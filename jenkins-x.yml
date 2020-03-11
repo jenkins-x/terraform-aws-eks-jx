@@ -1,0 +1,12 @@
+buildPack: none
+pipelineConfig:
+  pipelines:
+    pullRequest:
+      pipeline:
+        agent:
+          image: gcr.io/jenkinsxio/builder-terraform
+        stages:
+        - name: ci
+          steps:
+          - name: terraform-apply
+            command: ./scripts/ci.sh
