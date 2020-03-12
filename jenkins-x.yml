@@ -20,7 +20,7 @@ pipelineConfig:
         - name: ci
           options:
             volumes:
-              - name: aws_creds
+              - name: aws-creds
                 secret:
                   secretName: aws-bdd-user-creds
                   items:
@@ -29,7 +29,7 @@ pipelineConfig:
             containerOptions:
               volumeMounts:
                 - mountPath: /builder/home/
-                  name: aws_creds
+                  name: aws-creds
           steps:
           - name: terraform-apply
             command: ./scripts/ci.sh
