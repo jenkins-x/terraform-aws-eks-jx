@@ -14,7 +14,6 @@ environments:
   - key: staging
   - key: production
 ingress:
-  domain: ${domain}
   ignoreLoadBalancer: true
   externalDNS: ${enable_external_dns}
   tls:
