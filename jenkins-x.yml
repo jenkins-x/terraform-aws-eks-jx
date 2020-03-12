@@ -3,10 +3,33 @@ pipelineConfig:
   pipelines:
     pullRequest:
       pipeline:
+        environment:
+          - name: ACCOUNT_ID
+            valueFrom:
+              secretKeyRef:
+                name: aws-bdd-user-creds
+                key: account_id
+          - name: VAULT_USER
+            valueFrom:
+              secretKeyRef:
+                name: aws-bdd-user-creds
+                key: vault_user
         agent:
           image: gcr.io/jenkinsxio/builder-terraform
         stages:
         - name: ci
+          options:
+            volumes:
+              - name: aws_creds
+                secret:
+                  secretName: aws-bdd-user-creds
+                  items:
+                    - key: credentials
+                      path: credentials
+            containerOptions:
+              volumeMounts:
+                - mountPath: /builder/home/
+                  name: aws_creds
           steps:
           - name: terraform-apply
             command: ./scripts/ci.sh
