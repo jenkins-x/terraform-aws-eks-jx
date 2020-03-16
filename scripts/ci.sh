@@ -44,6 +44,12 @@ echo "Creating cluster ${CLUSTER_NAME}"
 echo "Applying Terraform..."
 terraform apply $VARS -auto-approve
 
+echo "Reattempting Terraform Apply to make sure it works - Actual solution: WIP"
+terraform apply $VARS -auto-approve
+
+make test ..
+
+
 #if [[ ! -z ${PULL_NUMBER:-} ]]; then
 #	echo "Commenting the resulting jx-requirements.yml"
 #	JX_REQUIREMENTS=$(cat jx-requirements.yaml)
