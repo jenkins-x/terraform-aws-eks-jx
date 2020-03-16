@@ -35,6 +35,14 @@ variable "cluster_id" {
     type = string
 }
 
+variable "jx_namespace" {
+  type = any
+}
+
+variable "cm_namespace" {
+  type = any
+}
+
 # Flags
 
 variable "enable_logs_storage" {
