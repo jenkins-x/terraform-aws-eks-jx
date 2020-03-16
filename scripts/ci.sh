@@ -42,7 +42,8 @@ PLAN=$(terraform plan $VARS -no-color)
 echo "Creating cluster ${CLUSTER_NAME}"
 
 echo "Applying Terraform..."
-terraform apply $VARS -auto-approve
+ret=$(terraform apply $VARS -auto-approve > /dev/null)
+cat $ret
 
 echo "Reattempting Terraform Apply to make sure it works - Actual solution: WIP"
 terraform apply $VARS -auto-approve
