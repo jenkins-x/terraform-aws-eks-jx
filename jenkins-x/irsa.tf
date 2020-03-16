@@ -43,9 +43,6 @@ module "iam_assumable_role_tekton_bot" {
 
 resource "kubernetes_service_account" "tekton-bot" {
   automount_service_account_token = true
-  depends_on = [
-    kubernetes_namespace.jx
-  ]
   metadata {
     name = "tekton-bot"
     namespace = local.jenkins-x-namespace
@@ -106,9 +103,6 @@ module "iam_assumable_role_external_dns" {
 
 resource "kubernetes_service_account" "exdns-external-dns" {
   automount_service_account_token = true
-  depends_on = [
-    kubernetes_namespace.jx
-  ]
   metadata {
     name = "exdns-external-dns"
     namespace = local.jenkins-x-namespace
@@ -178,9 +172,6 @@ module "iam_assumable_role_cert_manager" {
 
 resource "kubernetes_service_account" "cm-cert-manager" {
   automount_service_account_token = true
-  depends_on = [
-    kubernetes_namespace.cert-manager
-  ]
   metadata {
     name = "cm-cert-manager"
     namespace = local.cert-manager-namespace
@@ -209,9 +200,6 @@ module "iam_assumable_role_cm_cainjector" {
 
 resource "kubernetes_service_account" "cm-cainjector" {
   automount_service_account_token = true
-  depends_on = [
-    kubernetes_namespace.cert-manager
-  ]
   metadata {
     name = "cm-cainjector"
     namespace = local.cert-manager-namespace
@@ -242,9 +230,6 @@ module "iam_assumable_role_controllerbuild" {
 
 resource "kubernetes_service_account" "jenkins-x-controllerbuild" {
   automount_service_account_token = true
-  depends_on = [
-    kubernetes_namespace.jx
-  ]
   metadata {
     name = "jenkins-x-controllerbuild"
     namespace = local.jenkins-x-namespace
@@ -275,9 +260,6 @@ module "iam_assumable_role_jxui" {
 
 resource "kubernetes_service_account" "jxui" {
   automount_service_account_token = true
-  depends_on = [
-    kubernetes_namespace.jx
-  ]
   metadata {
     name = "jxui"
     namespace = local.jenkins-x-namespace

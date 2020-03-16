@@ -107,6 +107,9 @@ module "jenkinsx" {
   production_letsencrypt         = var.production_letsencrypt
   oidc_provider_url              = replace(module.eks.cluster_oidc_issuer_url, "https://", "")
   cluster_id                     = module.eks.cluster_id
+  // Will not be used, they are used to force Terraform to wait for them to be created before calling the Jenkinsx module
+  jx_namespace                   = kubernetes_namespace.jx
+  cm_namespace                   = kubernetes_namespace.cert-manager
 }
 
 module "vault" {
@@ -115,6 +118,38 @@ module "vault" {
   cluster_name           = var.cluster_name
   account_id             = var.account_id
   vault_user             = var.vault_user
+}
+
+// Jenkins X Resources
+
+resource "kubernetes_namespace" "jx" {
+  metadata {
+    name = "jx"
+  }
+  depends_on = [
+    module.eks
+  ]
+  lifecycle {
+    ignore_changes = [
+      metadata[0].labels,
+      metadata[0].annotations,
+    ]
+  }
+}
+
+resource "kubernetes_namespace" "cert-manager" {
+  metadata {
+    name = "cert-manager"
+  }
+  depends_on = [
+    module.eks
+  ]
+  lifecycle {
+    ignore_changes = [
+      metadata[0].labels,
+      metadata[0].annotations,
+    ]
+  }
 }
 
 # jx-requirements.yml file generation

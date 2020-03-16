@@ -1,29 +1,3 @@
-// Jenkins X Resources
-
-resource "kubernetes_namespace" "jx" {
-  metadata {
-    name = local.jenkins-x-namespace
-  }
-  lifecycle {
-    ignore_changes = [
-      metadata[0].labels,
-      metadata[0].annotations,
-    ]
-  }
-}
-
-resource "kubernetes_namespace" "cert-manager" {
-  metadata {
-    name = local.cert-manager-namespace
-  }
-  lifecycle {
-    ignore_changes = [
-      metadata[0].labels,
-      metadata[0].annotations,
-    ]
-  }
-}
-
 resource "aws_s3_bucket" "logs-jenkins-x" {
   count = var.enable_logs_storage ? 1 : 0
   bucket_prefix = "logs-${var.cluster_name}-"
