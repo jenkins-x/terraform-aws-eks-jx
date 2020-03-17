@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set +e
 set -u
 
 CLUSTER_NAME=tf-${BRANCH_NAME}-${BUILD_NUMBER}
@@ -42,11 +42,11 @@ PLAN=$(terraform plan $VARS -no-color)
 echo "Creating cluster ${CLUSTER_NAME}"
 
 echo "Applying Terraform..."
-set +e
+
 terraform apply $VARS -auto-approve
 
 echo "Reattempting Terraform Apply to make sure it works - Actual solution: WIP"
-set -e
+
 terraform apply $VARS -auto-approve
 
 make test ..
