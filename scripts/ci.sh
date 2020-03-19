@@ -9,7 +9,6 @@ VARS="-var cluster_name=${CLUSTER_NAME} -var region=us-east-1 -var account_id=${
 
 function cleanup()
 {
-	sleep 60000
 	echo "Cleanup..."
 	terraform destroy $VARS -auto-approve
 }
@@ -33,13 +32,6 @@ terraform init
 echo "Generating Plan..."
 PLAN=$(terraform plan $VARS -no-color)
 
-#if [[ ! -z ${PULL_NUMBER:-} ]]; then
-#	echo "Logging Plan..."
-# 	jx step pr comment --code --comment="${PLAN}"
-#else
-#	echo "Not commenting the PR as we are not running in a pipeline"
-#fi
-
 echo "Creating cluster ${CLUSTER_NAME}"
 
 echo "Applying Terraform..."
@@ -55,13 +47,3 @@ export PATH=/var/tmp/shellspec/bin:${PATH}
 popd
 
 make test
-
-
-#if [[ ! -z ${PULL_NUMBER:-} ]]; then
-#	echo "Commenting the resulting jx-requirements.yml"
-#	JX_REQUIREMENTS=$(cat jx-requirements.yaml)
-#	jx step pr comment --code --comment="${JX_REQUIREMENTS}"
-#else
-#	echo "Not commenting the PR as we are not running in a pipeline"
-#fi
-

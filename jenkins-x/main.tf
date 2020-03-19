@@ -70,9 +70,19 @@ module "eks" {
   ]
 }
 
-resource "kubernetes_namespace" "jx" {
+resource "null_resource" "kubeconfig" {
   depends_on = [
     module.eks
+  ]
+  provisioner "local-exec" {
+    command = "aws eks update-kubeconfig --name ${var.cluster_name}"
+    interpreter = ["/bin/bash", "-c"]
+  }
+}
+
+resource "kubernetes_namespace" "jx" {
+  depends_on = [
+    null_resource.kubeconfig
   ]
   metadata {
     name = "jx"
@@ -87,7 +97,7 @@ resource "kubernetes_namespace" "jx" {
 
 resource "kubernetes_namespace" "cert-manager" {
   depends_on = [
-    module.eks
+    null_resource.kubeconfig
   ]
   metadata {
     name = "cert-manager"
