@@ -9,6 +9,7 @@ VARS="-var cluster_name=${CLUSTER_NAME} -var region=us-east-1 -var account_id=${
 
 function cleanup()
 {
+	sleep 60000
 	echo "Cleanup..."
 	terraform destroy $VARS -auto-approve
 }
