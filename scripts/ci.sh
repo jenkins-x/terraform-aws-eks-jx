@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set +e
+set -e
 set -u
 
 CLUSTER_NAME=tf-${BRANCH_NAME}-${BUILD_NUMBER}
@@ -42,14 +42,18 @@ PLAN=$(terraform plan $VARS -no-color)
 echo "Creating cluster ${CLUSTER_NAME}"
 
 echo "Applying Terraform..."
-
 terraform apply $VARS -auto-approve
 
 echo "Reattempting Terraform Apply to make sure it works - Actual solution: WIP"
-
 terraform apply $VARS -auto-approve
 
-make test ..
+echo "Installing shellspec"
+pushd /var/tmp
+git clone https://github.com/shellspec/shellspec.git
+export PATH=/var/tmp/shellspec/bin:${PATH}
+popd
+
+make test
 
 
 #if [[ ! -z ${PULL_NUMBER:-} ]]; then

@@ -19,78 +19,6 @@ provider "template" {
   version = "~> 2.1"
 }
 
-data "aws_eks_cluster" "cluster" {
-  name = module.eks.cluster_id
-}
-
-data "aws_eks_cluster_auth" "cluster" {
-  name = module.eks.cluster_id
-}
-
-data "aws_availability_zones" "available" {}
-
-data "aws_caller_identity" "current" {}
-
-provider "kubernetes" {
-  host                   = data.aws_eks_cluster.cluster.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
-  token                  = data.aws_eks_cluster_auth.cluster.token
-  load_config_file       = false
-  version                = "1.10.0"
-}
-
-module "vpc" {
-  source               = "terraform-aws-modules/vpc/aws"
-  version              = "2.6.0"
-  name                 = var.vpc_name
-  cidr                 = var.vpc_cidr_block
-  azs                  = data.aws_availability_zones.available.names
-  public_subnets       = var.vpc_subnets
-  enable_dns_hostnames = true
-
-  tags = {
-    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
-  }
-
-  public_subnet_tags = {
-    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
-    "kubernetes.io/role/elb"                      = "1"
-  }
-}
-
-module "eks" {
-  source        = "terraform-aws-modules/eks/aws"
-  version       = "8.2.0"
-  cluster_name  = var.cluster_name
-  subnets       = module.vpc.public_subnets
-  vpc_id        = module.vpc.vpc_id
-  enable_irsa   = true
-  worker_groups = [
-    {
-      name                 = "worker-group-${var.cluster_name}"
-      instance_type        = var.worker_nodes_instance_types
-      asg_desired_capacity = var.desired_number_of_nodes
-      asg_min_size         = var.min_number_of_nodes
-      asg_max_size         = var.max_number_of_nodes
-      tags = [
-        {
-          "key"                 = "k8s.io/cluster-autoscaler/enabled"
-          "propagate_at_launch" = "false"
-          "value"               = "true"
-        },
-        {
-          "key"                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
-          "propagate_at_launch" = "false"
-          "value"               = "true"
-        }
-      ]
-    }
-  ]
-  workers_additional_policies = [
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
-  ]
-}
-
 module "jenkinsx" {
   source                         = "./jenkins-x"
   region                         = var.region
@@ -105,11 +33,6 @@ module "jenkinsx" {
   create_and_configure_subdomain = var.create_and_configure_subdomain
   enable_tls                     = var.enable_tls
   production_letsencrypt         = var.production_letsencrypt
-  oidc_provider_url              = replace(module.eks.cluster_oidc_issuer_url, "https://", "")
-  cluster_id                     = module.eks.cluster_id
-  // Will not be used, they are used to force Terraform to wait for them to be created before calling the Jenkinsx module
-  jx_namespace                   = kubernetes_namespace.jx
-  cm_namespace                   = kubernetes_namespace.cert-manager
 }
 
 module "vault" {
@@ -118,38 +41,6 @@ module "vault" {
   cluster_name           = var.cluster_name
   account_id             = var.account_id
   vault_user             = var.vault_user
-}
-
-// Jenkins X Resources
-
-resource "kubernetes_namespace" "jx" {
-  metadata {
-    name = "jx"
-  }
-  depends_on = [
-    module.eks
-  ]
-  lifecycle {
-    ignore_changes = [
-      metadata[0].labels,
-      metadata[0].annotations,
-    ]
-  }
-}
-
-resource "kubernetes_namespace" "cert-manager" {
-  metadata {
-    name = "cert-manager"
-  }
-  depends_on = [
-    module.eks
-  ]
-  lifecycle {
-    ignore_changes = [
-      metadata[0].labels,
-      metadata[0].annotations,
-    ]
-  }
 }
 
 # jx-requirements.yml file generation

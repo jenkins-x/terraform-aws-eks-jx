@@ -1,7 +1,3 @@
-output "aws_account_id" {
-  value = data.aws_caller_identity.current.account_id
-}
-
 output "lts_logs_bucket" {
   value = module.jenkinsx.logs-jenkins-x
 }
