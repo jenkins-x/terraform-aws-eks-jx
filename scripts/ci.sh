@@ -25,6 +25,17 @@ echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
 # Checking installation
 aws-iam-authenticator help
 
+echo "Installing the AWS CLI"
+# Install the AWS CLI to run commands in tests
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+./aws/install
+
+# Checking AWS Installation
+aws --version
+
+
+
 
 echo "Initializing modules..."
 terraform init
