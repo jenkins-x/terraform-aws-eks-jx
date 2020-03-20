@@ -65,7 +65,7 @@ resource "local_file" "jx-requirements" {
     vault_dynamodb_table        = module.vault.vault_dynamodb_table
     vault_user                  = var.vault_user
     enable_external_dns         = var.enable_external_dns
-    #domain                      = trimprefix(join(".", [var.subdomain, var.apex_domain]), ".")
+    domain                      = trimprefix(join(".", [var.subdomain, var.apex_domain]), ".")
     enable_tls                  = var.enable_tls
     tls_email                   = var.tls_email
     use_production_letsencrypt  = var.production_letsencrypt
