@@ -34,21 +34,12 @@ unzip awscliv2.zip
 # Checking AWS Installation
 aws --version
 
-
-
-
 echo "Initializing modules..."
 terraform init
-
-echo "Generating Plan..."
-PLAN=$(terraform plan $VARS -no-color)
 
 echo "Creating cluster ${CLUSTER_NAME}"
 
 echo "Applying Terraform..."
-terraform apply $VARS -auto-approve
-
-echo "Reattempting Terraform Apply to make sure it works - Actual solution: WIP"
 terraform apply $VARS -auto-approve
 
 echo "Installing shellspec"
