@@ -1,7 +1,15 @@
+// ----------------------------------------------------------------------------
+// Enforce Terraform version
+//
+// Using pessimistic version locking for all versions 
+// ----------------------------------------------------------------------------
 terraform {
   required_version = ">= 0.12.0"
 }
 
+// ----------------------------------------------------------------------------
+// Configure providers
+// ----------------------------------------------------------------------------
 provider "aws" {
   version = ">= 2.28.1"
   region  = var.region
@@ -19,6 +27,9 @@ provider "template" {
   version = "~> 2.1"
 }
 
+// ----------------------------------------------------------------------------
+// Setup all required resources for Jenkins X
+// ---------------------------------------------------------------------------
 module "jx" {
   source                         = "./jx"
   region                         = var.region
@@ -35,6 +46,10 @@ module "jx" {
   production_letsencrypt         = var.production_letsencrypt
 }
 
+// ----------------------------------------------------------------------------
+// Setup all required resources for using the  bank-vaults operator
+// See https://github.com/banzaicloud/bank-vaults
+// ----------------------------------------------------------------------------
 module "vault" {
   source                 = "./vault"
   create_vault_resources = var.create_vault_resources
@@ -43,8 +58,9 @@ module "vault" {
   vault_user             = var.vault_user
 }
 
-# jx-requirements.yml file generation
-
+// ----------------------------------------------------------------------------
+// Let's generate jx-requirements.yml 
+// ----------------------------------------------------------------------------
 resource "local_file" "jx-requirements" {
   depends_on = [
     module.jx,

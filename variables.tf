@@ -1,3 +1,6 @@
+// ----------------------------------------------------------------------------
+// Required Variables
+// ----------------------------------------------------------------------------
 variable "region" {
   type = string
   default = "us-east-1"
@@ -15,6 +18,8 @@ variable "vault_user" {
   type    = string
   default = ""
 }
+// ----------------------------------------------------------------------------
+
 
 variable "manage_aws_auth" {
   description = "Whether to apply the aws-auth configmap file."
@@ -27,7 +32,9 @@ variable "wait_for_cluster_cmd" {
   default     = "until curl -k -s $ENDPOINT/healthz >/dev/null; do sleep 4; done"
 }
 
-# Worker Nodes
+// ----------------------------------------------------------------------------
+// Worker Nodes Variables
+// ----------------------------------------------------------------------------
 variable "desired_number_of_nodes" {
   description = "The number of worker nodes to use for the cluster. Defaults to 3"
   type        = number
@@ -52,7 +59,9 @@ variable "worker_nodes_instance_types" {
   default      = "m5.large"
 }
 
-# VPC
+// ----------------------------------------------------------------------------
+// VPC Variables
+// ----------------------------------------------------------------------------
 variable "vpc_name" {
   description  = "The name of the VPC to be created for the cluster"
   type         = string
@@ -71,7 +80,9 @@ variable "vpc_cidr_block" {
   default     = "10.0.0.0/16"
 }
 
-# External DNS
+// ----------------------------------------------------------------------------
+// External DNS Variables
+// ----------------------------------------------------------------------------
 variable "apex_domain" {
   description = "Flag to enable or disable long term storage for logs"
   type        = string
@@ -90,8 +101,9 @@ variable "tls_email" {
   default     = ""
 }
 
-# Flags
-
+// ----------------------------------------------------------------------------
+// Flag Variables
+// ----------------------------------------------------------------------------
 variable "enable_logs_storage" {
   description = "Flag to enable or disable long term storage for logs"
   type        = bool

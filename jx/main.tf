@@ -1,3 +1,6 @@
+// ----------------------------------------------------------------------------
+// Query necessary data for the module
+// ----------------------------------------------------------------------------
 data "aws_eks_cluster" "cluster" {
   name = module.eks.cluster_id
 }
@@ -10,6 +13,9 @@ data "aws_availability_zones" "available" {}
 
 data "aws_caller_identity" "current" {}
 
+// ----------------------------------------------------------------------------
+// Define K8s cluster configuration
+// ----------------------------------------------------------------------------
 provider "kubernetes" {
   host                   = data.aws_eks_cluster.cluster.endpoint
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
@@ -18,6 +24,10 @@ provider "kubernetes" {
   version                = "1.11.1"
 }
 
+// ----------------------------------------------------------------------------
+// Create the AWS VPC
+// See https://github.com/terraform-aws-modules/terraform-aws-vpc
+// ----------------------------------------------------------------------------
 module "vpc" {
   source               = "terraform-aws-modules/vpc/aws"
   version              = "2.6.0"
@@ -37,6 +47,10 @@ module "vpc" {
   }
 }
 
+// ----------------------------------------------------------------------------
+// Create the EKS cluster with extra EC2ContainerRegistryPowerUser policy
+// See https://github.com/terraform-aws-modules/terraform-aws-eks
+// ----------------------------------------------------------------------------
 module "eks" {
   source        = "terraform-aws-modules/eks/aws"
   version       = "10.0.0"
@@ -70,6 +84,10 @@ module "eks" {
   ]
 }
 
+// ----------------------------------------------------------------------------
+// Update the kube configuration after the cluster has been created so we can
+// connect to it and create the K8s resources
+// ----------------------------------------------------------------------------
 resource "null_resource" "kubeconfig" {
   depends_on = [
     module.eks
@@ -80,6 +98,10 @@ resource "null_resource" "kubeconfig" {
   }
 }
 
+// ----------------------------------------------------------------------------
+// Create the necessary K8s namespaces that we will need to add the
+// Service Accounts later
+// ----------------------------------------------------------------------------
 resource "kubernetes_namespace" "jx" {
   depends_on = [
     null_resource.kubeconfig
@@ -110,8 +132,10 @@ resource "kubernetes_namespace" "cert-manager" {
   }
 }
 
-# S3
-
+// ----------------------------------------------------------------------------
+// Create the AWS S3 buckets for Long Term Storage based on flags
+// See https://www.terraform.io/docs/providers/aws/r/s3_bucket.html
+// ----------------------------------------------------------------------------
 resource "aws_s3_bucket" "logs-jenkins-x" {
   count = var.enable_logs_storage ? 1 : 0
   bucket_prefix = "logs-${var.cluster_name}-"
@@ -142,8 +166,11 @@ resource "aws_s3_bucket" "repository-jenkins-x" {
   }
 }
 
-# Route53
-
+// ----------------------------------------------------------------------------
+// Configure Route 53 based on flags and given parameters. This will create a
+// subdomain for the given apex domain zone and delegate DNS resolve to the parent
+// zone
+// ----------------------------------------------------------------------------
 data "aws_route53_zone" "apex_domain_zone" {
   count = var.create_and_configure_subdomain ? 1 : 0
   name = "${var.apex_domain}."

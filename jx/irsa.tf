@@ -1,6 +1,15 @@
 
-#TEKTON BOT POLICY, ROLE AND SERVICE ACCOUNTS
+// ----------------------------------------------------------------------------
+// IAM Roles for Service Accounts configuration:
+//  - We will create IAM Policies, Roles and Service Accounts
+//  - Annotate these service accounts with `eks.amazonaws.com/role-arn`
+// See https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html
+// ----------------------------------------------------------------------------
 
+
+// ----------------------------------------------------------------------------
+// Tekton Bot IAM Policy, IAM Role and Service Account
+// ----------------------------------------------------------------------------
 data "aws_iam_policy_document" "tekton-bot-policy" {
   statement {
     sid    = "tektonBotPolicy"
@@ -62,8 +71,9 @@ resource "kubernetes_service_account" "tekton-bot" {
   }
 }
 
-#EXTERNAL DNS POLICY, ROLE AND SERVICE ACCOUNTS
-
+// ----------------------------------------------------------------------------
+// External DNS IAM Policy, IAM Role and Service Account
+// ----------------------------------------------------------------------------
 data "aws_iam_policy_document" "external-dns-policy" {
   statement {
     effect = "Allow"
@@ -126,8 +136,9 @@ resource "kubernetes_service_account" "exdns-external-dns" {
 }
 
 
-# CERT MANAGER POLICY, ROLE AND SERVICE ACCOUNT
-
+// ----------------------------------------------------------------------------
+// Cert Manager IAM Policy, IAM Role and Service Account
+// ----------------------------------------------------------------------------
 data "aws_iam_policy_document" "cert-manager-policy" {
   statement {
     effect = "Allow"
@@ -197,6 +208,10 @@ resource "kubernetes_service_account" "cm-cert-manager" {
   }
 }
 
+
+// ----------------------------------------------------------------------------
+// CM CAInjector IAM Role and Service Account (Reuses the Cert Manager IAM Policy)
+// ----------------------------------------------------------------------------
 module "iam_assumable_role_cm_cainjector" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v2.6.0"
@@ -228,8 +243,9 @@ resource "kubernetes_service_account" "cm-cainjector" {
   }
 }
 
-# JENKINS X CONTROLLERBUILD SERVICE ACCOUNT
-
+// ----------------------------------------------------------------------------
+// ControllerBuild IAM Policy, IAM Role and Service Account
+// ----------------------------------------------------------------------------
 module "iam_assumable_role_controllerbuild" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v2.6.0"
@@ -261,8 +277,9 @@ resource "kubernetes_service_account" "jenkins-x-controllerbuild" {
   }
 }
 
-#JENKINS X JXUI
-
+// ----------------------------------------------------------------------------
+// Jenkins X UI IAM Policy, IAM Role and Service Account
+// ----------------------------------------------------------------------------
 module "iam_assumable_role_jxui" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v2.6.0"

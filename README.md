@@ -205,7 +205,7 @@ You will also need to provide a valid email to register your domain in LetsEncry
 The final output of running this module will not only be the creation of cloud resources but also, it will generate a valid `jx-requirements.yml` file that will be used by Jenkins X through `jx boot -r jx-requirements.yml`.
 The template can be found in: 
 
-https://github.com/jenkins-x/jx-cloud-provisioners/blob/master/eks/terraform/jx/jx-requirements.yml.tpl
+https://github.com/jenkins-x/terraform-aws-eks-jx/blob/master/jx/jx-requirements.yml.tpl
 
 ## Conditional creation
 Sometimes you need to have a way to create resources conditionally but Terraform does not allow to use count inside module block, there still isn't a solution for this in this repository but we will be working to allow users to provide their own VPC, subnets etc.
@@ -262,19 +262,16 @@ This documentation is being generated with `terraform-docs`:
 
 | Name | Description |
 |------|-------------|
-| cert\_manager\_iam\_role | n/a |
-| cluster\_name | n/a |
-| cm\_cainjector\_iam\_role | n/a |
-| controllerbuild\_iam\_role | n/a |
-| external\_dns\_iam\_role | n/a |
-| jxui\_iam\_role | n/a |
-| lts\_logs\_bucket | n/a |
-| lts\_reports\_bucket | n/a |
-| lts\_repository\_bucket | n/a |
-| tekton\_bot\_iam\_role | n/a |
-| vault\_dynamodb\_table | n/a |
-| vault\_kms\_unseal | n/a |
-| vault\_unseal\_bucket | n/a |
-|------|-------------|
-| aws\_account\_id | n/a |
-| cluster\_name | n/a |
+| cert\_manager\_iam\_role | The IAM Role that the Cert Manager pod will assume to authenticate |
+| cluster\_name | The name of the created cluster |
+| cm\_cainjector\_iam\_role | The IAM Role that the CM CA Injector pod will assume to authenticate |
+| controllerbuild\_iam\_role | The IAM Role that the ControllerBuild pod will assume to authenticate |
+| external\_dns\_iam\_role | The IAM Role that the External DNS pod will assume to authenticate |
+| jxui\_iam\_role | The IAM Role that the Jenkins X UI pod will assume to authenticate |
+| lts\_logs\_bucket | The bucket where logs from builds will be stored |
+| lts\_reports\_bucket | The bucket where test reports will be stored |
+| lts\_repository\_bucket | The bucket that will serve as artifacts repository |
+| tekton\_bot\_iam\_role | The IAM Role that the build pods will assume to authenticate |
+| vault\_dynamodb\_table | The bucket that Vault will use as backend |
+| vault\_kms\_unseal | The KMS Key that Vault will use for encryption |
+| vault\_unseal\_bucket | The bucket that Vault will use for storage |
