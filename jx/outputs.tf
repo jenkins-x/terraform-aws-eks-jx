@@ -1,4 +1,7 @@
 
+// ----------------------------------------------------------------------------
+// Long Term Storage S3 Buckets (Logs, Reports, Repository)
+// ----------------------------------------------------------------------------
 output "logs-jenkins-x" {
     value = aws_s3_bucket.logs-jenkins-x[0].id
 }
@@ -11,6 +14,9 @@ output "repository-jenkins-x" {
     value = aws_s3_bucket.repository-jenkins-x[0].id
 }
 
+// ----------------------------------------------------------------------------
+// Generated IAM Roles
+// ----------------------------------------------------------------------------
 output "cert_manager_iam_role" {
   value = module.iam_assumable_role_cert_manager
 }

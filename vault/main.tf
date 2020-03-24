@@ -1,3 +1,7 @@
+// ----------------------------------------------------------------------------
+// Vault S3 bucket
+// See https://www.terraform.io/docs/providers/aws/r/s3_bucket.html
+// ----------------------------------------------------------------------------
 resource "aws_s3_bucket" "vault-unseal-bucket" {
   count = var.create_vault_resources ? 1 : 0
   bucket_prefix = "vault-unseal-${var.cluster_name}-"
@@ -12,6 +16,10 @@ resource "aws_s3_bucket" "vault-unseal-bucket" {
   }
 }
 
+// ----------------------------------------------------------------------------
+// Vault DynamoDB Table
+// See https://www.terraform.io/docs/providers/aws/r/dynamodb_table.html
+// ----------------------------------------------------------------------------
 resource "aws_dynamodb_table" "vault-dynamodb-table" {
   count = var.create_vault_resources ? 1 : 0
   name           = "vault-unseal-${var.cluster_name}-random19210290120"
@@ -36,6 +44,10 @@ resource "aws_dynamodb_table" "vault-dynamodb-table" {
   }
 }
 
+// ----------------------------------------------------------------------------
+// Vault KMS Key
+// See https://www.terraform.io/docs/providers/aws/r/kms_key.html
+// ----------------------------------------------------------------------------
 resource "aws_kms_key" "kms_vault_unseal" {
   count = var.create_vault_resources ? 1 : 0
   description             = "KMS Key for bank vault unseal"
@@ -60,6 +72,11 @@ resource "aws_kms_key" "kms_vault_unseal" {
 POLICY
 }
 
+// ----------------------------------------------------------------------------
+// Permissions that will need to be attached to the provides IAM Username
+// We will use this IAM User's private keys to authenticate the Vault pod
+// against AWS
+// ----------------------------------------------------------------------------
 data "aws_iam_policy_document" "vault_iam_user_policy_document" {
   count = var.create_vault_resources ? 1 : 0
   depends_on = [
