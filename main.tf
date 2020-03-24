@@ -19,8 +19,8 @@ provider "template" {
   version = "~> 2.1"
 }
 
-module "jenkinsx" {
-  source                         = "./jenkins-x"
+module "jx" {
+  source                         = "./jx"
   region                         = var.region
   cluster_name                   = var.cluster_name
   apex_domain                    = var.apex_domain
@@ -47,18 +47,18 @@ module "vault" {
 
 resource "local_file" "jx-requirements" {
   depends_on = [
-    module.jenkinsx,
+    module.jx,
     module.vault
   ]
-  content = templatefile("${path.module}/jenkins-x/jx-requirements.yml.tpl", {
+  content = templatefile("${path.module}/jx/jx-requirements.yml.tpl", {
     cluster_name                = var.cluster_name
     region                      = var.region
     enable_logs_storage         = var.enable_logs_storage
-    logs_storage_bucket         = module.jenkinsx.logs-jenkins-x
+    logs_storage_bucket         = module.jx.logs-jenkins-x
     enable_reports_storage      = var.enable_reports_storage
-    reports_storage_bucket      = module.jenkinsx.reports-jenkins-x
+    reports_storage_bucket      = module.jx.reports-jenkins-x
     enable_repository_storage   = var.enable_repository_storage
-    repository_storage_bucket   = module.jenkinsx.repository-jenkins-x
+    repository_storage_bucket   = module.jx.repository-jenkins-x
     create_vault_resources      = var.create_vault_resources
     vault_kms_key               = module.vault.kms_vault_unseal 
     vault_bucket                = module.vault.vault_unseal_bucket
