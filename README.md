@@ -205,7 +205,7 @@ You will also need to provide a valid email to register your domain in LetsEncry
 The final output of running this module will not only be the creation of cloud resources but also, it will generate a valid `jx-requirements.yml` file that will be used by Jenkins X through `jx boot -r jx-requirements.yml`.
 The template can be found in: 
 
-https://github.com/jenkins-x/jx-cloud-provisioners/blob/master/eks/terraform/jenkins-x/jx-requirements.yml.tpl
+https://github.com/jenkins-x/jx-cloud-provisioners/blob/master/eks/terraform/jx/jx-requirements.yml.tpl
 
 ## Conditional creation
 Sometimes you need to have a way to create resources conditionally but Terraform does not allow to use count inside module block, there still isn't a solution for this in this repository but we will be working to allow users to provide their own VPC, subnets etc.
@@ -217,7 +217,7 @@ This module will setup a series of IAM Policies and Roles. These roles will be a
 
 This allows us to make use of IAM Roles for Sercive Accounts in order to set fine grained permissions on a pod per pod basis.
 
-There still isn't a way to provide your own roles or define other Service Accounts by variables but you can always modify the `eks/terraform/jenkins-x/irsa.tf` Terraform file.
+There still isn't a way to provide your own roles or define other Service Accounts by variables but you can always modify the `eks/terraform/jx/irsa.tf` Terraform file.
 
 ## Generated Documentation
 
