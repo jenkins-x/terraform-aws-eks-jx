@@ -227,7 +227,6 @@ This documentation is being generated with `terraform-docs`:
 
 | Name | Version |
 |------|---------|
-| aws | >= 2.28.1 |
 | local | ~> 1.2 |
 
 ### Inputs
@@ -262,6 +261,20 @@ This documentation is being generated with `terraform-docs`:
 ### Outputs
 
 | Name | Description |
+|------|-------------|
+| cert\_manager\_iam\_role | n/a |
+| cluster\_name | n/a |
+| cm\_cainjector\_iam\_role | n/a |
+| controllerbuild\_iam\_role | n/a |
+| external\_dns\_iam\_role | n/a |
+| jxui\_iam\_role | n/a |
+| lts\_logs\_bucket | n/a |
+| lts\_reports\_bucket | n/a |
+| lts\_repository\_bucket | n/a |
+| tekton\_bot\_iam\_role | n/a |
+| vault\_dynamodb\_table | n/a |
+| vault\_kms\_unseal | n/a |
+| vault\_unseal\_bucket | n/a |
 |------|-------------|
 | aws\_account\_id | n/a |
 | cluster\_name | n/a |
