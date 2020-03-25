@@ -2,7 +2,7 @@
 // Required Variables
 // ----------------------------------------------------------------------------
 variable "region" {
-  type = string
+  type    = string
   default = "us-east-1"
 }
 
@@ -54,18 +54,18 @@ variable "max_number_of_nodes" {
 }
 
 variable "worker_nodes_instance_types" {
-  description  = "The instance type to use for the cluster's worker nodes. Defaults to m5.large"
-  type         = string
-  default      = "m5.large"
+  description = "The instance type to use for the cluster's worker nodes. Defaults to m5.large"
+  type        = string
+  default     = "m5.large"
 }
 
 // ----------------------------------------------------------------------------
 // VPC Variables
 // ----------------------------------------------------------------------------
 variable "vpc_name" {
-  description  = "The name of the VPC to be created for the cluster"
-  type         = string
-  default      = "tf-vpc-eks"
+  description = "The name of the VPC to be created for the cluster"
+  type        = string
+  default     = "tf-vpc-eks"
 }
 
 variable "vpc_subnets" {
