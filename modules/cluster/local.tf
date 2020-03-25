@@ -7,6 +7,9 @@ resource "random_string" "suffix" {
   special = false
 }
 
+// ----------------------------------------------------------------------------
+// Module local variables
+// ----------------------------------------------------------------------------
 locals {
   generated_seed                = random_string.suffix.result
   # check if this makes sense

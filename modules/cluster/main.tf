@@ -117,7 +117,7 @@ resource "kubernetes_namespace" "jx" {
   }
 }
 
-resource "kubernetes_namespace" "cert-manager" {
+resource "kubernetes_namespace" "cert_manager" {
   depends_on = [
     null_resource.kubeconfig
   ]
@@ -130,67 +130,4 @@ resource "kubernetes_namespace" "cert-manager" {
       metadata[0].annotations,
     ]
   }
-}
-
-// ----------------------------------------------------------------------------
-// Create the AWS S3 buckets for Long Term Storage based on flags
-// See https://www.terraform.io/docs/providers/aws/r/s3_bucket.html
-// ----------------------------------------------------------------------------
-resource "aws_s3_bucket" "logs-jenkins-x" {
-  count = var.enable_logs_storage ? 1 : 0
-  bucket_prefix = "logs-${var.cluster_name}-"
-  acl    = "private"
-
-  tags = {
-    Owner = "Jenkins-x"
-  }
-}
-
-resource "aws_s3_bucket" "reports-jenkins-x" {
-  count = var.enable_reports_storage ? 1 : 0
-  bucket_prefix = "reports-${var.cluster_name}-"
-  acl    = "private"
-
-  tags = {
-    Owner = "Jenkins-x"
-  }
-}
-
-resource "aws_s3_bucket" "repository-jenkins-x" {
-  count = var.enable_repository_storage ? 1 : 0
-  bucket_prefix = "repository-${var.cluster_name}-"
-  acl    = "private"
-
-  tags = {
-    Owner = "Jenkins-x"
-  }
-}
-
-// ----------------------------------------------------------------------------
-// Configure Route 53 based on flags and given parameters. This will create a
-// subdomain for the given apex domain zone and delegate DNS resolve to the parent
-// zone
-// ----------------------------------------------------------------------------
-data "aws_route53_zone" "apex_domain_zone" {
-  count = var.create_and_configure_subdomain ? 1 : 0
-  name = "${var.apex_domain}."
-}
-
-resource "aws_route53_zone" "subdomain_zone" {
-  count = var.create_and_configure_subdomain ? 1 : 0
-  name = join(".", [var.subdomain, var.apex_domain])
-}
-
-resource "aws_route53_record" "subdomain_ns_delegation" {
-  count = var.create_and_configure_subdomain ? 1 : 0
-  zone_id = data.aws_route53_zone.apex_domain_zone[0].zone_id
-  name    = join(".", [var.subdomain, var.apex_domain])
-  type    = "NS"
-  ttl     = 30
-  records = [
-    "${aws_route53_zone.subdomain_zone[0].name_servers.0}",
-    "${aws_route53_zone.subdomain_zone[0].name_servers.1}",
-    "${aws_route53_zone.subdomain_zone[0].name_servers.2}",
-    "${aws_route53_zone.subdomain_zone[0].name_servers.3}",
-  ]
 }
