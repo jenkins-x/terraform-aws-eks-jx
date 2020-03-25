@@ -8,9 +8,8 @@ resource "random_string" "suffix" {
 }
 
 locals {
-  generated_seed                = random_string.suffix.result
-  # check if this makes sense
-  oidc_provider_url             = module.cluster.cluster_oidc_issuer_url
-  jenkins-x-namespace           = "jx"
-  cert-manager-namespace        = "cert-manager"
+  generated_seed         = random_string.suffix.result
+  oidc_provider_url      = module.cluster.cluster_oidc_issuer_url
+  jenkins-x-namespace    = "jx"
+  cert-manager-namespace = "cert-manager"
 }

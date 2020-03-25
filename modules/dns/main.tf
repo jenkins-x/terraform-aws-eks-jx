@@ -6,16 +6,16 @@
 // ----------------------------------------------------------------------------
 data "aws_route53_zone" "apex_domain_zone" {
   count = var.create_and_configure_subdomain ? 1 : 0
-  name = "${var.apex_domain}."
+  name  = "${var.apex_domain}."
 }
 
 resource "aws_route53_zone" "subdomain_zone" {
   count = var.create_and_configure_subdomain ? 1 : 0
-  name = join(".", [var.subdomain, var.apex_domain])
+  name  = join(".", [var.subdomain, var.apex_domain])
 }
 
 resource "aws_route53_record" "subdomain_ns_delegation" {
-  count = var.create_and_configure_subdomain ? 1 : 0
+  count   = var.create_and_configure_subdomain ? 1 : 0
   zone_id = data.aws_route53_zone.apex_domain_zone[0].zone_id
   name    = join(".", [var.subdomain, var.apex_domain])
   type    = "NS"
