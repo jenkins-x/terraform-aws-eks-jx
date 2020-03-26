@@ -1,5 +1,9 @@
 data "aws_caller_identity" "current" {}
 
+data "aws_iam_user" "vault_user" {
+  user_name = var.vault_user
+}
+
 // ----------------------------------------------------------------------------
 // Vault S3 bucket
 // See https://www.terraform.io/docs/providers/aws/r/s3_bucket.html
@@ -60,7 +64,7 @@ resource "aws_kms_key" "kms_vault_unseal" {
             "Effect": "Allow",
             "Principal": {
                 "AWS": [
-                    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${var.vault_user}",
+                    "${data.aws_iam_user.vault_user.arn}",
                     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
                 ]
             },
