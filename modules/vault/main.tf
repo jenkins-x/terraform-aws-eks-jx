@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 // ----------------------------------------------------------------------------
 // Vault S3 bucket
 // See https://www.terraform.io/docs/providers/aws/r/s3_bucket.html
@@ -58,8 +60,8 @@ resource "aws_kms_key" "kms_vault_unseal" {
             "Effect": "Allow",
             "Principal": {
                 "AWS": [
-                    "arn:aws:iam::${var.account_id}:user/${var.vault_user}",
-                    "arn:aws:iam::${var.account_id}:root"
+                    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${var.vault_user}",
+                    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
                 ]
             },
             "Action": "kms:*",

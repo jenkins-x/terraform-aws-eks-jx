@@ -34,7 +34,7 @@ provider "template" {
 // ----------------------------------------------------------------------------
 module "cluster" {
   source                      = "./modules/cluster"
-  cluster_name                = var.cluster_name
+  cluster_name                = local.cluster_name
   desired_number_of_nodes     = var.desired_number_of_nodes
   min_number_of_nodes         = var.min_number_of_nodes
   max_number_of_nodes         = var.max_number_of_nodes
@@ -51,8 +51,7 @@ module "cluster" {
 module "vault" {
   source                 = "./modules/vault"
   create_vault_resources = var.create_vault_resources
-  cluster_name           = var.cluster_name
-  account_id             = var.account_id
+  cluster_name           = local.cluster_name
   vault_user             = var.vault_user
 }
 
@@ -79,7 +78,7 @@ resource "local_file" "jx-requirements" {
     module.cluster
   ]
   content = templatefile("${path.module}/jx-requirements.yml.tpl", {
-    cluster_name               = var.cluster_name
+    cluster_name               = local.cluster_name
     region                     = var.region
     enable_logs_storage        = var.enable_logs_storage
     logs_storage_bucket        = module.cluster.logs_jenkins_x

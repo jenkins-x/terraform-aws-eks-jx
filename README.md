@@ -52,11 +52,12 @@ Both `kubectl` (>=1.10) and `aws-iam-authenticator` are installed and on your sh
 
 A default Jenkins X ready cluster can be provisioned by creating a main.tf file in an empty directory with the following content:
 
-module "eks-jx" {
-  source  = "jenkins-x/eks-jx/aws"
-  cluster_name = "<your_cluster_name>"
-  account_id   = "<your_aws_account_id>"
-}
+```
+    module "eks-jx" {
+      source  = "jenkins-x/eks-jx/aws"
+    }
+```
+The name of the cluster will be randomized but you can provide your own name.
 
 Refer to the documentation for additional variables.
 
@@ -72,6 +73,8 @@ terraform apply
 You can find some examples on different configurations in the [examples folder](examples).
 
 These include a `basic` configuration and a configuration with `vault` resources being created.
+
+Both will generate a valid `jx-requirements.yml` file that can be used to boot a Jenkins X cluster.
 
 #### VPC configuration
 <a id="markdown-vpc-configuration" name="vpc-configuration"></a>
