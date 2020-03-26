@@ -22,7 +22,6 @@ variable "vault_user" {
 // Whether to create the Vault resources
 // ----------------------------------------------------------------------------
 variable "create_vault_resources" {
-  description = "Flag to enable or disable the creation of Vault resources by Terraform"
   type        = bool
   default     = false
 }
