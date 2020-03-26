@@ -44,7 +44,7 @@ module "iam_assumable_role_tekton_bot" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v2.6.0"
   create_role                   = true
-  role_name                     = "tf-${var.cluster_name}-iamserviceaccount-Role1-tekton-bot-${local.generated_seed}"
+  role_name                     = substr("tf-${var.cluster_name}-sa-role-tekton-bot-${local.generated_seed}", 0, 60)
   provider_url                  = local.oidc_provider_url
   role_policy_arns              = [aws_iam_policy.tekton-bot.arn]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${kubernetes_namespace.jx.id}:tekton-bot"]
@@ -108,7 +108,7 @@ module "iam_assumable_role_external_dns" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v2.6.0"
   create_role                   = true
-  role_name                     = "tf-${var.cluster_name}-iamserviceaccount-Role-external_dns-${local.generated_seed}"
+  role_name                     = substr("tf-${var.cluster_name}-sa-role-external_dns-${local.generated_seed}", 0, 60)
   provider_url                  = local.oidc_provider_url
   role_policy_arns              = [aws_iam_policy.external-dns.arn]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${kubernetes_namespace.jx.id}:exdns-external-dns"]
@@ -181,7 +181,7 @@ module "iam_assumable_role_cert_manager" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v2.6.0"
   create_role                   = true
-  role_name                     = "tf-${var.cluster_name}-iamserviceaccount-Role-cert_manager-${local.generated_seed}"
+  role_name                     = substr("tf-${var.cluster_name}-sa-role-cert_manager-${local.generated_seed}", 0, 60)
   provider_url                  = local.oidc_provider_url
   role_policy_arns              = [aws_iam_policy.cert-manager.arn]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${kubernetes_namespace.cert_manager.id}:cm-cert-manager"]
@@ -216,7 +216,7 @@ module "iam_assumable_role_cm_cainjector" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v2.6.0"
   create_role                   = true
-  role_name                     = "tf-${var.cluster_name}-iamserviceaccount-Role-cm_cainjector-${local.generated_seed}"
+  role_name                     = substr("tf-${var.cluster_name}-sa-role-cm_cainjector-${local.generated_seed}", 0, 60)
   provider_url                  = local.oidc_provider_url
   role_policy_arns              = [aws_iam_policy.cert-manager.arn]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${kubernetes_namespace.cert_manager.id}:cm-cainjector"]
@@ -250,7 +250,7 @@ module "iam_assumable_role_controllerbuild" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v2.6.0"
   create_role                   = true
-  role_name                     = "tf-${var.cluster_name}-iamserviceaccount-Role-ctrlb-${local.generated_seed}"
+  role_name                     = substr("tf-${var.cluster_name}-sa-role-ctrlb-${local.generated_seed}", 0, 60)
   provider_url                  = local.oidc_provider_url
   role_policy_arns              = ["arn:aws:iam::aws:policy/AmazonS3FullAccess"]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${kubernetes_namespace.jx.id}:jenkins-x-controllerbuild"]
@@ -284,7 +284,7 @@ module "iam_assumable_role_jxui" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v2.6.0"
   create_role                   = true
-  role_name                     = "tf-${var.cluster_name}-iamserviceaccount-Role-jxui-${local.generated_seed}"
+  role_name                     = substr("tf-${var.cluster_name}-sa-role-jxui-${local.generated_seed}", 0, 60)
   provider_url                  = local.oidc_provider_url
   role_policy_arns              = ["arn:aws:iam::aws:policy/AmazonS3FullAccess"]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${kubernetes_namespace.jx.id}:jxui"]

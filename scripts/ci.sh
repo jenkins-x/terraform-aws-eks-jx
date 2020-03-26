@@ -5,7 +5,7 @@ set -u
 
 CLUSTER_NAME=tf-${BRANCH_NAME}-${BUILD_NUMBER}
 CLUSTER_NAME=$( echo ${CLUSTER_NAME} | tr  '[:upper:]' '[:lower:]')
-VARS="-var cluster_name=${CLUSTER_NAME} -var region=us-east-1 -var account_id=${ACCOUNT_ID} -var vault_user=${VAULT_USER} -var vpc_name=${CLUSTER_NAME}-vpc -var create_vault_resources=true"
+VARS="-var cluster_name=${CLUSTER_NAME} -var region=us-east-1 -var vault_user=${VAULT_USER} -var vpc_name=${CLUSTER_NAME}-vpc -var create_vault_resources=true"
 
 function cleanup()
 {

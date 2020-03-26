@@ -6,3 +6,8 @@ variable "region" {
 variable "cluster_name" {
   type = string
 }
+
+variable "vault_user" {
+  type    = string
+  default = ""
+}

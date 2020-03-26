@@ -7,11 +7,8 @@ variable "region" {
 }
 
 variable "cluster_name" {
-  type = string
-}
-
-variable "account_id" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "vault_user" {

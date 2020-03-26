@@ -11,27 +11,27 @@ Describe "AWS"
   Describe "IAM"
     It "The Cert Manager IAM Role has been created"
       When call iam_role_name cert_manager_iam_role
-      The output should include tf-$(terraform output cluster_name)-iamserviceaccount-Role-cert_manager-
+      The output should include tf-$(terraform output cluster_name)-sa-role-cert_manager-
     End
     It "The Tekton Bot IAM Role has been created"
       When call iam_role_name tekton_bot_iam_role 
-      The output should include tf-$(terraform output cluster_name)-iamserviceaccount-Role1-tekton-bot-
+      The output should include tf-$(terraform output cluster_name)-sa-role-tekton-bot-
     End
     It "The Cm CAInjector IAM Role has been created"
       When call iam_role_name cm_cainjector_iam_role 
-      The output should include tf-$(terraform output cluster_name)-iamserviceaccount-Role-cm_cainjector-
+      The output should include tf-$(terraform output cluster_name)-sa-role-cm_cainjector-
     End
     It "The External DNS IAM Role has been created"
       When call iam_role_name external_dns_iam_role 
-      The output should include tf-$(terraform output cluster_name)-iamserviceaccount-Role-external_dns-
+      The output should include tf-$(terraform output cluster_name)-sa-role-external_dns-
     End
     It "The ControllerBuild IAM Role has been created"
       When call iam_role_name controllerbuild_iam_role 
-      The output should include tf-$(terraform output cluster_name)-iamserviceaccount-Role-ctrlb-
+      The output should include tf-$(terraform output cluster_name)-sa-role-ctrlb-
     End
     It "The JX UI IAM Role has been created"
       When call iam_role_name jxui_iam_role 
-      The output should include tf-$(terraform output cluster_name)-iamserviceaccount-Role-jxui-
+      The output should include tf-$(terraform output cluster_name)-sa-role-jxui-
     End
   End
   Describe "Service Accounts"

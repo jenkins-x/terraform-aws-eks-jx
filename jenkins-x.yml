@@ -4,11 +4,6 @@ pipelineConfig:
     pullRequest:
       pipeline:
         environment:
-          - name: ACCOUNT_ID
-            valueFrom:
-              secretKeyRef:
-                name: aws-bdd-user-creds
-                key: account_id
           - name: VAULT_USER
             valueFrom:
               secretKeyRef:
