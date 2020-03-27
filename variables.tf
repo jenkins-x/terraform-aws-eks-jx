@@ -9,13 +9,13 @@ variable "region" {
 
 variable "cluster_name" {
   description = "Variable to provide your desired name for the cluster. The script will create a random name if this is empty"
-  type    = string
-  default = ""
+  type        = string
+  default     = ""
 }
 
 variable "vault_user" {
   description = "The AWS IAM Username whose credentials will be used to authenticate the Vault pods against AWS"
-  type    = string
+  type        = string
 }
 // ----------------------------------------------------------------------------
 

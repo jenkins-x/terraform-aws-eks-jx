@@ -17,7 +17,7 @@ resource "random_pet" "current" {
 }
 
 locals {
-  cluster_name           = "${var.cluster_name != "" ? var.cluster_name : random_pet.current.id}"
-  generated_seed         = random_string.suffix.result
-  oidc_provider_url      = module.cluster.cluster_oidc_issuer_url
+  cluster_name      = "${var.cluster_name != "" ? var.cluster_name : random_pet.current.id}"
+  generated_seed    = random_string.suffix.result
+  oidc_provider_url = module.cluster.cluster_oidc_issuer_url
 }
