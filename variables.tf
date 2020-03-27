@@ -2,24 +2,26 @@
 // Required Variables
 // ----------------------------------------------------------------------------
 variable "region" {
-  type    = string
-  default = "us-east-1"
+  description = "The region to create the resources into"
+  type        = string
+  default     = "us-east-1"
 }
 
 variable "cluster_name" {
+  description = "Variable to provide your desired name for the cluster. The script will create a random name if this is empty"
   type    = string
   default = ""
 }
 
 variable "vault_user" {
+  description = "The AWS IAM Username whose credentials will be used to authenticate the Vault pods against AWS"
   type    = string
-  default = ""
 }
 // ----------------------------------------------------------------------------
 
 
 variable "manage_aws_auth" {
-  description = "Whether to apply the aws-auth configmap file."
+  description = "Whether to apply the aws-auth configmap file"
   default     = true
 }
 
@@ -33,25 +35,25 @@ variable "wait_for_cluster_cmd" {
 // Worker Nodes Variables
 // ----------------------------------------------------------------------------
 variable "desired_number_of_nodes" {
-  description = "The number of worker nodes to use for the cluster. Defaults to 3"
+  description = "The number of worker nodes to use for the cluster"
   type        = number
   default     = 3
 }
 
 variable "min_number_of_nodes" {
-  description = "The minimum number of worker nodes to use for the cluster. Defaults to 3"
+  description = "The minimum number of worker nodes to use for the cluster"
   type        = number
   default     = 3
 }
 
 variable "max_number_of_nodes" {
-  description = "The maximum number of worker nodes to use for the cluster. Defaults to 5"
+  description = "The maximum number of worker nodes to use for the cluster"
   type        = number
   default     = 5
 }
 
 variable "worker_nodes_instance_types" {
-  description = "The instance type to use for the cluster's worker nodes. Defaults to m5.large"
+  description = "The instance type to use for the cluster's worker nodes"
   type        = string
   default     = "m5.large"
 }
@@ -81,7 +83,7 @@ variable "vpc_cidr_block" {
 // External DNS Variables
 // ----------------------------------------------------------------------------
 variable "apex_domain" {
-  description = "Flag to enable or disable long term storage for logs"
+  description = "The main domain to either use directly or to configure a subdomain from"
   type        = string
   default     = ""
 }
@@ -117,12 +119,6 @@ variable "enable_repository_storage" {
   description = "Flag to enable or disable the repository bucket storage"
   type        = bool
   default     = true
-}
-
-variable "create_vault_resources" {
-  description = "Flag to enable or disable the creation of Vault resources by Terraform"
-  type        = bool
-  default     = false
 }
 
 variable "enable_external_dns" {

@@ -1,3 +1,0 @@
-module "jx-eks" {
-    source = "../"
-}

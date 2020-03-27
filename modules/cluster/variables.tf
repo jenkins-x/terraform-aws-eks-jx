@@ -57,8 +57,3 @@ variable "enable_repository_storage" {
   type        = bool
   default     = true
 }
-
-variable "create_vault_resources" {
-  type        = bool
-  default     = false
-}

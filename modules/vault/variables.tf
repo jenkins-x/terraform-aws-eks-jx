@@ -13,11 +13,3 @@ variable "cluster_name" {
 variable "vault_user" {
   type = string
 }
-
-// ----------------------------------------------------------------------------
-// Whether to create the Vault resources
-// ----------------------------------------------------------------------------
-variable "create_vault_resources" {
-  type        = bool
-  default     = false
-}
