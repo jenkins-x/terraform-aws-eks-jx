@@ -49,9 +49,9 @@ module "cluster" {
 // See https://github.com/banzaicloud/bank-vaults
 // ----------------------------------------------------------------------------
 module "vault" {
-  source                 = "./modules/vault"
-  cluster_name           = local.cluster_name
-  vault_user             = var.vault_user
+  source       = "./modules/vault"
+  cluster_name = local.cluster_name
+  vault_user   = var.vault_user
 }
 
 // ----------------------------------------------------------------------------
