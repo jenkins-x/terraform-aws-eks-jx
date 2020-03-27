@@ -23,7 +23,7 @@ ingress:
     production: ${use_production_letsencrypt}
 kaniko: true
 secretStorage: vault
-%{ if create_vault_resources }vault:
+vault:
   aws:
     iamUserName: ${vault_user}
     dynamoDBTable: ${vault_dynamodb_table}
@@ -31,7 +31,7 @@ secretStorage: vault
     kmsKeyId: ${vault_kms_key}
     kmsRegion: ${region}
     s3Bucket: ${vault_bucket}
-    s3Region: ${region} %{ endif }
+    s3Region: ${region}
 storage:
   logs:
     enabled: ${enable_logs_storage}

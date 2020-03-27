@@ -50,7 +50,6 @@ module "cluster" {
 // ----------------------------------------------------------------------------
 module "vault" {
   source                 = "./modules/vault"
-  create_vault_resources = var.create_vault_resources
   cluster_name           = local.cluster_name
   vault_user             = var.vault_user
 }
@@ -86,7 +85,6 @@ resource "local_file" "jx-requirements" {
     reports_storage_bucket     = module.cluster.reports_jenkins_x
     enable_repository_storage  = var.enable_repository_storage
     repository_storage_bucket  = module.cluster.repository_jenkins_x
-    create_vault_resources     = var.create_vault_resources
     vault_kms_key              = module.vault.kms_vault_unseal
     vault_bucket               = module.vault.vault_unseal_bucket
     vault_dynamodb_table       = module.vault.vault_dynamodb_table

@@ -7,8 +7,3 @@ variable "vault_user" {
   type    = string
   default = ""
 }
-
-variable "create_vault_resources" {
-  type        = bool
-  default     = true
-}
