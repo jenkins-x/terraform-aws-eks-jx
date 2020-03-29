@@ -6,28 +6,30 @@ This module is based on the Terraform EKS cluster that can be found here: https:
 
 This module will also create the necessary resources that Jenkins X will need in order to be installed in this cluster using `jx boot` using the generated `jx-requirements.yml` which should be preconfigured with all the resources that were created by this module.
 
-## Assumptions
+## Assumptions
 
 You want to create an EKS cluster that will be used to install Jenkins X into.
 
-It's required that both kubectl (>=1.10) and aws-iam-authenticator are installed and on your shell's PATH.
+It's required that both kubectl (`>=1.10`) and [aws-iam-authenticator](https://github.com/kubernetes-sigs/aws-iam-authenticator) are installed and on your shell's PATH.
 
 ## Usage example
 
 This module works with a series of variables with default values, this will let you easily run it with a default configuration for easy prototyping by just providing the following required variables:
 
-```bash
+```sh
 terraform init
 ```
 
-```bash
+```sh
 CLUSTER_NAME=
 REGION=<your_aws_region>
 ACCOUNT_ID=<your_aws_account_id>
 ```
 
-```bash
-terraform apply -var 'cluster_name=$CLUSTER_NAME' -var 'region=$REGION' -var 'account_id=$ACCOUNT_ID'
+```sh
+terraform apply -var 'cluster_name=$CLUSTER_NAME' \
+   -var 'region=$REGION' \
+   -var 'account_id=$ACCOUNT_ID'
 ```
 
 Full customization of the EKS and Kubernetes modules through the use of this module is still not supported as this is still work in progress.
@@ -63,29 +65,29 @@ With these variables you can define a few variables for the VPC that will be cre
 With these variables you can configure the worker nodes pool for the EKS cluster:
 
 ```terraform
-    variable "desired_number_of_nodes" {
-      description = "The desired number of worker nodes to use for the cluster. Defaults to 3"
-      type        = number
-      default     = 3
-    }
+variable "desired_number_of_nodes" {
+  description = "The desired number of worker nodes to use for the cluster. Defaults to 3"
+  type        = number
+  default     = 3
+}
 
-    variable "min_number_of_nodes" {
-      description = "The minimum number of worker nodes to use for the cluster. Defaults to 3"
-      type        = number
-      default     = 3
-    }
+variable "min_number_of_nodes" {
+  description = "The minimum number of worker nodes to use for the cluster. Defaults to 3"
+  type        = number
+  default     = 3
+}
 
-    variable "max_number_of_nodes" {
-      description = "The maximum number of worker nodes to use for the cluster. Defaults to 5"
-      type        = number
-      default     = 5
-    }
+variable "max_number_of_nodes" {
+  description = "The maximum number of worker nodes to use for the cluster. Defaults to 5"
+  type        = number
+  default     = 5
+}
 
-    variable "worker_nodes_instance_types" {
-      description  = "The instance type to use for the cluster's worker nodes. Defaults to m5.large"
-      type         = string
-      default      = "m5.large"
-    }
+variable "worker_nodes_instance_types" {
+  description  = "The instance type to use for the cluster's worker nodes. Defaults to m5.large"
+  type         = string
+  default      = "m5.large"
+}
 ```
 
 ### Long Term Storage
@@ -93,23 +95,23 @@ With these variables you can configure the worker nodes pool for the EKS cluster
 You can choose whether to create S3 buckets for long term storage and enable them in the generated `jx-requirements.yml` file.
 
 ```terraform
-    variable "enable_logs_storage" {
-      description = "Flag to enable or disable long term storage for logs"
-      type        = bool
-      default     = true
-    }
+variable "enable_logs_storage" {
+  description = "Flag to enable or disable long term storage for logs"
+  type        = bool
+  default     = true
+}
 
-    variable "enable_reports_storage" {
-      description = "Flag to enable or disable long term storage for reports"
-      type        = bool
-      default     = true
-    }
+variable "enable_reports_storage" {
+  description = "Flag to enable or disable long term storage for reports"
+  type        = bool
+  default     = true
+}
 
-    variable "enable_repository_storage" {
-      description = "Flag to enable or disable the repository bucket storage"
-      type        = bool
-      default     = true
-    }
+variable "enable_repository_storage" {
+  description = "Flag to enable or disable the repository bucket storage"
+  type        = bool
+  default     = true
+}
 ```
 
 If these variables are `true`, after creating the necessary S3 buckets, it will configure the `jx-requirements.yml` file in the following section:
@@ -127,7 +129,7 @@ storage:
     url: s3://${repository_storage_bucket}
 ```
 
-### Vault configuration
+### Vault configuration
 
 With this module, we can choose to create the Vault resources that will be used by Jenkins X.
 
@@ -150,7 +152,7 @@ variable "vault_user" {
 }
 ```
 
-### External DNS and Cert Manager
+### External DNS and Cert Manager
 
 #### External DNS
 
@@ -247,7 +249,7 @@ The template can be found in:
 
 https://github.com/jenkins-x/jx-cloud-provisioners/blob/master/eks/terraform/jx/jx-requirements.yml.tpl
 
-## Conditional creation
+## Conditional creation
 
 Sometimes you need to have a way to create resources conditionally but Terraform does not allow to use count inside module block, there still isn't a solution for this in this repository but we will be working to allow users to provide their own VPC, subnets etc.
 
