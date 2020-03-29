@@ -5,15 +5,18 @@ This module is based on the Terraform EKS cluster that can be found here: https:
 This module will also create the necessary resources that Jenkins X will need in order to be installed in this cluster using `jx boot` using the generated `jx-requirements.yml` which should be preconfigured with all the resources that were created by this module.
 
 ## Assumptions
+
 You want to create an EKS cluster that will be used to install Jenkins X into.
 
 It's required that both kubectl (>=1.10) and aws-iam-authenticator are installed and on your shell's PATH.
 
 ## Usage example
+
 This module works with a series of variables with default values, this will let you easily run it with a default configuration for easy prototyping by just providing the following required variables:
 
     terraform init
-    terraaform apply -var 'cluster_name=<cluster_name>' -var 'region=<your_aws_region>' -var 'account_id=<your_aws_account_id>' 
+
+    terraform apply -var 'cluster_name=<cluster_name>' -var 'region=<your_aws_region>' -var 'account_id=<your_aws_account_id>' 
 
 Full customization of the EKS and Kubernetes modules through the use of this module is still not supported as this is still work in progress.
 
@@ -199,7 +202,6 @@ You will also need to provide a valid email to register your domain in LetsEncry
       default     = ""
     }
 
-
 ## Generation of jx-requirements.yml
 
 The final output of running this module will not only be the creation of cloud resources but also, it will generate a valid `jx-requirements.yml` file that will be used by Jenkins X through `jx boot -r jx-requirements.yml`.
@@ -208,11 +210,13 @@ The template can be found in:
 https://github.com/jenkins-x/jx-cloud-provisioners/blob/master/eks/terraform/jx/jx-requirements.yml.tpl
 
 ## Conditional creation
+
 Sometimes you need to have a way to create resources conditionally but Terraform does not allow to use count inside module block, there still isn't a solution for this in this repository but we will be working to allow users to provide their own VPC, subnets etc.
 
 ## FAQ: Frequently Asked Questions
 
 ### IAM Roles for Service Accounts
+
 This module will setup a series of IAM Policies and Roles. These roles will be annotated into a few Kubernetes Service accounts.
 
 This allows us to make use of IAM Roles for Sercive Accounts in order to set fine grained permissions on a pod per pod basis.
