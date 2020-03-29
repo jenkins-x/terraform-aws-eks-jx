@@ -152,9 +152,7 @@ variable "vault_user" {
 }
 ```
 
-### External DNS and Cert Manager
-
-#### External DNS
+### External DNS
 
 You can enable External DNS with the following variable:
 
@@ -208,7 +206,7 @@ This is done by creating a `NS` RecordSet in the apex domain's Hosted Zone with 
 
 This will make sure that the newly created HostedZone for the subdomain is instantly resolveable instead of having to wait for DNS propagation.
 
-#### Cert Manager
+### Cert Manager
 
 You can enable Cert Manager in order to use TLS for your cluster through LetsEncrypt with the following variables:
 
