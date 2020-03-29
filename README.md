@@ -1,3 +1,5 @@
+# Jenkins X - Terraform AWS EKS
+
 A terraform module to create an EKS cluster and all the necessary infrastructure that serves as an alternative to `jx create cluster eks`.
 
 This module is based on the Terraform EKS cluster that can be found here: https://github.com/terraform-aws-modules/terraform-aws-eks.
@@ -14,9 +16,19 @@ It's required that both kubectl (>=1.10) and aws-iam-authenticator are installed
 
 This module works with a series of variables with default values, this will let you easily run it with a default configuration for easy prototyping by just providing the following required variables:
 
-    terraform init
+```bash
+terraform init
+```
 
-    terraform apply -var 'cluster_name=<cluster_name>' -var 'region=<your_aws_region>' -var 'account_id=<your_aws_account_id>' 
+```bash
+CLUSTER_NAME=
+REGION=<your_aws_region>
+ACCOUNT_ID=<your_aws_account_id>
+```
+
+```bash
+terraform apply -var 'cluster_name=$CLUSTER_NAME' -var 'region=$REGION' -var 'account_id=$ACCOUNT_ID'
+```
 
 Full customization of the EKS and Kubernetes modules through the use of this module is still not supported as this is still work in progress.
 
@@ -26,6 +38,7 @@ There are a number of variables that will let you configure some resources for y
 
 With these variables you can define a few variables for the VPC that will be created:
 
+```terraform
     variable "vpc_name" {
       description  = "The name of the VPC to be created for the cluster"
       type         = string
@@ -43,11 +56,13 @@ With these variables you can define a few variables for the VPC that will be cre
       type        = string
       default     = "10.0.0.0/16"
     }
+```
 
 ### EKS Worker Nodes configration
 
 With these variables you can configure the worker nodes pool for the EKS cluster:
 
+```terraform
     variable "desired_number_of_nodes" {
       description = "The desired number of worker nodes to use for the cluster. Defaults to 3"
       type        = number
@@ -71,11 +86,13 @@ With these variables you can configure the worker nodes pool for the EKS cluster
       type         = string
       default      = "m5.large"
     }
+```
 
 ### Long Term Storage
 
 You can choose whether to create S3 buckets for long term storage and enable them in the generated `jx-requirements.yml` file.
 
+```terraform
     variable "enable_logs_storage" {
       description = "Flag to enable or disable long term storage for logs"
       type        = bool
@@ -93,19 +110,22 @@ You can choose whether to create S3 buckets for long term storage and enable the
       type        = bool
       default     = true
     }
+```
 
 If these variables are `true`, after creating the necessary S3 buckets, it will configure the `jx-requirements.yml` file in the following section:
 
-    storage:
-      logs:
-        enabled: ${enable_logs_storage}
-        url: s3://${logs_storage_bucket}
-      reports:
-        enabled: ${enable_reports_storage}
-        url: s3://${reports_storage_bucket}
-      repository:
-        enabled: ${enable_repository_storage}
-        url: s3://${repository_storage_bucket}
+```yaml
+storage:
+  logs:
+    enabled: ${enable_logs_storage}
+    url: s3://${logs_storage_bucket}
+  reports:
+    enabled: ${enable_reports_storage}
+    url: s3://${reports_storage_bucket}
+  repository:
+    enabled: ${enable_repository_storage}
+    url: s3://${repository_storage_bucket}
+```
 
 ### Vault configuration
 
@@ -113,18 +133,22 @@ With this module, we can choose to create the Vault resources that will be used 
 
 You can enable the creation of the Vault resources with the following variable:
 
-    variable "create_vault_resources" {
-      description = "Flag to enable or disable the creation of Vault resources by Terraform"
-      type        = bool
-      default     = false
-    }
+```terraform
+variable "create_vault_resources" {
+  description = "Flag to enable or disable the creation of Vault resources by Terraform"
+  type        = bool
+  default     = false
+}
+```
 
 If `create_vault_resources` is `true`, the `vault_user` variable will be required:
 
-    variable "vault_user" {
-      type    = string
-      default = ""
-    }
+```terraform
+variable "vault_user" {
+  type    = string
+  default = ""
+}
+```
 
 ### External DNS and Cert Manager
 
@@ -132,42 +156,50 @@ If `create_vault_resources` is `true`, the `vault_user` variable will be require
 
 You can enable External DNS with the following variable:
 
-    variable "enable_external_dns" {
-      description = "Flag to enable or disable External DNS in the final `jx-requirements.yml` file"
-      type        = bool
-      default     = false
-    }
+```terraform
+variable "enable_external_dns" {
+  description = "Flag to enable or disable External DNS in the final `jx-requirements.yml` file"
+  type        = bool
+  default     = false
+}
+```
 
 If `enable_external_dns` is true, additional configuration will be required:
 
 If you want to use a domain with an already existing Route 53 Hosted Zone, you can provide it through the following variable:
 
-    variable "apex_domain" {
-      description = "Flag to enable or disable long term storage for logs"
-      type        = string
-      default     = ""
-    }
+```terraform
+variable "apex_domain" {
+  description = "Flag to enable or disable long term storage for logs"
+  type        = string
+  default     = ""
+}
+```
 
 This domain will be configured in the resulting `jx-requirements.yml` file in the following section:
 
-    ingress:
-      domain: ${domain}
-      ignoreLoadBalancer: true
-      externalDNS: ${enable_external_dns}
+```yaml
+ingress:
+  domain: ${domain}
+  ignoreLoadBalancer: true
+  externalDNS: ${enable_external_dns}
+```
 
 If you want use a subdomain and have this script create and configure a new Hosted Zone with DNS delegation, you can provide the following variables:
 
-    variable "subdomain" {
-      description = "The subdomain to be used added to the apex domain. If subdomain is set, it will be appended to the apex domain in  `jx-requirements-eks.yml` file"
-      type        = string
-      default     = ""
-    }
-    
-    variable "create_and_configure_subdomain" {
-      description = "Flag to create an NS record ser for the subdomain in the apex domain's Hosted Zone"
-      type        = bool
-      default     = false
-    }
+```terraform
+variable "subdomain" {
+  description = "The subdomain to be used added to the apex domain. If subdomain is set, it will be appended to the apex domain in  `jx-requirements-eks.yml` file"
+  type        = string
+  default     = ""
+}
+
+variable "create_and_configure_subdomain" {
+  description = "Flag to create an NS record ser for the subdomain in the apex domain's Hosted Zone"
+  type        = bool
+  default     = false
+}
+```
 
 By providing these variables, the script will create a new `Route 53` HostedZone that looks like `<subdomain>.<apex_domain>` and it will delegate the resolving of DNS to the apex domain.
 This is done by creating a `NS` RecordSet in the apex domain's Hosted Zone with the subdomain's HostedZone nameservers.
@@ -178,29 +210,35 @@ This will make sure that the newly created HostedZone for the subdomain is insta
 
 You can enable Cert Manager in order to use TLS for your cluster through LetsEncrypt with the following variables:
 
-    variable "enable_tls" {
-      description = "Flag to enable TLS int he final `jx-requirements.yml` file"
-      type        = bool
-      default     = false
-    }
+```terraform
+variable "enable_tls" {
+  description = "Flag to enable TLS int he final `jx-requirements.yml` file"
+  type        = bool
+  default     = false
+}
+```
 
 LetsEncrypt has two environments, `staging` and `production`, the difference is that if you use staging, you will be provided self signed certificates but will not be rate limited while if you use the `production` environment, you will be provided certificates signed by LetsEncrypt but you can be rate limited.
 
 You can choose to use the `production` environment with the following variable: 
 
-    variable "production_letsencrypt" {
-      description = "Flag to use the production environment of letsencrypt in the `jx-requirements.yml` file"
-      type        = bool
-      default     = false
-    }
+```terraform
+variable "production_letsencrypt" {
+  description = "Flag to use the production environment of letsencrypt in the `jx-requirements.yml` file"
+  type        = bool
+  default     = false
+}
+```
 
 You will also need to provide a valid email to register your domain in LetsEncrypt:
 
-    variable "tls_email" {
-      description = "The email to register the LetsEncrypt certificate with. Added to the `jx-requirements.yml` file"
-      type        = string
-      default     = ""
-    }
+```terraform
+variable "tls_email" {
+  description = "The email to register the LetsEncrypt certificate with. Added to the `jx-requirements.yml` file"
+  type        = string
+  default     = ""
+}
+```
 
 ## Generation of jx-requirements.yml
 
