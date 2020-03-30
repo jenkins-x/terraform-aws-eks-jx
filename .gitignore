@@ -5,6 +5,9 @@
 *.tfstate
 *.tfstate.*
 
+# Terraform variable file
+terraform.tfvars 
+
 # Crash log files
 crash.log
 
