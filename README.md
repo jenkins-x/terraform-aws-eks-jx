@@ -1,4 +1,7 @@
 # Jenkins X EKS Module
+<a id="markdown-Jenkins%20X%20EKS%20Module" name="Jenkins%20X%20EKS%20Module"></a>
+
+![Terraform Version](https://img.shields.io/badge/tf-%3E%3D0.12.0-blue.svg)
 
 This repository contains a Terraform module for creating an EKS cluster and all the necessary infrastructure to install Jenkins X via `jx boot`.
 The module generates for this purpose a  templated `jx-requirements.yml` which can be passed to `jx boot`.
@@ -7,91 +10,89 @@ The module makes use of the [Terraform EKS cluster Module](https://github.com/te
 
 <!-- TOC depthfrom:2 -->
 
-- [Jenkins X EKS Module](#jenkins-x-eks-module)
-  - [What is a Terraform Module](#what-is-a-terraform-module)
-  - [How do you use this Module](#how-do-you-use-this-module)
-    - [Assumptions](#assumptions)
+- [What is a Terraform Module](#what-is-a-terraform-module)
+- [How do you use this Module](#how-do-you-use-this-module)
+    - [Prerequisites](#prerequisites)
     - [Usage](#usage)
-      - [Examples](#examples)
-      - [VPC configuration](#vpc-configuration)
-      - [EKS Worker Nodes configuration](#eks-worker-nodes-configuration)
-      - [Long Term Storage](#long-term-storage)
-      - [Vault configuration](#vault-configuration)
-      - [External DNS and Cert Manager](#external-dns-and-cert-manager)
-        - [External DNS](#external-dns)
-        - [Cert Manager](#cert-manager)
-  - [Generation of jx-requirements.yml](#generation-of-jx-requirementsyml)
-  - [Conditional creation](#conditional-creation)
-  - [FAQ: Frequently Asked Questions](#faq-frequently-asked-questions)
+        - [VPC](#vpc)
+        - [EKS Worker Nodes configuration](#eks-worker-nodes-configuration)
+        - [Long Term Storage](#long-term-storage)
+        - [Vault](#vault)
+        - [ExternalDNS](#externaldns)
+        - [cert-manager](#cert-manager)
+        - [Running `jx boot`](#running-jx-boot)
+        - [Inputs](#inputs)
+        - [Outputs](#outputs)
+        - [Examples](#examples)
+- [FAQ: Frequently Asked Questions](#faq-frequently-asked-questions)
     - [IAM Roles for Service Accounts](#iam-roles-for-service-accounts)
-  - [Generated Documentation](#generated-documentation)
-    - [Providers](#providers)
-    - [Inputs](#inputs)
-    - [Outputs](#outputs)
+- [How do I contribute](#how-do-i-contribute)
 
 <!-- /TOC -->
 
 ## What is a Terraform Module
-<a id="markdown-what-is-a-terraform-module" name="what-is-a-terraform-module"></a>
+<a id="markdown-What%20is%20a%20Terraform%20Module" name="What%20is%20a%20Terraform%20Module"></a>
 
 A Terraform Module refers to a self-contained package of Terraform configurations that are managed as a group.
 For more information around Modules refer to the Terraform [documentation](https://www.terraform.io/docs/modules/index.html).
 
 ## How do you use this Module
-<a id="markdown-how-do-you-use-this-module" name="how-do-you-use-this-module"></a>
+<a id="markdown-How%20do%20you%20use%20this%20Module" name="How%20do%20you%20use%20this%20Module"></a>
 
-### Assumptions
-<a id="markdown-assumptions" name="assumptions"></a>
+### Prerequisites
+<a id="markdown-Prerequisites" name="Prerequisites"></a>
 
-You want to create an EKS cluster for installation of Jenkins X.
+This Terraform Module allows you to create an EKS cluster for installation of Jenkins X. You will need the following binaries locally installed and configured on your _PATH_:
 
-Both `kubectl` (>=1.10) and `aws-iam-authenticator` are installed and on your shell's PATH.
+- `terraform` (~> 0.12.0)
+- `kubectl` (>=1.10)
+- `aws-iam-authenticator`
 
 ### Usage
-<a id="markdown-usage" name="usage"></a>
+<a id="markdown-Usage" name="Usage"></a>
 
-A default Jenkins X ready cluster can be provisioned by creating a main.tf file in an empty directory with the following content:
+A default Jenkins X ready cluster can be provisioned by creating a _main.tf_ file in an empty directory with the following content:
 
+```terraform
+module "eks-jx" {
+  source  = "jenkins-x/eks-jx/aws"
+
+  vault_user="<your_vault_iam_username>"
+}
 ```
-    module "eks-jx" {
-      source  = "jenkins-x/eks-jx/aws"
-    }
-```
-The name of the cluster will be randomized but you can provide your own name.
 
-Refer to the documentation for additional variables.
+You will need to provide a existing IAM user name for Vault.
+The specified user's access keys are used to authenticate the Vault pod against AWS.
+The IAM user does not need any permissions attached to it.
+This Terraform Module creates a new IAM Policy and attaches it to the specified user.
+For more information refer to [Configuring Vault for EKS](https://jenkins-x.io/docs/getting-started/setup/boot/clouds/amazon/#configuring-vault-for-eks) in the Jenkins X documentation.
 
-You can then apply this Terraform configuration via:
+The minimal configuration from above can be applied by running:
 
 ```sh
 terraform init
-terraform apply -var='vault_user=<your_vault_IAM_username>' 
+terraform apply
 ```
 
-#### Examples
+The name of the cluster will be randomized, but you can provide your own name using _cluster_name_. Refer to the [Inputs](#inputs) section for a full list of all configuration variables.
+The following sections give an overview of the available variables.
 
-You can find some examples on different configurations in the [examples folder](examples).
-
-These include a `basic` configuration and a configuration with `vault` resources being created.
-
-Both will generate a valid `jx-requirements.yml` file that can be used to boot a Jenkins X cluster.
-
-#### VPC configuration
-<a id="markdown-vpc-configuration" name="vpc-configuration"></a>
+#### VPC
+<a id="markdown-VPC" name="VPC"></a>
 
 The following variables allow you to configure the settings of the generated VPC: `vpc_name`, `vpc_subnets` and `vpc_cidr_blocl`.
 
 #### EKS Worker Nodes configuration
-<a id="markdown-eks-worker-nodes-config" name="eks-worker-nodes-config"></a>
+<a id="markdown-EKS%20Worker%20Nodes%20configuration" name="EKS%20Worker%20Nodes%20configuration"></a>
 
 You can configure the EKS worker node pool with the following variables: `desired_number_of_nodes`, `min_number_of_nodes`, `max_number_of_nodes` and `worker_nodes_instance_types`.
 
 #### Long Term Storage
-<a id="markdown-long-term-storage" name="long-term-storage"></a>
+<a id="markdown-Long%20Term%20Storage" name="Long%20Term%20Storage"></a>
 
-You can choose whether to create S3 buckets for long term storage and enable them in the generated `jx-requirements.yml` file with the `enable_logs_storage`, `enable_reports_storage` and `enable_repository_storage`
+You can choose to create S3 buckets for long term storage and enable them in the generated _jx-requirements.yml_ file with `enable_logs_storage`, `enable_reports_storage` and `enable_repository_storage`.
 
-If these variables are `true`, after creating the necessary S3 buckets, it will configure the `jx-requirements.yml` file in the following section:
+During `terraform apply` the enabledS3 buckets are created, and the generated `jx-requirements.yml` will contain the following section:
 
 ```yaml
     storage:
@@ -106,28 +107,25 @@ If these variables are `true`, after creating the necessary S3 buckets, it will 
         url: s3://${repository_storage_bucket}
 ```
 
-#### Vault configuration
-<a id="markdown-vault-configuration" name="vault-configuration"></a>
+#### Vault
+<a id="markdown-Vault" name="Vault"></a>
 
-Vault resources will be created when running this script.
-
-These resources are: An S3 Bucket, a DynamoDB Table and a KMS Key.
+Vault is used by Jenkins X for managing secrets.
+Part of this module's responsibilities is the creation of all resources required to run the [Vault Operator](https://github.com/banzaicloud/bank-vaults).
+These resources are An S3 Bucket, a DynamoDB Table and a KMS Key.
 
 The `vault_user` variable is required when running this script. This is the user whose credentials will be used to authenticate the Vault pods against AWS.
 
-#### External DNS and Cert Manager
-<a id="markdown-exdns-cm" name="exdns-cm"></a>
+#### ExternalDNS
+<a id="markdown-ExternalDNS" name="ExternalDNS"></a>
 
-##### External DNS
-<a id="markdown-exdns" name="exdns"></a>
+You can enable [ExternalDNS](https://github.com/kubernetes-sigs/external-dns) with the `enable_external_dns` variable. This will modify the generated _jx-requirements.yml_ file to enable External DNS when running `jx boot`.
 
-You can enable External DNS with the `enable_external_dns` variable. This will modify the generated `jx-requirements.yml` file to enable External DNS when running `jx boot`. 
-
-If `enable_external_dns` is true, additional configuration will be required.
+If `enable_external_dns` is _true_, additional configuration will be required.
 
 If you want to use a domain with an already existing Route 53 Hosted Zone, you can provide it through the `apex_domain` variable:
 
-This domain will be configured in the resulting `jx-requirements.yml` file in the following section:
+This domain will be configured in the resulting _jx-requirements.yml_ file in the following section:
 
 ```yaml
     ingress:
@@ -138,7 +136,7 @@ This domain will be configured in the resulting `jx-requirements.yml` file in th
 
 If you want to use a subdomain and have this script create and configure a new Hosted Zone with DNS delegation, you can provide the following variables:
 
-`subdomain`: This subdomain will be added to the apex domain. This will be configured in the resulting `jx-requirements.yml` file.
+`subdomain`: This subdomain will be added to the apex domain. This will be configured in the resulting _jx-requirements.yml_ file.
 
 `create_and_configure_subdomain`: This flag will instruct the script to create a new `Route53 Hosted Zone` for your subdomain and configure DNS delegation with the apex domain.
 
@@ -147,24 +145,23 @@ This is done by creating a `NS` RecordSet in the apex domain's Hosted Zone with 
 
 This will make sure that the newly created HostedZone for the subdomain is instantly resolvable instead of having to wait for DNS propagation.
 
-##### Cert Manager
-<a id="markdown-certmanager" name="certmanager"></a>
+#### cert-manager
+<a id="markdown-cert-manager" name="cert-manager"></a>
 
-You can enable Cert Manager to use TLS for your cluster through LetsEncrypt with the `enable_tls` variable.
+You can enable [cert-manager](https://github.com/jetstack/cert-manager) to use TLS for your cluster through LetsEncrypt with the `enable_tls` variable.
 
-LetsEncrypt has two environments, `staging` and `production`.
+[LetsEncrypt](https://letsencrypt.org/) has two environments, `staging` and `production`.
 
-If you use staging, you will receive self-signed certificates, but you are not rate limited, if you use the `production` environment, you receive certificates signed by LetsEncrypt, but you can be rate limited.
+If you use staging, you will receive self-signed certificates, but you are not rate-limited, if you use the `production` environment, you receive certificates signed by LetsEncrypt, but you can be rate limited.
 
 You can choose to use the `production` environment with the `production_letsencrypt` variable:
 
 You need to provide a valid email to register your domain in LetsEncrypt with `tls_email`:
 
-## Generation of jx-requirements.yml
-<a id="markdown-jxreq-generation" name="jxreq-generation"></a>
+#### Running `jx boot`
+<a id="markdown-Running%20%60jx%20boot%60" name="Running%20%60jx%20boot%60"></a>
 
-
-The final output of running this module will not only be the creation of cloud resources but also the creation of a valid `jx-requirements.yml` file.
+The final output of running this module will not only be the creation of cloud resources but also the creation of a valid _jx-requirements.yml_ file.
 You can use this file to install Jenkins X by running:
 
 ```bash
@@ -173,43 +170,8 @@ You can use this file to install Jenkins X by running:
 
 The template can be found [here](https://github.com/jenkins-x/terraform-aws-eks-jx/blob/master/jx-requirements.yml.tpl)
 
-## Conditional creation
-<a id="markdown-conditional-creation" name="conditional-creation"></a>
-
-
-Sometimes you need to have a way to create resources conditionally; however, Terraform does not allow to use `count` inside a module block.
-There still isn't a solution for this in this repository, but we will be working to allow users to provide their own VPC, subnets etc.
-
-## FAQ: Frequently Asked Questions
-<a id="markdown-conditional-faq" name="faq"></a>
-
-### IAM Roles for Service Accounts
-<a id="markdown-irsa" name="irsa"></a>
-
-This module sets up a series of IAM Policies and Roles. These roles will be annotated into a few Kubernetes Service accounts.
-
-This allows us to make use of IAM Roles for Sercive Accounts to set fine-grained permissions on a pod per pod basis.
-
-There still isn't a way to provide your roles or define other Service Accounts by variables, but you can always modify the `eks/terraform/jx/irsa.tf` Terraform file.
-
-## Generated Documentation
-<a id="markdown-generated-documentation" name="generated-documentation"></a>
-
-The following tables are generated with `terraform-docs`:
-
-### Providers
-<a id="markdown-providers" name="providers"></a>
-
-
-| Name | Version |
-|------|---------|
-| local | ~> 1.2 |
-| random | ~> 2.1 |
-
-
-### Inputs
-<a id="markdown-inputs" name="inputs"></a>
-
+#### Inputs
+<a id="markdown-Inputs" name="Inputs"></a>
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:-----:|
@@ -236,9 +198,8 @@ The following tables are generated with `terraform-docs`:
 | wait\_for\_cluster\_cmd | Custom local-exec command to execute for determining if the eks cluster is healthy. Cluster endpoint will be available as an environment variable called ENDPOINT | `string` | `"until curl -k -s $ENDPOINT/healthz \u003e/dev/null; do sleep 4; done"` | no |
 | worker\_nodes\_instance\_types | The instance type to use for the cluster's worker nodes | `string` | `"m5.large"` | no |
 
-### Outputs
-<a id="markdown-outputs" name="outputs"></a>
-
+#### Outputs
+<a id="markdown-Outputs" name="Outputs"></a>
 
 | Name | Description |
 |------|-------------|
@@ -255,3 +216,25 @@ The following tables are generated with `terraform-docs`:
 | vault\_dynamodb\_table | The bucket that Vault will use as backend |
 | vault\_kms\_unseal | The KMS Key that Vault will use for encryption |
 | vault\_unseal\_bucket | The bucket that Vault will use for storage |
+
+#### Examples
+<a id="markdown-Examples" name="Examples"></a>
+
+You can find examples for different configurations in the [examples folder](./examples).
+
+Each example generates a valid _jx-requirements.yml_ file that can be used to boot a Jenkins X cluster.
+
+## FAQ: Frequently Asked Questions
+<a id="markdown-FAQ%3A%20Frequently%20Asked%20Questions" name="FAQ%3A%20Frequently%20Asked%20Questions"></a>
+
+### IAM Roles for Service Accounts
+<a id="markdown-IAM%20Roles%20for%20Service%20Accounts" name="IAM%20Roles%20for%20Service%20Accounts"></a>
+
+This module sets up a series of IAM Policies and Roles. These roles will be annotated into a few Kubernetes Service accounts.
+This allows us to make use of [IAM Roles for Sercive Accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) to set fine-grained permissions on a pod per pod basis.
+There is no way to provide your own roles or define other Service Accounts by variables, but you can always modify the `eks/terraform/jx/irsa.tf` Terraform file.
+
+## How do I contribute
+<a id="markdown-How%20do%20I%20contribute" name="How%20do%20I%20contribute"></a>
+
+Contributions are very welcome! Check out the [Contribution Guidelines](./CONTRIBUTING.md) for instructions.
