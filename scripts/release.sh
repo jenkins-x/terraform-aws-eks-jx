@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
 # Script to release a new Terraform Module version.
-# The script exepct the version to release in the format v<major>.<minor>.<patch>.
-# It then creates and pushes the tag and updates the GitHub changelog.
+# The script expects the version to release in the format v<major>.<minor>.<patch>.
+# It then creates and pushes the tag and prints out the changelog.
 
 set -e
 
@@ -36,4 +36,4 @@ current_tag=$(git for-each-ref --sort=-creatordate --format="%(objectname)" refs
 current_tag_base=$(git merge-base $current_tag master)
 
 # actual changelog creation
-jx step changelog -v $version -p $prev_tag_base -r $current_tag_base --generate-yaml=false --no-dev-release --update-release=true
+jx step changelog -v $version -p $prev_tag_base -r $current_tag_base --generate-yaml=false --no-dev-release --update-release=false
