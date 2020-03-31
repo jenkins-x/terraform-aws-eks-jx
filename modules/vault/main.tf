@@ -24,7 +24,6 @@ resource "aws_s3_bucket" "vault-unseal-bucket" {
 // See https://www.terraform.io/docs/providers/aws/r/dynamodb_table.html
 // ----------------------------------------------------------------------------
 resource "aws_dynamodb_table" "vault-dynamodb-table" {
-
   name           = "vault-unseal-${var.cluster_name}-${local.vault_seed}"
   billing_mode   = "PROVISIONED"
   read_capacity  = 2
