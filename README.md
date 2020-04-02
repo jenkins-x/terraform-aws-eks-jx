@@ -26,6 +26,8 @@ The module makes use of the [Terraform EKS cluster Module](https://github.com/te
         - [Examples](#examples)
 - [FAQ: Frequently Asked Questions](#faq-frequently-asked-questions)
     - [IAM Roles for Service Accounts](#iam-roles-for-service-accounts)
+- [Development](#development)
+    - [Releasing](#releasing)
 - [How do I contribute](#how-do-i-contribute)
 
 <!-- /TOC -->
@@ -233,6 +235,23 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 This module sets up a series of IAM Policies and Roles. These roles will be annotated into a few Kubernetes Service accounts.
 This allows us to make use of [IAM Roles for Sercive Accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) to set fine-grained permissions on a pod per pod basis.
 There is no way to provide your own roles or define other Service Accounts by variables, but you can always modify the `eks/terraform/jx/irsa.tf` Terraform file.
+
+## Development
+<a id="markdown-Development" name="Development"></a>
+
+### Releasing
+<a id="markdown-Releasing" name="Releasing"></a>
+
+At the moment there is no release pipeline defined in [jenkins-x.yml](./jenkins-x.yml).
+A Terraform release does not require building an artifact, only a tag needs to be created and pushed.
+To make this task easier and there is a helper script `release.sh` which simplifies this process and creates the changelog as well:
+
+```sh
+./scripts/release.sh
+```
+
+This can be executed on demand whenever a release is required.
+For the script to work the envrionment variable _$GH_TOKEN_ must be exported and reference a valid GitHub API token.
 
 ## How do I contribute
 <a id="markdown-How%20do%20I%20contribute" name="How%20do%20I%20contribute"></a>
