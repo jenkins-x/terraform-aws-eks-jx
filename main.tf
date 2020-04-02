@@ -95,5 +95,5 @@ resource "local_file" "jx-requirements" {
     tls_email                  = var.tls_email
     use_production_letsencrypt = var.production_letsencrypt
   })
-  filename = "${path.module}/jx-requirements.yml"
+  filename = "${path.cwd}/jx-requirements.yml"
 }
