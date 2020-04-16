@@ -17,9 +17,8 @@ variable "vault_user" {
   description = "The AWS IAM Username whose credentials will be used to authenticate the Vault pods against AWS"
   type        = string
 }
+
 // ----------------------------------------------------------------------------
-
-
 variable "manage_aws_auth" {
   description = "Whether to apply the aws-auth configmap file"
   default     = true
@@ -34,25 +33,25 @@ variable "wait_for_cluster_cmd" {
 // ----------------------------------------------------------------------------
 // Worker Nodes Variables
 // ----------------------------------------------------------------------------
-variable "desired_number_of_nodes" {
+variable "desired_node_count" {
   description = "The number of worker nodes to use for the cluster"
   type        = number
   default     = 3
 }
 
-variable "min_number_of_nodes" {
+variable "min_node_count" {
   description = "The minimum number of worker nodes to use for the cluster"
   type        = number
   default     = 3
 }
 
-variable "max_number_of_nodes" {
+variable "max_node_count" {
   description = "The maximum number of worker nodes to use for the cluster"
   type        = number
   default     = 5
 }
 
-variable "worker_nodes_instance_types" {
+variable "node_machine_type" {
   description = "The instance type to use for the cluster's worker nodes"
   type        = string
   default     = "m5.large"

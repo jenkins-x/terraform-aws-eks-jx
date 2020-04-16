@@ -61,10 +61,10 @@ module "eks" {
   worker_groups = [
     {
       name                 = "worker-group-${var.cluster_name}"
-      instance_type        = var.worker_nodes_instance_types
-      asg_desired_capacity = var.desired_number_of_nodes
-      asg_min_size         = var.min_number_of_nodes
-      asg_max_size         = var.max_number_of_nodes
+      instance_type        = var.node_machine_type
+      asg_desired_capacity = var.desired_node_count
+      asg_min_size         = var.min_node_count
+      asg_max_size         = var.max_node_count
       tags = [
         {
           "key"                 = "k8s.io/cluster-autoscaler/enabled"

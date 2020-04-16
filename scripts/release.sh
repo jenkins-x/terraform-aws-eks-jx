@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Script to release a new Terraform Module version.
+# Script to release a new Terraform module version.
 
 set -e
 

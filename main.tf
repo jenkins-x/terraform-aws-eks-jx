@@ -33,15 +33,15 @@ provider "template" {
 // See https://www.terraform.io/docs/providers/aws/r/eks_cluster.html
 // ----------------------------------------------------------------------------
 module "cluster" {
-  source                      = "./modules/cluster"
-  cluster_name                = local.cluster_name
-  desired_number_of_nodes     = var.desired_number_of_nodes
-  min_number_of_nodes         = var.min_number_of_nodes
-  max_number_of_nodes         = var.max_number_of_nodes
-  worker_nodes_instance_types = var.worker_nodes_instance_types
-  vpc_name                    = var.vpc_name
-  vpc_subnets                 = var.vpc_subnets
-  vpc_cidr_block              = var.vpc_cidr_block
+  source             = "./modules/cluster"
+  cluster_name       = local.cluster_name
+  desired_node_count = var.desired_node_count
+  min_node_count     = var.min_node_count
+  max_node_count     = var.max_node_count
+  node_machine_type  = var.node_machine_type
+  vpc_name           = var.vpc_name
+  vpc_subnets        = var.vpc_subnets
+  vpc_cidr_block     = var.vpc_cidr_block
 }
 
 // ----------------------------------------------------------------------------
