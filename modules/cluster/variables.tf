@@ -3,22 +3,22 @@ variable "cluster_name" {
 }
 
 # Worker Nodes
-variable "desired_number_of_nodes" {
+variable "desired_node_count" {
   type        = number
   default     = 3
 }
 
-variable "min_number_of_nodes" {
+variable "min_node_count" {
   type        = number
   default     = 3
 }
 
-variable "max_number_of_nodes" {
+variable "max_node_count" {
   type        = number
   default     = 5
 }
 
-variable "worker_nodes_instance_types" {
+variable "node_machine_type" {
   type         = string
   default      = "m5.large"
 }
