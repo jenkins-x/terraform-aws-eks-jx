@@ -16,7 +16,6 @@ output "lts_repository_bucket" {
   description = "The bucket that will serve as artifacts repository"
 }
 
-
 // ----------------------------------------------------------------------------
 // Cluster Name
 // ----------------------------------------------------------------------------
@@ -63,15 +62,25 @@ output "jxui_iam_role" {
 // ----------------------------------------------------------------------------
 output "vault_unseal_bucket" {
   value       = module.vault.vault_unseal_bucket
-  description = "The bucket that Vault will use for storage"
+  description = "The Vault storage bucket"
 }
 
 output "vault_dynamodb_table" {
   value       = module.vault.vault_dynamodb_table
-  description = "The bucket that Vault will use as backend"
+  description = "The Vault DynamoDB table"
 }
 
 output "vault_kms_unseal" {
   value       = module.vault.kms_vault_unseal
-  description = "The KMS Key that Vault will use for encryption"
+  description = "The Vault KMS Key for encryption"
+}
+
+output "vault_user_id" {
+  value       = module.vault.vault_user_id
+  description = "The Vault IAM user id"
+}
+
+output "vault_user_secret" {
+  value       = module.vault.vault_user_secret
+  description = "The Vault IAM user secret"
 }

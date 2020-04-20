@@ -13,21 +13,11 @@ variable "cluster_name" {
   default     = ""
 }
 
+// ----------------------------------------------------------------------------
 variable "vault_user" {
   description = "The AWS IAM Username whose credentials will be used to authenticate the Vault pods against AWS"
   type        = string
-}
-
-// ----------------------------------------------------------------------------
-variable "manage_aws_auth" {
-  description = "Whether to apply the aws-auth configmap file"
-  default     = true
-}
-
-variable "wait_for_cluster_cmd" {
-  description = "Custom local-exec command to execute for determining if the eks cluster is healthy. Cluster endpoint will be available as an environment variable called ENDPOINT"
-  type        = string
-  default     = "until curl -k -s $ENDPOINT/healthz >/dev/null; do sleep 4; done"
+  default     = ""
 }
 
 // ----------------------------------------------------------------------------
@@ -88,7 +78,7 @@ variable "apex_domain" {
 }
 
 variable "subdomain" {
-  description = "The subdomain to be used added to the apex domain. If subdomain is set, it will be appended to the apex domain in  `jx-requirements-eks.yml` file"
+  description = "The subdomain to be added to the apex domain. If subdomain is set, it will be appended to the apex domain in  `jx-requirements-eks.yml` file"
   type        = string
   default     = ""
 }
@@ -127,13 +117,13 @@ variable "enable_external_dns" {
 }
 
 variable "create_and_configure_subdomain" {
-  description = "Flag to create an NS record ser for the subdomain in the apex domain's Hosted Zone"
+  description = "Flag to create an NS record set for the subdomain in the apex domain's Hosted Zone"
   type        = bool
   default     = false
 }
 
 variable "enable_tls" {
-  description = "Flag to enable TLS int he final `jx-requirements.yml` file"
+  description = "Flag to enable TLS in the final `jx-requirements.yml` file"
   type        = bool
   default     = false
 }
