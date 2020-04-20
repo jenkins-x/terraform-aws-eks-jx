@@ -1,7 +1,23 @@
+// ----------------------------------------------------------------------------
+// If the Vault IAM user does exist create one
+// See https://www.terraform.io/docs/providers/aws/r/iam_user.html
+// ----------------------------------------------------------------------------
+resource "aws_iam_user" "jenkins-x-vault" {
+  count = var.vault_user == "" ? 1 : 0
+
+  name = "jenkins-x-vault"
+}
+
+resource "aws_iam_access_key" "jenkins-x-vault" {
+  count = var.vault_user == "" ? 1 : 0
+
+  user = aws_iam_user.jenkins-x-vault[0].name
+}
+
 data "aws_caller_identity" "current" {}
 
 data "aws_iam_user" "vault_user" {
-  user_name = var.vault_user
+  user_name = var.vault_user == "" ? aws_iam_user.jenkins-x-vault[0].name : var.vault_user
 }
 
 // ----------------------------------------------------------------------------

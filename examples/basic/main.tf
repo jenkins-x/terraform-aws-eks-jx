@@ -1,4 +1,4 @@
 module "jx-eks" {
-    source                 = "../.."
+    source                 = "jenkins-x/eks-jx/aws"
     vault_user             = var.vault_user
 }
