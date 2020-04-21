@@ -22,6 +22,7 @@ data "aws_iam_policy_document" "tekton-bot-policy" {
           "cloudformation:DeleteStack",
           "eks:*",
           "s3:*",
+          "ecr:*",      
           "iam:DetachRolePolicy",
           "iam:GetPolicy",
           "iam:CreatePolicy",
