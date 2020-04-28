@@ -227,13 +227,17 @@ If you use staging, you will receive self-signed certificates, but you are not r
 
 You can choose to use the `production` environment with the `production_letsencrypt` variable:
 
-You need to provide a valid email to register your domain in LetsEncrypt with `tls_email`:
+You need to provide a valid email to register your domain in LetsEncrypt with `tls_email`.
 
 ### Running `jx boot`
 <a id="markdown-Running%20%60jx%20boot%60" name="Running%20%60jx%20boot%60"></a>
 
 An output of applying this Terraform module is a _jx-requirements.yml_ file in the current directory.
 This file can be used as input to [Jenkins X Boot](https://jenkins-x.io/docs/getting-started/setup/boot/) which is responsible for installing all the required Jenkins X components into the cluster created by this module.
+
+:warning: **Note**: The generated _jx-requirements.yml_ is only used for the first run of `jx boot`.
+During this first run a git repository containing the source code for Jenkins X Boot is created.
+This repository contains the _jx-requirements.yml_ used by successive runs of `jx boot`.
 
 Change into  an empty directory and execute:
 
