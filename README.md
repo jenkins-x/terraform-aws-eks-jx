@@ -70,6 +70,7 @@ output "vault_user_secret" {
   value       = module.eks-jx.vault_user_secret
   description = "The Vault IAM user secret"
 }
+
 ```
 
 Due to the Vault issue [7450](https://github.com/hashicorp/vault/issues/7450), this Terraform module needs for now to create a new IAM user for installing Vault.
@@ -120,6 +121,7 @@ The following sections provide a full list of configuration in- and output varia
 |------|-------------|------|---------|:-----:|
 | apex\_domain | The main domain to either use directly or to configure a subdomain from | `string` | `""` | no |
 | cluster\_name | Variable to provide your desired name for the cluster. The script will create a random name if this is empty | `string` | `""` | no |
+| cluster\_version | Variable to provide your desired Kubernetes version for the cluster. | `string` | `"1.15"` | no |
 | create\_and\_configure\_subdomain | Flag to create an NS record set for the subdomain in the apex domain's Hosted Zone | `bool` | `false` | no |
 | desired\_node\_count | The number of worker nodes to use for the cluster | `number` | `3` | no |
 | enable\_external\_dns | Flag to enable or disable External DNS in the final `jx-requirements.yml` file | `bool` | `false` | no |

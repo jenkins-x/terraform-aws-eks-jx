@@ -13,6 +13,12 @@ variable "cluster_name" {
   default     = ""
 }
 
+variable "cluster_version" {
+  description = "Kubernetes version to use for the EKS cluster."
+  type        = string
+  default     = "1.15"
+}
+
 // ----------------------------------------------------------------------------
 variable "vault_user" {
   description = "The AWS IAM Username whose credentials will be used to authenticate the Vault pods against AWS"
