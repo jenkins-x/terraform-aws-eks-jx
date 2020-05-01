@@ -2,6 +2,11 @@ variable "cluster_name" {
   type = string
 }
 
+variable "cluster_version" {
+  description = "Kubernetes version to use for the EKS cluster."
+  type        = string
+}
+
 # Worker Nodes
 variable "desired_node_count" {
   type        = number

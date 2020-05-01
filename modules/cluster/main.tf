@@ -55,6 +55,7 @@ module "eks" {
   source        = "terraform-aws-modules/eks/aws"
   version       = "10.0.0"
   cluster_name  = var.cluster_name
+  cluster_version  = var.cluster_version
   subnets       = module.vpc.public_subnets
   vpc_id        = module.vpc.vpc_id
   enable_irsa   = true
