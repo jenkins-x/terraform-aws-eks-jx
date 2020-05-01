@@ -52,13 +52,14 @@ module "vpc" {
 // See https://github.com/terraform-aws-modules/terraform-aws-eks
 // ----------------------------------------------------------------------------
 module "eks" {
-  source        = "terraform-aws-modules/eks/aws"
-  version       = "10.0.0"
-  cluster_name  = var.cluster_name
-  subnets       = module.vpc.public_subnets
-  vpc_id        = module.vpc.vpc_id
-  enable_irsa   = true
-  worker_groups = [
+  source           = "terraform-aws-modules/eks/aws"
+  version          = "10.0.0"
+  cluster_name     = var.cluster_name
+  cluster_version  = var.cluster_version
+  subnets          = module.vpc.public_subnets
+  vpc_id           = module.vpc.vpc_id
+  enable_irsa      = true
+  worker_groups    = [
     {
       name                 = "worker-group-${var.cluster_name}"
       instance_type        = var.node_machine_type
