@@ -44,4 +44,4 @@ storage:
 versionStream:
   ref: master
   url: https://github.com/jenkins-x/jenkins-x-versions.git
-webhook: prow
+webhook: lighthouse
