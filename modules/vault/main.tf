@@ -171,6 +171,6 @@ resource "aws_iam_policy" "aws_vault_user_policy" {
 }
 
 resource "aws_iam_user_policy_attachment" "attach_vault_policy_to_user" {
-  user       = var.vault_user
+  user       = data.aws_iam_user.vault_user.user_name
   policy_arn = aws_iam_policy.aws_vault_user_policy.arn
 }
