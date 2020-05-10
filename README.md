@@ -1,7 +1,7 @@
 # Jenkins X EKS Module
 <a id="markdown-Jenkins%20X%20EKS%20Module" name="Jenkins%20X%20EKS%20Module"></a>
 
-![Terraform Version](https://img.shields.io/badge/tf-%3E%3D0.12.0-blue.svg)
+![Terraform Version](https://img.shields.io/badge/tf-%3E%3D0.12.17-blue.svg)
 
 This repository contains a Terraform module for creating an EKS cluster and all the necessary infrastructure to install Jenkins X via `jx boot`.
 The module generates for this purpose a  templated `jx-requirements.yml` file for `jx boot`.
