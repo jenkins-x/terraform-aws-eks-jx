@@ -37,3 +37,6 @@ jx-requirements.yml
 kubeconfig*
 
 .DS_Store
+
+#Intellij
+.idea
