@@ -10,7 +10,7 @@ variable "region" {
 variable "cluster_name" {
   description = "Variable to provide your desired name for the cluster. The script will create a random name if this is empty"
   type        = string
-  default     = ""
+  default     = "jx-hoplife"
 }
 
 variable "cluster_version" {
@@ -50,7 +50,7 @@ variable "max_node_count" {
 variable "node_machine_type" {
   description = "The instance type to use for the cluster's worker nodes"
   type        = string
-  default     = "m5.large"
+  default     = "t2.large"
 }
 
 // ----------------------------------------------------------------------------
@@ -59,7 +59,7 @@ variable "node_machine_type" {
 variable "vpc_name" {
   description = "The name of the VPC to be created for the cluster"
   type        = string
-  default     = "tf-vpc-eks"
+  default     = "tf-hoplife-vpc-eks"
 }
 
 variable "vpc_subnets" {
@@ -92,7 +92,7 @@ variable "subdomain" {
 variable "tls_email" {
   description = "The email to register the LetsEncrypt certificate with. Added to the `jx-requirements.yml` file"
   type        = string
-  default     = ""
+  default     = "sysops@hop.life"
 }
 
 // ----------------------------------------------------------------------------
@@ -131,11 +131,11 @@ variable "create_and_configure_subdomain" {
 variable "enable_tls" {
   description = "Flag to enable TLS in the final `jx-requirements.yml` file"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "production_letsencrypt" {
   description = "Flag to use the production environment of letsencrypt in the `jx-requirements.yml` file"
   type        = bool
-  default     = false
+  default     = true
 }
