@@ -4,7 +4,7 @@ autoUpdate:
 terraform: true
 cluster:
   clusterName: "jx-hoplife"
-  environmentGitOwner: ""
+  environmentGitOwner: "andrew@hop.life"
   provider: eks
   region: "us-east-1"
 gitops: true
@@ -13,9 +13,9 @@ environments:
   - key: staging
   - key: production
 ingress:
-  domain: "jenkins.newhop.life"
+  domain: "newhop.life"
   ignoreLoadBalancer: true
-  externalDNS: false
+  externalDNS: true
   tls:
     email: "sysops@hop.life"
     enabled: true
@@ -25,22 +25,22 @@ secretStorage: vault
 vault:
   aws:
     iamUserName: ""
-    dynamoDBTable: "vault-unseal-jx-hoplife-dhtA19zZ"
+    dynamoDBTable: "vault-unseal-jx-hoplife-EiTszUcA"
     dynamoDBRegion: "us-east-1"
-    kmsKeyId: "7f03cccf-a834-47c4-848d-168c3140a70a"
+    kmsKeyId: "143a8fb8-1eab-47d8-b649-34436df5d668"
     kmsRegion: "us-east-1"
-    s3Bucket: "vault-unseal-jx-hoplife-20200520183547152100000004"
+    s3Bucket: "vault-unseal-jx-hoplife-20200520215829582100000001"
     s3Region: "us-east-1"
 storage:
   logs:
     enabled: true
-    url: s3://logs-jx-hoplife-20200520183547148800000001
+    url: s3://logs-jx-hoplife-20200520215830224100000009
   reports:
     enabled: true
-    url: s3://reports-jx-hoplife-20200520183547163800000007
+    url: s3://reports-jx-hoplife-20200520215829614200000006
   repository:
     enabled: true
-    url: s3://repository-jx-hoplife-20200520183547158100000006
+    url: s3://repository-jx-hoplife-20200520215829606500000004
 versionStream:
   ref: master
   url: https://github.com/jenkins-x/jenkins-x-versions.git
