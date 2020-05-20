@@ -1,6 +1,6 @@
-// ----------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 // Query necessary data for the module
-// ----------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 data "aws_eks_cluster" "cluster" {
   name = module.eks.cluster_id
 }
@@ -94,7 +94,7 @@ resource "null_resource" "kubeconfig" {
     module.eks
   ]
   provisioner "local-exec" {
-    command = "sudo apt-get -y install awscli ; sleep 5 ; aws eks update-kubeconfig --name ${var.cluster_name}"
+    command = "aws eks update-kubeconfig --name ${var.cluster_name}"
     interpreter = ["/bin/bash", "-c"]
   }
 }
