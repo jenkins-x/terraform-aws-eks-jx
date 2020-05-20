@@ -13,7 +13,7 @@ environments:
   - key: staging
   - key: production
 ingress:
-  domain: "jenkins.newhop.life.newhop.life"
+  domain: "jenkins.newhop.life"
   ignoreLoadBalancer: true
   externalDNS: false
   tls:
@@ -25,22 +25,22 @@ secretStorage: vault
 vault:
   aws:
     iamUserName: ""
-    dynamoDBTable: "vault-unseal-jx-hoplife-VPpFkyFa"
+    dynamoDBTable: "vault-unseal-jx-hoplife-dhtA19zZ"
     dynamoDBRegion: "us-east-1"
-    kmsKeyId: "62d1e2c4-527b-4f08-bce9-098f910845e4"
+    kmsKeyId: "7f03cccf-a834-47c4-848d-168c3140a70a"
     kmsRegion: "us-east-1"
-    s3Bucket: "vault-unseal-jx-hoplife-20200520160402436500000003"
+    s3Bucket: "vault-unseal-jx-hoplife-20200520183547152100000004"
     s3Region: "us-east-1"
 storage:
   logs:
     enabled: true
-    url: s3://logs-jx-hoplife-20200520160402458700000007
+    url: s3://logs-jx-hoplife-20200520183547148800000001
   reports:
     enabled: true
-    url: s3://reports-jx-hoplife-20200520160402433400000002
+    url: s3://reports-jx-hoplife-20200520183547163800000007
   repository:
     enabled: true
-    url: s3://repository-jx-hoplife-20200520160402450900000004
+    url: s3://repository-jx-hoplife-20200520183547158100000006
 versionStream:
   ref: master
   url: https://github.com/jenkins-x/jenkins-x-versions.git

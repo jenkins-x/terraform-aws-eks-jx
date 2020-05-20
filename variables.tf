@@ -119,13 +119,13 @@ variable "enable_repository_storage" {
 variable "enable_external_dns" {
   description = "Flag to enable or disable External DNS in the final `jx-requirements.yml` file"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "create_and_configure_subdomain" {
   description = "Flag to create an NS record set for the subdomain in the apex domain's Hosted Zone"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "enable_tls" {
