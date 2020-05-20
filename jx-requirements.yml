@@ -1,0 +1,47 @@
+autoUpdate:
+  enabled: false
+  schedule: ""
+terraform: true
+cluster:
+  clusterName: "jx-hoplife"
+  environmentGitOwner: ""
+  provider: eks
+  region: "us-east-1"
+gitops: true
+environments:
+  - key: dev
+  - key: staging
+  - key: production
+ingress:
+  domain: "jenkins.newhop.life"
+  ignoreLoadBalancer: true
+  externalDNS: true
+  tls:
+    email: "sysops@hop.life"
+    enabled: true
+    production: true
+kaniko: true
+secretStorage: vault
+vault:
+  aws:
+    iamUserName: ""
+    dynamoDBTable: "vault-unseal-jx-hoplife-FM9OfjJG"
+    dynamoDBRegion: "us-east-1"
+    kmsKeyId: "1df04a73-201c-4964-8853-4b6a1aa644bb"
+    kmsRegion: "us-east-1"
+    s3Bucket: "vault-unseal-jx-hoplife-20200519164320108300000008"
+    s3Region: "us-east-1"
+storage:
+  logs:
+    enabled: true
+    url: s3://logs-jx-hoplife-20200519164319423600000006
+  reports:
+    enabled: true
+    url: s3://reports-jx-hoplife-20200519164319419200000005
+  repository:
+    enabled: true
+    url: s3://repository-jx-hoplife-20200519164319425900000007
+versionStream:
+  ref: master
+  url: https://github.com/jenkins-x/jenkins-x-versions.git
+webhook: lighthouse

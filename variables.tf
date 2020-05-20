@@ -80,13 +80,13 @@ variable "vpc_cidr_block" {
 variable "apex_domain" {
   description = "The main domain to either use directly or to configure a subdomain from"
   type        = string
-  default     = ""
+  default     = "newhop.life"
 }
 
 variable "subdomain" {
   description = "The subdomain to be added to the apex domain. If subdomain is set, it will be appended to the apex domain in  `jx-requirements-eks.yml` file"
   type        = string
-  default     = ""
+  default     = "jenkins.newhop.life""
 }
 
 variable "tls_email" {
