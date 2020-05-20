@@ -86,7 +86,7 @@ variable "apex_domain" {
 variable "subdomain" {
   description = "The subdomain to be added to the apex domain. If subdomain is set, it will be appended to the apex domain in  `jx-requirements-eks.yml` file"
   type        = string
-  default     = "jenkins.newhop.life""
+  default     = "jenkins.newhop.life"
 }
 
 variable "tls_email" {
