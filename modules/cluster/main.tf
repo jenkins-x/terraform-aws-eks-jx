@@ -94,7 +94,7 @@ resource "null_resource" "kubeconfig" {
     module.eks
   ]
   provisioner "local-exec" {
-    command = "apt-get -y install awscli ; sleep 5 ; aws eks update-kubeconfig --name ${var.cluster_name}"
+    command = "sudo apt-get -y install awscli ; sleep 5 ; aws eks update-kubeconfig --name ${var.cluster_name}"
     interpreter = ["/bin/bash", "-c"]
   }
 }
