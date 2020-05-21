@@ -13,7 +13,7 @@ terraform {
       organization = "HopLife"
 
       workspaces {
-        name = "terraform-eks-jx"
+        name = "terraform-aws-eks-jx"
     }
   }
 }
