@@ -1,9 +1,21 @@
 // ----------------------------------------------------------------------------
 // Enforce Terraform version
-//
+// Store state in TF Cloud. Note you must use 'terraform login' prior to
+// running.
 // ----------------------------------------------------------------------------
 terraform {
   required_version = ">= 0.12.17"
+}
+
+ terraform {
+ backend "remote" {
+      hostname = "app.terraform.io"
+      organization = "HopLife"
+
+      workspaces {
+        name = "terraform-eks-jx"
+    }
+  }
 }
 
 // ----------------------------------------------------------------------------
