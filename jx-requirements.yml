@@ -3,44 +3,44 @@ autoUpdate:
   schedule: ""
 terraform: true
 cluster:
-  clusterName: "jx-hoplife"
+  clusterName: "${cluster_name}"
   environmentGitOwner: ""
   provider: eks
-  region: "us-east-1"
+  region: "${region}"
 gitops: true
 environments:
   - key: dev
   - key: staging
   - key: production
 ingress:
-  domain: "jenkins.newhop.life"
+  domain: "${domain}"
   ignoreLoadBalancer: true
-  externalDNS: true
+  externalDNS: ${enable_external_dns}
   tls:
-    email: "sysops@hop.life"
-    enabled: true
-    production: true
+    email: "${tls_email}"
+    enabled: ${enable_tls}
+    production: ${use_production_letsencrypt}
 kaniko: true
 secretStorage: vault
 vault:
   aws:
-    iamUserName: ""
-    dynamoDBTable: "vault-unseal-jx-hoplife-OWfF3tmI"
-    dynamoDBRegion: "us-east-1"
-    kmsKeyId: "b8053cf0-4a17-4093-a751-2ed4c29b7bc4"
-    kmsRegion: "us-east-1"
-    s3Bucket: "vault-unseal-jx-hoplife-20200521001305173200000008"
-    s3Region: "us-east-1"
+    iamUserName: "${vault_user}"
+    dynamoDBTable: "${vault_dynamodb_table}"
+    dynamoDBRegion: "${region}"
+    kmsKeyId: "${vault_kms_key}"
+    kmsRegion: "${region}"
+    s3Bucket: "${vault_bucket}"
+    s3Region: "${region}"
 storage:
   logs:
-    enabled: true
-    url: s3://logs-jx-hoplife-20200521001305154900000001
+    enabled: ${enable_logs_storage}
+    url: s3://${logs_storage_bucket}
   reports:
-    enabled: true
-    url: s3://reports-jx-hoplife-20200521001305163600000006
+    enabled: ${enable_reports_storage}
+    url: s3://${reports_storage_bucket}
   repository:
-    enabled: true
-    url: s3://repository-jx-hoplife-20200521001305159900000002
+    enabled: ${enable_repository_storage}
+    url: s3://${repository_storage_bucket}
 versionStream:
   ref: master
   url: https://github.com/jenkins-x/jenkins-x-versions.git

@@ -25,7 +25,7 @@ variable "max_node_count" {
 
 variable "node_machine_type" {
   type         = string
-  default      = "m5.large"
+  default      = "m1.large"
 }
 
 # VPC
