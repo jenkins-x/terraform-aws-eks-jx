@@ -4,7 +4,7 @@ autoUpdate:
 terraform: true
 cluster:
   clusterName: "${cluster_name}"
-  environmentGitOwner: ""
+  environmentGitOwner: "HL"
   provider: eks
   region: "${region}"
 gitops: true

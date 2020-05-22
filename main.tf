@@ -7,17 +7,6 @@ terraform {
   required_version = ">= 0.12.17"
 }
 
- terraform {
- backend "remote" {
-      hostname = "app.terraform.io"
-      organization = "HopLife"
-
-      workspaces {
-        name = "terraform-aws-eks-jx"
-    }
-  }
-}
-
 // ----------------------------------------------------------------------------
 // Configure providers
 // ----------------------------------------------------------------------------
