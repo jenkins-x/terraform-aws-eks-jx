@@ -18,6 +18,7 @@ data "aws_caller_identity" "current" {}
 
 data "aws_iam_user" "vault_user" {
   user_name = var.vault_user == "" ? aws_iam_user.jenkins-x-vault[0].name : var.vault_user
+  depends_on = [aws_iam_user.jenkins-x-vault]
 }
 
 // ----------------------------------------------------------------------------
