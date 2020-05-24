@@ -34,6 +34,7 @@ resource "aws_s3_bucket" "vault-unseal-bucket" {
   versioning {
     enabled = false
   }
+  force_destroy = var.force_destroy
 }
 
 // ----------------------------------------------------------------------------

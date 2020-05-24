@@ -42,6 +42,7 @@ module "cluster" {
   vpc_name           = var.vpc_name
   vpc_subnets        = var.vpc_subnets
   vpc_cidr_block     = var.vpc_cidr_block
+  force_destroy      = var.force_destroy
 }
 
 // ----------------------------------------------------------------------------
@@ -49,9 +50,10 @@ module "cluster" {
 // See https://github.com/banzaicloud/bank-vaults
 // ----------------------------------------------------------------------------
 module "vault" {
-  source       = "./modules/vault"
-  cluster_name = local.cluster_name
-  vault_user   = var.vault_user
+  source        = "./modules/vault"
+  cluster_name  = local.cluster_name
+  vault_user    = var.vault_user
+  force_destroy = var.force_destroy
 }
 
 // ----------------------------------------------------------------------------

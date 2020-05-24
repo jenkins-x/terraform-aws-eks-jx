@@ -9,6 +9,7 @@ resource "aws_s3_bucket" "logs_jenkins_x" {
   tags = {
     Owner = "Jenkins-x"
   }
+  force_destroy = var.force_destroy
 }
 
 resource "aws_s3_bucket" "reports_jenkins_x" {
@@ -18,6 +19,7 @@ resource "aws_s3_bucket" "reports_jenkins_x" {
   tags = {
     Owner = "Jenkins-x"
   }
+  force_destroy = var.force_destroy
 }
 
 resource "aws_s3_bucket" "repository_jenkins_x" {
@@ -27,4 +29,5 @@ resource "aws_s3_bucket" "repository_jenkins_x" {
   tags = {
     Owner = "Jenkins-x"
   }
+  force_destroy = var.force_destroy
 }
