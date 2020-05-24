@@ -118,10 +118,10 @@ The following sections provide a full list of configuration in- and output varia
 <a id="markdown-Inputs" name="Inputs"></a>
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:-----:|
+|------|-------------|------|---------|:--------:|
 | apex\_domain | The main domain to either use directly or to configure a subdomain from | `string` | `""` | no |
 | cluster\_name | Variable to provide your desired name for the cluster. The script will create a random name if this is empty | `string` | `""` | no |
-| cluster\_version | Variable to provide your desired Kubernetes version for the cluster. | `string` | `"1.15"` | no |
+| cluster\_version | Kubernetes version to use for the EKS cluster. | `string` | `"1.15"` | no |
 | create\_and\_configure\_subdomain | Flag to create an NS record set for the subdomain in the apex domain's Hosted Zone | `bool` | `false` | no |
 | desired\_node\_count | The number of worker nodes to use for the cluster | `number` | `3` | no |
 | enable\_external\_dns | Flag to enable or disable External DNS in the final `jx-requirements.yml` file | `bool` | `false` | no |
@@ -129,6 +129,7 @@ The following sections provide a full list of configuration in- and output varia
 | enable\_reports\_storage | Flag to enable or disable long term storage for reports | `bool` | `true` | no |
 | enable\_repository\_storage | Flag to enable or disable the repository bucket storage | `bool` | `true` | no |
 | enable\_tls | Flag to enable TLS in the final `jx-requirements.yml` file | `bool` | `false` | no |
+| force\_destroy | Flag to determine whether storage buckets get forcefully destroyed. If set to false, empty the bucket first in the aws s3 console, else terraform destroy will fail with BucketNotEmpty error | `bool` | `false` | no |
 | max\_node\_count | The maximum number of worker nodes to use for the cluster | `number` | `5` | no |
 | min\_node\_count | The minimum number of worker nodes to use for the cluster | `number` | `3` | no |
 | node\_machine\_type | The instance type to use for the cluster's worker nodes | `string` | `"m5.large"` | no |
@@ -181,6 +182,9 @@ During `terraform apply` the enabledS3 buckets are created, and the generated `j
         enabled: ${enable_repository_storage}
         url: s3://${repository_storage_bucket}
 ```
+If you just want to experiment with Jenkins X, you can set force_destroy to true. This allows you to remove all generated buckets when running terraform destroy.
+
+:warning: **Note**: If you set `force_destroy` to false, and run a `terraform destroy`, it will fail. In that case empty the s3 buckets from the aws s3 console, and re run `terraform destroy`.
 
 ### Vault
 <a id="markdown-Vault" name="Vault"></a>
