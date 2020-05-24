@@ -50,6 +50,7 @@ You need the following binaries locally installed and configured on your _PATH_:
 - `terraform` (~> 0.12.0)
 - `kubectl` (>=1.10)
 - `aws-iam-authenticator`
+- `wget`
 
 ### Cluster provisioning
 <a id="markdown-Cluster%20provisioning" name="Cluster%20provisioning"></a>
