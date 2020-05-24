@@ -66,6 +66,11 @@ module "eks" {
       asg_desired_capacity = var.desired_node_count
       asg_min_size         = var.min_node_count
       asg_max_size         = var.max_node_count
+      spot_price           = (var.enable_spot_instances ? var.spot_price : null)
+      key_name             = (var.enable_key_name ? var.key_name : null)
+      root_volume_type     = var.volume_type
+      root_volume_size     = var.volume_size
+      root_iops            = var.iops
       tags = [
         {
           "key"                 = "k8s.io/cluster-autoscaler/enabled"

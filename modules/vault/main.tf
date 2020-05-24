@@ -34,6 +34,7 @@ resource "aws_s3_bucket" "vault-unseal-bucket" {
   versioning {
     enabled = false
   }
+  force_destroy = var.force_destroy
 }
 
 // ----------------------------------------------------------------------------
@@ -42,9 +43,9 @@ resource "aws_s3_bucket" "vault-unseal-bucket" {
 // ----------------------------------------------------------------------------
 resource "aws_dynamodb_table" "vault-dynamodb-table" {
   name           = "vault-unseal-${var.cluster_name}-${local.vault_seed}"
-  billing_mode   = "PROVISIONED"
-  read_capacity  = 2
-  write_capacity = 2
+  billing_mode   = "PAY_PER_REQUEST"
+  read_capacity  = 25
+  write_capacity = 25
   hash_key       = "Path"
   range_key      = "Key"
 

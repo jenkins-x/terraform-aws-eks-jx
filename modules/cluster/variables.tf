@@ -44,7 +44,34 @@ variable "vpc_cidr_block" {
   default     = "10.0.0.0/16"
 }
 
+variable "spot_price" {
+  description = "The spot price ceiling for spot instances"
+  type        = string
+  default     = "0.1"
+}
 
+variable "key_name" {
+  description = "The ssh key pair name to use"
+  type        = string
+}
+
+variable "volume_type" {
+  description = "The volume type to use. Can be standard, gp2 or io1"
+  type        = string
+  default     = "gp2"
+}
+
+variable "volume_size" {
+  description = "The volume size in GB"
+  type        = number
+  default     = 10
+}
+
+variable "iops" {
+  description = "The IOPS value"
+  type        = number
+  default     = 0
+}
 // ----------------------------------------------------------------------------
 // Flag Variables
 // ----------------------------------------------------------------------------
@@ -61,4 +88,22 @@ variable "enable_reports_storage" {
 variable "enable_repository_storage" {
   type        = bool
   default     = true
+}
+
+variable "force_destroy" {
+  description = "Flag to determine whether storage buckets get forcefully destroyed. If set to false, empty the bucket first in the aws s3 console, else terraform destroy will fail with BucketNotEmpty error"
+  type        = bool
+  default     = false
+}
+
+variable "enable_spot_instances" {
+  description = "Flag to enable spot instances"
+  type        = bool
+  default     = false
+}
+
+variable "enable_key_name" {
+  description = "Flag to enable ssh key pair name"
+  type        = bool
+  default     = false
 }

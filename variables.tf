@@ -53,6 +53,34 @@ variable "node_machine_type" {
   default     = "m5.large"
 }
 
+variable "spot_price" {
+  description = "The spot price ceiling for spot instances"
+  type        = string
+  default     = "0.1"
+}
+
+variable "key_name" {
+  description = "The ssh key pair name"
+  type        = string
+}
+
+variable "volume_type" {
+  description = "The volume type to use. Can be standard, gp2 or io1"
+  type        = string
+  default     = "gp2"
+}
+
+variable "volume_size" {
+  description = "The volume size in GB"
+  type        = number
+  default     = 10
+}
+
+variable "iops" {
+  description = "The IOPS value"
+  type        = number
+  default     = 0
+}
 // ----------------------------------------------------------------------------
 // VPC Variables
 // ----------------------------------------------------------------------------
@@ -136,6 +164,24 @@ variable "enable_tls" {
 
 variable "production_letsencrypt" {
   description = "Flag to use the production environment of letsencrypt in the `jx-requirements.yml` file"
+  type        = bool
+  default     = false
+}
+
+variable "force_destroy" {
+  description = "Flag to determine whether storage buckets get forcefully destroyed. If set to false, empty the bucket first in the aws s3 console, else terraform destroy will fail with BucketNotEmpty error"
+  type        = bool
+  default     = false
+}
+
+variable "enable_spot_instances" {
+  description = "Flag to enable spot instances"
+  type        = bool
+  default     = false
+}
+
+variable "enable_key_name" {
+  description = "Flag to enable ssh key pair name"
   type        = bool
   default     = false
 }

@@ -23,6 +23,7 @@ The module makes use of the [Terraform EKS cluster Module](https://github.com/te
     - [Running `jx boot`](#running-jx-boot)
     - [Production cluster considerations](#production-cluster-considerations)
     - [Configuring a Terraform backend](#configuring-a-terraform-backend)
+    - [Using Spot Instances](#using-spot-instances)
     - [Examples](#examples)
 - [FAQ: Frequently Asked Questions](#faq-frequently-asked-questions)
     - [IAM Roles for Service Accounts](#iam-roles-for-service-accounts)
@@ -50,6 +51,7 @@ You need the following binaries locally installed and configured on your _PATH_:
 - `terraform` (~> 0.12.0)
 - `kubectl` (>=1.10)
 - `aws-iam-authenticator`
+- `wget`
 
 ### Cluster provisioning
 <a id="markdown-Cluster%20provisioning" name="Cluster%20provisioning"></a>
@@ -118,22 +120,29 @@ The following sections provide a full list of configuration in- and output varia
 <a id="markdown-Inputs" name="Inputs"></a>
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:-----:|
+|------|-------------|------|---------|:--------:|
 | apex\_domain | The main domain to either use directly or to configure a subdomain from | `string` | `""` | no |
 | cluster\_name | Variable to provide your desired name for the cluster. The script will create a random name if this is empty | `string` | `""` | no |
-| cluster\_version | Variable to provide your desired Kubernetes version for the cluster. | `string` | `"1.15"` | no |
+| cluster\_version | Kubernetes version to use for the EKS cluster. | `string` | `"1.15"` | no |
 | create\_and\_configure\_subdomain | Flag to create an NS record set for the subdomain in the apex domain's Hosted Zone | `bool` | `false` | no |
 | desired\_node\_count | The number of worker nodes to use for the cluster | `number` | `3` | no |
 | enable\_external\_dns | Flag to enable or disable External DNS in the final `jx-requirements.yml` file | `bool` | `false` | no |
 | enable\_logs\_storage | Flag to enable or disable long term storage for logs | `bool` | `true` | no |
 | enable\_reports\_storage | Flag to enable or disable long term storage for reports | `bool` | `true` | no |
 | enable\_repository\_storage | Flag to enable or disable the repository bucket storage | `bool` | `true` | no |
+| enable\_spot\_instances | Flag to enable Spot Instances | `bool` | `false` | no |
+| enable\_key\_name | Flag to enable SSH Key Pair name | `bool` | `false` | no |
 | enable\_tls | Flag to enable TLS in the final `jx-requirements.yml` file | `bool` | `false` | no |
+| force\_destroy | Flag to determine whether storage buckets get forcefully destroyed. If set to false, empty the bucket first in the aws s3 console, else terraform destroy will fail with BucketNotEmpty error | `bool` | `false` | no |
 | max\_node\_count | The maximum number of worker nodes to use for the cluster | `number` | `5` | no |
 | min\_node\_count | The minimum number of worker nodes to use for the cluster | `number` | `3` | no |
 | node\_machine\_type | The instance type to use for the cluster's worker nodes | `string` | `"m5.large"` | no |
 | production\_letsencrypt | Flag to use the production environment of letsencrypt in the `jx-requirements.yml` file | `bool` | `false` | no |
 | region | The region to create the resources into | `string` | `"us-east-1"` | no |
+| spot_price | The ceiling price for spot instances | `string` | `"0.1"` | no |
+| key_name | The SSH Key Pair name | `string` | `""` | no |
+| volume_type | The EBS Volume type | `string` | `"gp2"` | no |
+| volume_size | The EBS Volume size in GB | `number` | `10` | no |
 | subdomain | The subdomain to be added to the apex domain. If subdomain is set, it will be appended to the apex domain in  `jx-requirements-eks.yml` file | `string` | `""` | no |
 | tls\_email | The email to register the LetsEncrypt certificate with. Added to the `jx-requirements.yml` file | `string` | `""` | no |
 | vault\_user | The AWS IAM Username whose credentials will be used to authenticate the Vault pods against AWS | `string` | `""` | no |
@@ -162,6 +171,22 @@ The following sections provide a full list of configuration in- and output varia
 | vault\_user\_id | The Vault IAM user id |
 | vault\_user\_secret | The Vault IAM user secret |
 
+### Using Spot Instances
+You can save up to 90% of cost when you use Spot Instances. You just need to make sure your applications are resilient. You can set the ceiling `spot_price` of what you want to pay then set `enable_spot_instances` to `true`.
+
+:warning: **Note**: If the price of the instance reaches this point it will be terminated. 
+
+### Using SSH Key Pair
+Import a key pair or use an existing one and take note of the name. Set `key_name` and set `enable_key_pair` to `true`.
+
+### Using different EBS Volume type and size
+Set `volume_type` to either `standard`, `gp2` or `io1` and `volume_size` to the desired size in GB. If chosing `io1` set desired `iops`.
+
+#### Resizing a disk on existing nodes
+The existing nodes needs to be terminated and replaced with new ones if disk is needed to be resized. You need to execute the following command before `terraform apply` in order to replace the Auto Scaling Launch Configuration.
+
+`terraform taint module.eks-jx.module.cluster.module.eks.aws_launch_configuration.workers[0]`
+
 ### Long Term Storage
 <a id="markdown-Long%20Term%20Storage" name="Long%20Term%20Storage"></a>
 
@@ -181,6 +206,9 @@ During `terraform apply` the enabledS3 buckets are created, and the generated `j
         enabled: ${enable_repository_storage}
         url: s3://${repository_storage_bucket}
 ```
+If you just want to experiment with Jenkins X, you can set force_destroy to true. This allows you to remove all generated buckets when running terraform destroy.
+
+:warning: **Note**: If you set `force_destroy` to false, and run a `terraform destroy`, it will fail. In that case empty the s3 buckets from the aws s3 console, and re run `terraform destroy`.
 
 ### Vault
 <a id="markdown-Vault" name="Vault"></a>
@@ -288,6 +316,23 @@ To use the _s3_ backend, you will need to create the bucket upfront.
 You need the S3 bucket as well as a Dynamo table for state locks.
 You can use [terraform-aws-tfstate-backend](https://github.com/cloudposse/terraform-aws-tfstate-backend) to create these required resources.
 
+### Using Spot Instances
+<a id="markdown-Using%20Spot%20Instances" name="Using%20Spot%20Instances"></a>
+You can save up to 90% of cost when you use Spot Instances. You just need to make sure your applications are resilient. You can set the ceiling `spot_price` of what you want to pay then set `enable_spot_instances` to `true`.
+
+:warning: **Note**: If the price of the instance reaches this point it will be terminated.
+
+### Using SSH Key Pair
+Import a key pair or use an existing one and take note of the name. Set `key_name` and set `enable_key_pair` to `true`.
+
+### Using different EBS Volume type and size
+Set `volume_type` to either `standard`, `gp2` or `io1` and `volume_size` to the desired size in GB. If chosing `io1` set desired `iops`.
+
+#### Resizing a disk on existing nodes
+The existing nodes needs to be terminated and replaced with new ones if disk is needed to be resized. You need to execute the following command before `terraform apply` in order to replace the Auto Scaling Launch Configuration.
+
+`terraform taint module.eks-jx.module.cluster.module.eks.aws_launch_configuration.workers[0]`
+
 ### Examples
 <a id="markdown-Examples" name="Examples"></a>
 
@@ -303,7 +348,7 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 
 This module sets up a series of IAM Policies and Roles. These roles will be annotated into a few Kubernetes Service accounts.
 This allows us to make use of [IAM Roles for Sercive Accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) to set fine-grained permissions on a pod per pod basis.
-There is no way to provide your own roles or define other Service Accounts by variables, but you can always modify the `eks/terraform/jx/irsa.tf` Terraform file.
+There is no way to provide your own roles or define other Service Accounts by variables, but you can always modify the `modules/cluster/irsa.tf` Terraform file.
 
 ## Development
 <a id="markdown-Development" name="Development"></a>
