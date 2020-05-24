@@ -15,15 +15,15 @@ output "cluster_oidc_issuer_url" {
 // Long Term Storage S3 Buckets (Logs, Reports, Repository)
 // ----------------------------------------------------------------------------
 output "logs_jenkins_x" {
-    value = aws_s3_bucket.logs_jenkins_x[0].id
+    value = aws_s3_bucket.logs_jenkins_x.*.id
 }
 
 output "reports_jenkins_x" {
-    value = aws_s3_bucket.reports_jenkins_x[0].id
+    value = aws_s3_bucket.reports_jenkins_x.*.id
 }
 
 output "repository_jenkins_x" {
-    value = aws_s3_bucket.repository_jenkins_x[0].id
+    value = aws_s3_bucket.repository_jenkins_x.*.id
 }
 
 // ----------------------------------------------------------------------------
