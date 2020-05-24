@@ -2,17 +2,17 @@
 // Storage (logs, reports, repo)
 // ----------------------------------------------------------------------------
 output "lts_logs_bucket" {
-  value       = module.cluster.logs_jenkins_x
+  value       = length(module.cluster.logs_jenkins_x) > 0 ? module.cluster.logs_jenkins_x[0] : ""
   description = "The bucket where logs from builds will be stored"
 }
 
 output "lts_reports_bucket" {
-  value       = module.cluster.reports_jenkins_x
+  value       = length(module.cluster.reports_jenkins_x) > 0 ? module.cluster.reports_jenkins_x[0] : ""
   description = "The bucket where test reports will be stored"
 }
 
 output "lts_repository_bucket" {
-  value       = module.cluster.repository_jenkins_x
+  value       = length(module.cluster.repository_jenkins_x) > 0 ? module.cluster.repository_jenkins_x[0] : ""
   description = "The bucket that will serve as artifacts repository"
 }
 
@@ -76,11 +76,11 @@ output "vault_kms_unseal" {
 }
 
 output "vault_user_id" {
-  value       = module.vault.vault_user_id
+  value       = length(module.vault.vault_user_id) > 0 ? module.vault.vault_user_id[0] : ""
   description = "The Vault IAM user id"
 }
 
 output "vault_user_secret" {
-  value       = module.vault.vault_user_secret
+  value       = length(module.vault.vault_user_secret) > 0 ? module.vault.vault_user_secret[0] : ""
   description = "The Vault IAM user secret"
 }
