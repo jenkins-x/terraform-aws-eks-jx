@@ -308,7 +308,7 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 
 This module sets up a series of IAM Policies and Roles. These roles will be annotated into a few Kubernetes Service accounts.
 This allows us to make use of [IAM Roles for Sercive Accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) to set fine-grained permissions on a pod per pod basis.
-There is no way to provide your own roles or define other Service Accounts by variables, but you can always modify the `eks/terraform/jx/irsa.tf` Terraform file.
+There is no way to provide your own roles or define other Service Accounts by variables, but you can always modify the `modules/cluster/irsa.tf` Terraform file.
 
 ## Development
 <a id="markdown-Development" name="Development"></a>
