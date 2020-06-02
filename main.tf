@@ -82,11 +82,11 @@ resource "local_file" "jx-requirements" {
     cluster_name               = local.cluster_name
     region                     = var.region
     enable_logs_storage        = var.enable_logs_storage
-    logs_storage_bucket        = module.cluster.logs_jenkins_x[0]
+    logs_storage_bucket        = length(module.cluster.logs_jenkins_x) > 0 ? module.cluster.logs_jenkins_x[0] : ""
     enable_reports_storage     = var.enable_reports_storage
-    reports_storage_bucket     = module.cluster.reports_jenkins_x[0]
+    reports_storage_bucket     = length(module.cluster.reports_jenkins_x) > 0 ? module.cluster.reports_jenkins_x[0] : ""
     enable_repository_storage  = var.enable_repository_storage
-    repository_storage_bucket  = module.cluster.repository_jenkins_x[0]
+    repository_storage_bucket  = length(module.cluster.repository_jenkins_x) > 0 ? module.cluster.repository_jenkins_x[0] : ""
     vault_kms_key              = module.vault.kms_vault_unseal
     vault_bucket               = module.vault.vault_unseal_bucket
     vault_dynamodb_table       = module.vault.vault_dynamodb_table
