@@ -1,5 +1,4 @@
 # Jenkins X EKS Module
-<a id="markdown-Jenkins%20X%20EKS%20Module" name="Jenkins%20X%20EKS%20Module"></a>
 
 ![Terraform Version](https://img.shields.io/badge/tf-%3E%3D0.12.17-blue.svg)
 
@@ -8,17 +7,13 @@ The module generates for this purpose a  templated `jx-requirements.yml` file fo
 
 The module makes use of the [Terraform EKS cluster Module](https://github.com/terraform-aws-modules/terraform-aws-eks).
 
-<!-- TOC depthfrom:2 -->
+<!-- TOC depthfrom:2 insertanchor:false -->
 
 - [What is a Terraform module](#what-is-a-terraform-module)
 - [How do you use this module](#how-do-you-use-this-module)
     - [Prerequisites](#prerequisites)
     - [Cluster provisioning](#cluster-provisioning)
-        - [Inputs](#inputs)
-        - [Outputs](#outputs)
-    - [Long Term Storage](#long-term-storage)
-    - [Vault](#vault)
-    - [ExternalDNS](#externaldns)
+    - [EKS node groups](#eks-node-groups)
     - [cert-manager](#cert-manager)
     - [Running `jx boot`](#running-jx-boot)
     - [Production cluster considerations](#production-cluster-considerations)
@@ -34,16 +29,13 @@ The module makes use of the [Terraform EKS cluster Module](https://github.com/te
 <!-- /TOC -->
 
 ## What is a Terraform module
-<a id="markdown-What%20is%20a%20Terraform%20module" name="What%20is%20a%20Terraform%20module"></a>
 
 A Terraform module refers to a self-contained package of Terraform configurations that are managed as a group.
 For more information about modules refer to the Terraform [documentation](https://www.terraform.io/docs/modules/index.html).
 
 ## How do you use this module
-<a id="markdown-How%20do%20you%20use%20this%20module" name="How%20do%20you%20use%20this%20module"></a>
 
 ### Prerequisites
-<a id="markdown-Prerequisites" name="Prerequisites"></a>
 
 This Terraform module allows you to create an [EKS](https://aws.amazon.com/eks/) cluster for installation of Jenkins X.
 You need the following binaries locally installed and configured on your _PATH_:
@@ -54,7 +46,6 @@ You need the following binaries locally installed and configured on your _PATH_:
 - `wget`
 
 ### Cluster provisioning
-<a id="markdown-Cluster%20provisioning" name="Cluster%20provisioning"></a>
 
 A default Jenkins X ready cluster can be provisioned by creating a _main.tf_ file in an empty directory with the following content:
 
@@ -117,7 +108,6 @@ Refer to [Production cluster considerations](#production-cluster-considerations)
 The following sections provide a full list of configuration in- and output variables.
 
 #### Inputs
-<a id="markdown-Inputs" name="Inputs"></a>
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -128,17 +118,21 @@ The following sections provide a full list of configuration in- and output varia
 | desired\_node\_count | The number of worker nodes to use for the cluster | `number` | `3` | no |
 | enable\_external\_dns | Flag to enable or disable External DNS in the final `jx-requirements.yml` file | `bool` | `false` | no |
 | enable\_logs\_storage | Flag to enable or disable long term storage for logs | `bool` | `true` | no |
+| enable\_node\_group | Flag to enable node group | `bool` | `false` | no |
 | enable\_reports\_storage | Flag to enable or disable long term storage for reports | `bool` | `true` | no |
 | enable\_repository\_storage | Flag to enable or disable the repository bucket storage | `bool` | `true` | no |
-| enable\_spot\_instances | Flag to enable Spot Instances | `bool` | `false` | no |
+| enable\_spot\_instances | Flag to enable spot instances | `bool` | `false` | no |
 | enable\_tls | Flag to enable TLS in the final `jx-requirements.yml` file | `bool` | `false` | no |
+| enable\_worker\_group | Flag to enable worker group | `bool` | `true` | no |
 | force\_destroy | Flag to determine whether storage buckets get forcefully destroyed. If set to false, empty the bucket first in the aws s3 console, else terraform destroy will fail with BucketNotEmpty error | `bool` | `false` | no |
 | max\_node\_count | The maximum number of worker nodes to use for the cluster | `number` | `5` | no |
 | min\_node\_count | The minimum number of worker nodes to use for the cluster | `number` | `3` | no |
+| node\_group\_ami | ami type for the node group worker intances | `string` | `"AL2_x86_64"` | no |
+| node\_group\_disk\_size | node group worker disk size | `string` | `"50"` | no |
 | node\_machine\_type | The instance type to use for the cluster's worker nodes | `string` | `"m5.large"` | no |
 | production\_letsencrypt | Flag to use the production environment of letsencrypt in the `jx-requirements.yml` file | `bool` | `false` | no |
 | region | The region to create the resources into | `string` | `"us-east-1"` | no |
-| spot_price | The ceiling price for spot instances | `string` | `"0.1"` | no |
+| spot\_price | The spot price ceiling for spot instances | `string` | `"0.1"` | no |
 | subdomain | The subdomain to be added to the apex domain. If subdomain is set, it will be appended to the apex domain in  `jx-requirements-eks.yml` file | `string` | `""` | no |
 | tls\_email | The email to register the LetsEncrypt certificate with. Added to the `jx-requirements.yml` file | `string` | `""` | no |
 | vault\_user | The AWS IAM Username whose credentials will be used to authenticate the Vault pods against AWS | `string` | `""` | no |
@@ -147,7 +141,6 @@ The following sections provide a full list of configuration in- and output varia
 | vpc\_subnets | The subnet CIDR block to use in the created VPC | `list(string)` | <pre>[<br>  "10.0.1.0/24",<br>  "10.0.2.0/24",<br>  "10.0.3.0/24"<br>]</pre> | no |
 
 #### Outputs
-<a id="markdown-Outputs" name="Outputs"></a>
 
 | Name | Description |
 |------|-------------|
@@ -168,7 +161,6 @@ The following sections provide a full list of configuration in- and output varia
 | vault\_user\_secret | The Vault IAM user secret |
 
 ### Long Term Storage
-<a id="markdown-Long%20Term%20Storage" name="Long%20Term%20Storage"></a>
 
 You can choose to create S3 buckets for long term storage and enable them in the generated _jx-requirements.yml_ file with `enable_logs_storage`, `enable_reports_storage` and `enable_repository_storage`.
 
@@ -186,19 +178,53 @@ During `terraform apply` the enabledS3 buckets are created, and the generated `j
         enabled: ${enable_repository_storage}
         url: s3://${repository_storage_bucket}
 ```
+
 If you just want to experiment with Jenkins X, you can set force_destroy to true. This allows you to remove all generated buckets when running terraform destroy.
 
 :warning: **Note**: If you set `force_destroy` to false, and run a `terraform destroy`, it will fail. In that case empty the s3 buckets from the aws s3 console, and re run `terraform destroy`.
 
+### EKS node groups
+
+This module provisions self-managed worker nodes by default.
+
+If you want AWS to manage the provisioning and lifecycle of worker nodes for EKS, you can opt for [managed node groups](https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html).
+
+They have the added benefit of running the latest Amazon EKS-optimized AMIs and gracefully drain nodes before termination to ensure that your applications stay available.
+
+In order to provision EKS node groups create a _main.tf_ with the following content:
+
+```terraform
+module "eks-jx" {
+  source  = "jenkins-x/eks-jx/aws"
+  enable_node_group   = true
+  enable_worker_group = false
+}
+
+output "vault_user_id" {
+  value       = module.eks-jx.vault_user_id
+  description = "The Vault IAM user id"
+}
+
+output "vault_user_secret" {
+  value       = module.eks-jx.vault_user_secret
+  description = "The Vault IAM user secret"
+}
+
+```
+
+:warning: **Note**: If you forget to set `enable_worker_group = false`, then the module will provision both self managed worker groups and node groups.
+
+:warning: **Note**: EKS node groups are supported in kubernetes v1.14+ and platform version eks.3
+
+:warning: **Note**: Spot instances are not supported for EKS node groups. Check this AWS [issue](https://github.com/aws/containers-roadmap/issues/583) for more details.
+
 ### Vault
-<a id="markdown-Vault" name="Vault"></a>
 
 Vault is used by Jenkins X for managing secrets.
 Part of this module's responsibilities is the creation of all resources required to run the [Vault Operator](https://github.com/banzaicloud/bank-vaults).
 These resources are An S3 Bucket, a DynamoDB Table and a KMS Key.
 
 ### ExternalDNS
-<a id="markdown-ExternalDNS" name="ExternalDNS"></a>
 
 You can enable [ExternalDNS](https://github.com/kubernetes-sigs/external-dns) with the `enable_external_dns` variable. This modifies the generated _jx-requirements.yml_ file to enable External DNS when running `jx boot`.
 
@@ -227,7 +253,6 @@ This is done by creating a `NS` RecordSet in the apex domain's Hosted Zone with 
 This ensures that the newly created HostedZone for the subdomain is instantly resolvable instead of having to wait for DNS propagation.
 
 ### cert-manager
-<a id="markdown-cert-manager" name="cert-manager"></a>
 
 You can enable [cert-manager](https://github.com/jetstack/cert-manager) to use TLS for your cluster through LetsEncrypt with the `enable_tls` variable.
 
@@ -240,7 +265,6 @@ You can choose to use the `production` environment with the `production_letsencr
 You need to provide a valid email to register your domain in LetsEncrypt with `tls_email`.
 
 ### Running `jx boot`
-<a id="markdown-Running%20%60jx%20boot%60" name="Running%20%60jx%20boot%60"></a>
 
 An output of applying this Terraform module is a _jx-requirements.yml_ file in the current directory.
 This file can be used as input to [Jenkins X Boot](https://jenkins-x.io/docs/getting-started/setup/boot/) which is responsible for installing all the required Jenkins X components into the cluster created by this module.
@@ -262,7 +286,6 @@ You are prompted for any further required configuration.
 The number of prompts depends on how much you have [pre-configured](#inputs) via your Terraform variables.
 
 ### Production cluster considerations
-<a id="markdown-Production%20cluster%20considerations" name="Production%20cluster%20considerations"></a>
 
 The configuration, as seen in [Cluster provisioning](#cluster-provisioning), is not suited for creating and maintaining a production Jenkins X cluster.
 The following is a list of considerations for a production use case.
@@ -284,7 +307,6 @@ The following is a list of considerations for a production use case.
 - Setup a Terraform backend to securely store and share the state of your cluster. For more information refer to [Configuring a Terraform backend](#configuring-a-terraform-backend).
 
 ### Configuring a Terraform backend
-<a id="markdown-Configuring%20a%20Terraform%20backend" name="Configuring%20a%20Terraform%20backend"></a>
 
 A "[backend](https://www.terraform.io/docs/backends/index.html)" in Terraform determines how state is loaded and how an operation such as _apply_ is executed.
 By default, Terraform uses the _local_ backend, which keeps the state of the created resources on the local file system.
@@ -297,33 +319,28 @@ You need the S3 bucket as well as a Dynamo table for state locks.
 You can use [terraform-aws-tfstate-backend](https://github.com/cloudposse/terraform-aws-tfstate-backend) to create these required resources.
 
 ### Using Spot Instances
-<a id="markdown-Using%20Spot%20Instances" name="Using%20Spot%20Instances"></a>
+
 You can save up to 90% of cost when you use Spot Instances. You just need to make sure your applications are resilient. You can set the ceiling `spot_price` of what you want to pay then set `enable_spot_instances` to `true`.
 
 :warning: **Note**: If the price of the instance reaches this point it will be terminated.
 
 ### Examples
-<a id="markdown-Examples" name="Examples"></a>
 
 You can find examples for different configurations in the [examples folder](./examples).
 
 Each example generates a valid _jx-requirements.yml_ file that can be used to boot a Jenkins X cluster.
 
 ## FAQ: Frequently Asked Questions
-<a id="markdown-FAQ%3A%20Frequently%20Asked%20Questions" name="FAQ%3A%20Frequently%20Asked%20Questions"></a>
 
 ### IAM Roles for Service Accounts
-<a id="markdown-IAM%20Roles%20for%20Service%20Accounts" name="IAM%20Roles%20for%20Service%20Accounts"></a>
 
 This module sets up a series of IAM Policies and Roles. These roles will be annotated into a few Kubernetes Service accounts.
 This allows us to make use of [IAM Roles for Sercive Accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) to set fine-grained permissions on a pod per pod basis.
 There is no way to provide your own roles or define other Service Accounts by variables, but you can always modify the `modules/cluster/irsa.tf` Terraform file.
 
 ## Development
-<a id="markdown-Development" name="Development"></a>
 
 ### Releasing
-<a id="markdown-Releasing" name="Releasing"></a>
 
 At the moment, there is no release pipeline defined in [jenkins-x.yml](./jenkins-x.yml).
 A Terraform release does not require building an artifact; only a tag needs to be created and pushed.
@@ -337,6 +354,5 @@ This can be executed on demand whenever a release is required.
 For the script to work, the environment variable _$GH_TOKEN_ must be exported and reference a valid GitHub API token.
 
 ## How can I contribute
-<a id="markdown-How%20can%20I%20contribute" name="How%20can%20I%20contribute"></a>
 
 Contributions are very welcome! Check out the [Contribution Guidelines](./CONTRIBUTING.md) for instructions.
