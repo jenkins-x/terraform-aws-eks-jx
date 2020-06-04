@@ -45,6 +45,8 @@ module "cluster" {
   vpc_cidr_block        = var.vpc_cidr_block
   force_destroy         = var.force_destroy
   enable_spot_instances = var.enable_spot_instances
+  enable_node_group     = var.enable_node_group
+  enable_worker_group   = var.enable_worker_group
 }
 
 // ----------------------------------------------------------------------------

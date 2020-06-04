@@ -50,6 +50,19 @@ variable "spot_price" {
   default     = "0.1"
 }
 
+variable "node_group_ami" {
+  description = "ami type for the node group worker intances"
+  type        = string
+  default     = "AL2_x86_64"
+}
+
+variable "node_group_disk_size" {
+  description = "node group worker disk size"
+  type        = string
+  default     = "50"
+}
+
+
 
 // ----------------------------------------------------------------------------
 // Flag Variables
@@ -57,6 +70,18 @@ variable "spot_price" {
 variable "enable_logs_storage" {
   type    = bool
   default = true
+}
+
+variable "enable_node_group" {
+  description = "Flag to enable node group"
+  type        = bool
+  default     = false
+}
+
+variable "enable_worker_group" {
+  description = "Flag to enable worker group"
+  type        = bool
+  default     = true
 }
 
 variable "enable_reports_storage" {

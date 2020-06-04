@@ -58,6 +58,19 @@ variable "spot_price" {
   type        = string
   default     = "0.1"
 }
+
+variable "node_group_ami" {
+  description = "ami type for the node group worker intances"
+  type        = string
+  default     = "AL2_x86_64"
+}
+
+variable "node_group_disk_size" {
+  description = "node group worker disk size"
+  type        = string
+  default     = "50"
+}
+
 // ----------------------------------------------------------------------------
 // VPC Variables
 // ----------------------------------------------------------------------------
@@ -155,4 +168,16 @@ variable "enable_spot_instances" {
   description = "Flag to enable spot instances"
   type        = bool
   default     = false
+}
+
+variable "enable_node_group" {
+  description = "Flag to enable node group"
+  type        = bool
+  default     = false
+}
+
+variable "enable_worker_group" {
+  description = "Flag to enable worker group"
+  type        = bool
+  default     = true
 }

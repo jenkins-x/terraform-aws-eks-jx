@@ -59,7 +59,7 @@ module "eks" {
   subnets         = module.vpc.public_subnets
   vpc_id          = module.vpc.vpc_id
   enable_irsa     = true
-  worker_groups = [
+  worker_groups = var.enable_worker_group ? [
     {
       name                 = "worker-group-${var.cluster_name}"
       instance_type        = var.node_machine_type
@@ -69,21 +69,42 @@ module "eks" {
       spot_price           = (var.enable_spot_instances ? var.spot_price : null)
       tags = [
         {
-          "key"                 = "k8s.io/cluster-autoscaler/enabled"
-          "propagate_at_launch" = "false"
-          "value"               = "true"
+          key                 = "k8s.io/cluster-autoscaler/enabled"
+          propagate_at_launch = "false"
+          value               = "true"
         },
         {
-          "key"                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
-          "propagate_at_launch" = "false"
-          "value"               = "true"
+          key                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
+          propagate_at_launch = "false"
+          value               = "true"
         }
       ]
     }
-  ]
-  workers_additional_policies = [
+  ] : []
+  workers_additional_policies = var.enable_worker_group ? [
     "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
-  ]
+  ] : []
+
+  node_groups = var.enable_node_group ? {
+    eks-jx-node-group = {
+      ami_type         = var.node_group_ami
+      disk_size        = var.node_group_disk_size
+      desired_capacity = var.desired_node_count
+      max_capacity     = var.max_node_count
+      min_capacity     = var.min_node_count
+
+      instance_type = var.node_machine_type
+      k8s_labels = {
+        "jenkins-x.io/name"       = var.cluster_name
+        "jenkins-x.io/part-of"    = "jx-platform"
+        "jenkins-x.io/managed-by" = "terraform"
+      }
+      additional_tags = {
+        aws_managed = "true"
+      }
+    }
+  } : {}
+
 }
 
 // ----------------------------------------------------------------------------
