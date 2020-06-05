@@ -44,6 +44,12 @@ variable "vpc_cidr_block" {
   default     = "10.0.0.0/16"
 }
 
+variable "spot_price" {
+  description = "The spot price ceiling for spot instances"
+  type        = string
+  default     = "0.1"
+}
+
 
 // ----------------------------------------------------------------------------
 // Flag Variables
@@ -65,6 +71,12 @@ variable "enable_repository_storage" {
 
 variable "force_destroy" {
   description = "Flag to determine whether storage buckets get forcefully destroyed. If set to false, empty the bucket first in the aws s3 console, else terraform destroy will fail with BucketNotEmpty error"
+  type        = bool
+  default     = false
+}
+
+variable "enable_spot_instances" {
+  description = "Flag to enable spot instances"
   type        = bool
   default     = false
 }

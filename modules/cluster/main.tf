@@ -66,6 +66,7 @@ module "eks" {
       asg_desired_capacity = var.desired_node_count
       asg_min_size         = var.min_node_count
       asg_max_size         = var.max_node_count
+      spot_price           = (var.enable_spot_instances ? var.spot_price : null)
       tags = [
         {
           "key"                 = "k8s.io/cluster-autoscaler/enabled"
