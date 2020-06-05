@@ -32,17 +32,19 @@ provider "template" {
 // See https://www.terraform.io/docs/providers/aws/r/eks_cluster.html
 // ----------------------------------------------------------------------------
 module "cluster" {
-  source             = "./modules/cluster"
-  cluster_name       = local.cluster_name
-  cluster_version    = var.cluster_version
-  desired_node_count = var.desired_node_count
-  min_node_count     = var.min_node_count
-  max_node_count     = var.max_node_count
-  node_machine_type  = var.node_machine_type
-  vpc_name           = var.vpc_name
-  vpc_subnets        = var.vpc_subnets
-  vpc_cidr_block     = var.vpc_cidr_block
-  force_destroy      = var.force_destroy
+  source                = "./modules/cluster"
+  cluster_name          = local.cluster_name
+  cluster_version       = var.cluster_version
+  desired_node_count    = var.desired_node_count
+  min_node_count        = var.min_node_count
+  max_node_count        = var.max_node_count
+  node_machine_type     = var.node_machine_type
+  spot_price            = var.spot_price
+  vpc_name              = var.vpc_name
+  vpc_subnets           = var.vpc_subnets
+  vpc_cidr_block        = var.vpc_cidr_block
+  force_destroy         = var.force_destroy
+  enable_spot_instances = var.enable_spot_instances
 }
 
 // ----------------------------------------------------------------------------
