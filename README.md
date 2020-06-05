@@ -133,6 +133,7 @@ The following sections provide a full list of configuration in- and output varia
 | desired\_node\_count | The number of worker nodes to use for the cluster | `number` | `3` | no |
 | enable\_external\_dns | Flag to enable or disable External DNS in the final `jx-requirements.yml` file | `bool` | `false` | no |
 | enable\_key\_rotation | Flag to enable kms key rotation | `bool` | `true` | no |
+| enable\_key\_name | Flag to enable SSH Key Pair name | `bool` | `false` | no |
 | enable\_logs\_storage | Flag to enable or disable long term storage for logs | `bool` | `true` | no |
 | enable\_nat\_gateway | Should be true if you want to provision NAT Gateways for each of your private networks | `bool` | `false` | no |
 | enable\_node\_group | Flag to enable node group | `bool` | `false` | no |
@@ -156,6 +157,10 @@ The following sections provide a full list of configuration in- and output varia
 | region | The region to create the resources into | `string` | `"us-east-1"` | no |
 | single\_nat\_gateway | Should be true if you want to provision a single shared NAT Gateway across all of your private networks | `bool` | `false` | no |
 | spot\_price | The spot price ceiling for spot instances | `string` | `"0.1"` | no |
+| key\_name | The SSH Key Pair name | `string` | `""` | no |
+| volume\_type | The EBS Volume type | `string` | `"gp2"` | no |
+| volume\_size | The EBS Volume size in GB | `number` | `10` | no |
+| iops | The IOPS if chosen `volume_type` is `io1` | `number` | `0` | no |
 | subdomain | The subdomain to be added to the apex domain. If subdomain is set, it will be appended to the apex domain in  `jx-requirements-eks.yml` file | `string` | `""` | no |
 | tls\_email | The email to register the LetsEncrypt certificate with. Added to the `jx-requirements.yml` file | `string` | `""` | no |
 | vault\_url | URL to an external Vault instance in case Jenkins X does not create its own system Vault | `string` | `""` | no |
@@ -464,6 +469,17 @@ module "eks-jx" {
   ]
 }
 ```
+
+### Using SSH Key Pair
+Import a key pair or use an existing one and take note of the name. Set `key_name` and set `enable_key_pair` to `true`.
+
+### Using different EBS Volume type and size
+Set `volume_type` to either `standard`, `gp2` or `io1` and `volume_size` to the desired size in GB. If chosing `io1` set desired `iops`.
+
+#### Resizing a disk on existing nodes
+The existing nodes needs to be terminated and replaced with new ones if disk is needed to be resized. You need to execute the following command before `terraform apply` in order to replace the Auto Scaling Launch Configuration.
+
+`terraform taint module.eks-jx.module.cluster.module.eks.aws_launch_configuration.workers[0]`
 
 ### Examples
 

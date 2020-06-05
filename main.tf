@@ -55,6 +55,11 @@ module "cluster" {
   map_accounts              = var.map_accounts
   map_roles                 = var.map_roles
   map_users                 = var.map_users
+  enable_key_name           = var.enable_key_name
+  key_name                  = var.key_name
+  volume_type               = var.volume_type
+  volume_size               = var.volume_size
+  iops                      = var.iops
 }
 
 // ----------------------------------------------------------------------------
