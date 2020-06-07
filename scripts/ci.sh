@@ -37,6 +37,9 @@ aws --version
 echo "Initializing modules..."
 terraform init
 
+echo "Validating modules ..."
+terraform validate
+
 echo "Creating cluster ${CLUSTER_NAME}"
 
 echo "Applying Terraform..."

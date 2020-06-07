@@ -117,6 +117,7 @@ The following sections provide a full list of configuration in- and output varia
 | create\_and\_configure\_subdomain | Flag to create an NS record set for the subdomain in the apex domain's Hosted Zone | `bool` | `false` | no |
 | desired\_node\_count | The number of worker nodes to use for the cluster | `number` | `3` | no |
 | enable\_external\_dns | Flag to enable or disable External DNS in the final `jx-requirements.yml` file | `bool` | `false` | no |
+| enable\_key\_rotation | Flag to enable kms key rotation | `bool` | `true` | no |
 | enable\_logs\_storage | Flag to enable or disable long term storage for logs | `bool` | `true` | no |
 | enable\_node\_group | Flag to enable node group | `bool` | `false` | no |
 | enable\_reports\_storage | Flag to enable or disable long term storage for reports | `bool` | `true` | no |

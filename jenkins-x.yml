@@ -30,5 +30,9 @@ pipelineConfig:
             command: make
             args:
             - lint
+          - name: terraform-security-check
+            command: make
+            args:
+            - tfsec
           - name: terraform-apply-and-test
             command: ./scripts/ci.sh
