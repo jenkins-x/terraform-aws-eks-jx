@@ -19,3 +19,9 @@ variable "force_destroy" {
   type        = bool
   default     = false
 }
+
+variable "enable_key_rotation" {
+  description = "Flag to enable kms key rotation"
+  type        = bool
+  default     = true
+}

@@ -28,7 +28,18 @@ lint: init ## Verifies Terraform syntax
 fmt: ## Reformats Terraform files accoring to standard
 	terraform fmt
 
-.PHONY: test 
+install-tfsec: ##Installs tfsec
+	curl -L "$$(curl -s https://api.github.com/repos/liamg/tfsec/releases/latest | grep -o -E "https://.+?-linux-amd64")" > tfsec;\
+	chmod +x ./tfsec
+
+check-tfsec: # check if tfsec is installed
+	./tfsec --version
+
+.PHONY: tfsec
+tfsec: install-tfsec check-tfsec #Runs tfsec
+	./tfsec . -e AWS002,AWS017
+
+.PHONY: test
 test: ## Runs ShellSpec tests
 	shellspec --format document --warning-as-failure
 
@@ -36,6 +47,7 @@ test: ## Runs ShellSpec tests
 clean: ## Deletes temporary files
 	rm -rf report
 	rm jx-requirements.yml
+	rm ./tfsec
 
 .PHONY: markdown-table
 markdown-table: ## Creates markdown tables for in- and output of this module

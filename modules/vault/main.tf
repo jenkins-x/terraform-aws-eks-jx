@@ -69,8 +69,9 @@ resource "aws_dynamodb_table" "vault-dynamodb-table" {
 // See https://www.terraform.io/docs/providers/aws/r/kms_key.html
 // ----------------------------------------------------------------------------
 resource "aws_kms_key" "kms_vault_unseal" {
-  description = "KMS Key for bank vault unseal"
-  policy      = <<POLICY
+  description         = "KMS Key for bank vault unseal"
+  enable_key_rotation = var.enable_key_rotation
+  policy              = <<POLICY
 {
     "Version": "2012-10-17",
     "Statement": [
