@@ -21,9 +21,9 @@ resource "aws_route53_record" "subdomain_ns_delegation" {
   type    = "NS"
   ttl     = 30
   records = [
-    "${aws_route53_zone.subdomain_zone[0].name_servers.0}",
-    "${aws_route53_zone.subdomain_zone[0].name_servers.1}",
-    "${aws_route53_zone.subdomain_zone[0].name_servers.2}",
-    "${aws_route53_zone.subdomain_zone[0].name_servers.3}",
+    aws_route53_zone.subdomain_zone[0].name_servers[0],
+    aws_route53_zone.subdomain_zone[0].name_servers[1],
+    aws_route53_zone.subdomain_zone[0].name_servers[2],
+    aws_route53_zone.subdomain_zone[0].name_servers[3],
   ]
 }

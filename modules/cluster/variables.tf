@@ -9,39 +9,39 @@ variable "cluster_version" {
 
 # Worker Nodes
 variable "desired_node_count" {
-  type        = number
-  default     = 3
+  type    = number
+  default = 3
 }
 
 variable "min_node_count" {
-  type        = number
-  default     = 3
+  type    = number
+  default = 3
 }
 
 variable "max_node_count" {
-  type        = number
-  default     = 5
+  type    = number
+  default = 5
 }
 
 variable "node_machine_type" {
-  type         = string
-  default      = "m5.large"
+  type    = string
+  default = "m5.large"
 }
 
 # VPC
 variable "vpc_name" {
-  type         = string
-  default      = "tf-vpc-eks"
+  type    = string
+  default = "tf-vpc-eks"
 }
 
 variable "vpc_subnets" {
-  type        = list(string)
-  default     = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+  type    = list(string)
+  default = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
 }
 
 variable "vpc_cidr_block" {
-  type        = string
-  default     = "10.0.0.0/16"
+  type    = string
+  default = "10.0.0.0/16"
 }
 
 variable "spot_price" {
@@ -55,18 +55,18 @@ variable "spot_price" {
 // Flag Variables
 // ----------------------------------------------------------------------------
 variable "enable_logs_storage" {
-  type        = bool
-  default     = true
+  type    = bool
+  default = true
 }
 
 variable "enable_reports_storage" {
-  type        = bool
-  default     = true
+  type    = bool
+  default = true
 }
 
 variable "enable_repository_storage" {
-  type        = bool
-  default     = true
+  type    = bool
+  default = true
 }
 
 variable "force_destroy" {
