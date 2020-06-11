@@ -30,7 +30,7 @@ provider "kubernetes" {
 // ----------------------------------------------------------------------------
 module "vpc" {
   source               = "terraform-aws-modules/vpc/aws"
-  version              = "2.6.0"
+  version              = "2.39.0"
   name                 = var.vpc_name
   cidr                 = var.vpc_cidr_block
   azs                  = data.aws_availability_zones.available.names
@@ -43,7 +43,7 @@ module "vpc" {
 
   public_subnet_tags = {
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
-    "kubernetes.io/role/elb"                      = "1"
+    "kubernetes.io/role/elb"                    = "1"
   }
 }
 
@@ -52,14 +52,14 @@ module "vpc" {
 // See https://github.com/terraform-aws-modules/terraform-aws-eks
 // ----------------------------------------------------------------------------
 module "eks" {
-  source           = "terraform-aws-modules/eks/aws"
-  version          = "10.0.0"
-  cluster_name     = var.cluster_name
-  cluster_version  = var.cluster_version
-  subnets          = module.vpc.public_subnets
-  vpc_id           = module.vpc.vpc_id
-  enable_irsa      = true
-  worker_groups    = [
+  source          = "terraform-aws-modules/eks/aws"
+  version         = "12.1.0"
+  cluster_name    = var.cluster_name
+  cluster_version = var.cluster_version
+  subnets         = module.vpc.public_subnets
+  vpc_id          = module.vpc.vpc_id
+  enable_irsa     = true
+  worker_groups = [
     {
       name                 = "worker-group-${var.cluster_name}"
       instance_type        = var.node_machine_type
@@ -95,7 +95,7 @@ resource "null_resource" "kubeconfig" {
     module.eks
   ]
   provisioner "local-exec" {
-    command = "aws eks update-kubeconfig --name ${var.cluster_name}"
+    command     = "aws eks update-kubeconfig --name ${var.cluster_name}"
     interpreter = ["/bin/bash", "-c"]
   }
 }
