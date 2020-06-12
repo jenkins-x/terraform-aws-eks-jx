@@ -34,7 +34,8 @@ module "vpc" {
   name                 = var.vpc_name
   cidr                 = var.vpc_cidr_block
   azs                  = data.aws_availability_zones.available.names
-  public_subnets       = var.vpc_subnets
+  public_subnets       = var.public_subnets
+  private_subnets      = var.private_subnets
   enable_dns_hostnames = true
 
   tags = {
@@ -52,14 +53,14 @@ module "vpc" {
 // See https://github.com/terraform-aws-modules/terraform-aws-eks
 // ----------------------------------------------------------------------------
 module "eks" {
-  source          = "terraform-aws-modules/eks/aws"
-  version         = "12.1.0"
-  cluster_name    = var.cluster_name
-  cluster_version = var.cluster_version
-  subnets         = module.vpc.public_subnets
-  vpc_id          = module.vpc.vpc_id
-  enable_irsa     = true
-  worker_groups = var.enable_worker_group ? [
+  source           = "terraform-aws-modules/eks/aws"
+  version          = "12.1.0"
+  cluster_name     = var.cluster_name
+  cluster_version  = var.cluster_version
+  subnets          = (var.cluster_in_private_subnet ? module.vpc.private_subnets : module.vpc.public_subnets)
+  vpc_id           = module.vpc.vpc_id
+  enable_irsa      = true
+  worker_groups    = var.enable_worker_group ? [
     {
       name                 = "worker-group-${var.cluster_name}"
       instance_type        = var.node_machine_type
