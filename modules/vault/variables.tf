@@ -34,3 +34,25 @@ variable "external_vault" {
   type        = bool
   default     = false
 }
+
+// ----------------------------------------------------------------------------
+// DynamoDB Variables
+// ----------------------------------------------------------------------------
+
+variable "billing_rcu" {
+  description = "The Read Capacity Units of DynamoDB when using PROVISIONED"
+  type        = number
+  default     = 2
+}
+
+variable "billing_wcu" {
+  description = "The Write Capacity Units of DynamoDB when using PROVISIONED"
+  type        = number
+  default     = 2
+}
+
+variable "enable_provisioned_dynamodb" {
+  description = "Flag to enable provisioned billing for DynamoDB"
+  type        = bool
+  default     = false
+}
