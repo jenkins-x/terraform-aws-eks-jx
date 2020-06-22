@@ -11,6 +11,7 @@ else
 endif
 
 SHELL_SPEC_DIR ?= /var/tmp
+TERRAFORM_VAR_FILE ?= terraform.tfvars
 
 .DEFAULT_GOAL := help
 
@@ -19,12 +20,13 @@ help:
 	@grep -h -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 .PHONY: apply 
-apply: ## Applies Terraform plan
-	terraform apply --var-file terraform.tfvars
+apply: ## Applies Terraform plan w/ auto approve
+	@test -s $(TERRAFORM_VAR_FILE) || { echo "The 'apply' rule assumes that variables are provided $(TERRAFORM_VAR_FILE)"; exit 1; }
+	terraform apply -auto-approve --var-file $(TERRAFORM_VAR_FILE)
 
 .PHONY: destroy 
-destroy: ## Destroys Terraform infrastructure
-	terraform destroy
+destroy: ## Destroys Terraform infrastructure w/ auto approve
+	terraform destroy -auto-approve --var-file $(TERRAFORM_VAR_FILE)
 
 .PHONY: init 
 init: ## Init the terraform module
@@ -54,6 +56,10 @@ run-tfsec: tfsec check-tfsec ## Runs tfsec
 .PHONY: test
 test: ## Runs ShellSpec tests
 	shellspec --format document --warning-as-failure
+
+.PHONY: test-focus
+test-focus: ## Runs ShellSpec tests
+	shellspec --format document --warning-as-failure --focus
 
 .PHONY: clean
 clean: ## Deletes temporary files

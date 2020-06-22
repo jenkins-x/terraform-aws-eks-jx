@@ -4,13 +4,20 @@ set -e
 set -u
 
 CLUSTER_NAME=tf-${BRANCH_NAME}-${BUILD_NUMBER}
-CLUSTER_NAME=$( echo ${CLUSTER_NAME} | tr  '[:upper:]' '[:lower:]')
-VARS="-var cluster_name=${CLUSTER_NAME} -var region=us-east-1 -var vault_user=${VAULT_USER} -var vpc_name=${CLUSTER_NAME}-vpc"
+CLUSTER_NAME=$(echo ${CLUSTER_NAME} | tr  '[:upper:]' '[:lower:]')
+VAULT_USER=$(echo ${VAULT_USER} | tr -d '\n')
+
+cat <<EOF > terraform.tfvars
+cluster_name="${CLUSTER_NAME}"
+region="us-east-1"
+vault_user="${VAULT_USER}"
+vpc_name="${CLUSTER_NAME}-vpc"
+EOF
 
 function cleanup()
 {
 	echo "Cleanup..."
-	terraform destroy $VARS -auto-approve
+	make destroy
 }
 
 trap cleanup EXIT
@@ -28,22 +35,17 @@ aws-iam-authenticator help
 echo "Installing the AWS CLI"
 # Install the AWS CLI to run commands in tests
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-./aws/install
+unzip awscliv2.zip > /dev/null
+./aws/install 
 
 # Checking AWS Installation
 aws --version
 
 echo "Initializing modules..."
-terraform init
-
-echo "Validating modules ..."
-terraform validate
+make init
 
 echo "Creating cluster ${CLUSTER_NAME}"
-
-echo "Applying Terraform..."
-terraform apply $VARS -auto-approve
+make apply
 
 echo "Installing shellspec"
 pushd /var/tmp

@@ -20,8 +20,16 @@ variable "cluster_version" {
 }
 
 // ----------------------------------------------------------------------------
+// Vault
+// ----------------------------------------------------------------------------
 variable "vault_user" {
   description = "The AWS IAM Username whose credentials will be used to authenticate the Vault pods against AWS"
+  type        = string
+  default     = ""
+}
+
+variable "vault_url" {
+  description = "URL to an external Vault instance in case Jenkins X shall not create its own system Vault"
   type        = string
   default     = ""
 }
