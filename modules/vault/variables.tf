@@ -20,8 +20,17 @@ variable "force_destroy" {
   default     = false
 }
 
+// ----------------------------------------------------------------------------
+// Optional Variables	// Optional Variables
+// ----------------------------------------------------------------------------
 variable "enable_key_rotation" {
   description = "Flag to enable kms key rotation"
   type        = bool
   default     = true
+}
+
+variable "external_vault" {
+  description = "Whether or not Jenkins X creates and manages the Vault instance. If set to true a external Vault URL needs to be provided"
+  type        = bool
+  default     = false
 }

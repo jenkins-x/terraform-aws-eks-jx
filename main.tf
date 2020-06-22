@@ -54,10 +54,11 @@ module "cluster" {
 // See https://github.com/banzaicloud/bank-vaults
 // ----------------------------------------------------------------------------
 module "vault" {
-  source        = "./modules/vault"
-  cluster_name  = local.cluster_name
-  vault_user    = var.vault_user
-  force_destroy = var.force_destroy
+  source         = "./modules/vault"
+  cluster_name   = local.cluster_name
+  vault_user     = var.vault_user
+  force_destroy  = var.force_destroy
+  external_vault = local.external_vault
 }
 
 // ----------------------------------------------------------------------------
@@ -77,12 +78,8 @@ module "dns" {
 // ----------------------------------------------------------------------------
 // Let's generate jx-requirements.yml 
 // ----------------------------------------------------------------------------
-resource "local_file" "jx-requirements" {
-  depends_on = [
-    module.vault,
-    module.cluster
-  ]
-  content = templatefile("${path.module}/jx-requirements.yml.tpl", {
+locals {
+  interpolated_content = templatefile("${path.module}/modules/jx-requirements.yml.tpl", {
     cluster_name               = local.cluster_name
     region                     = var.region
     enable_logs_storage        = var.enable_logs_storage
@@ -95,11 +92,21 @@ resource "local_file" "jx-requirements" {
     vault_bucket               = module.vault.vault_unseal_bucket
     vault_dynamodb_table       = module.vault.vault_dynamodb_table
     vault_user                 = var.vault_user
+    vault_url                  = var.vault_url
+    external_vault             = local.external_vault
     enable_external_dns        = var.enable_external_dns
     domain                     = module.dns.domain
     enable_tls                 = var.enable_tls
     tls_email                  = var.tls_email
     use_production_letsencrypt = var.production_letsencrypt
   })
+
+  split_content   = split("\n", local.interpolated_content)
+  compact_content = compact(local.split_content)
+  content         = join("\n", local.compact_content)
+}
+
+resource "local_file" "jx-requirements" {
+  content  = "${local.content}\n"
   filename = "${path.cwd}/jx-requirements.yml"
 }

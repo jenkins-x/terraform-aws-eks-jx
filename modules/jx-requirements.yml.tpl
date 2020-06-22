@@ -23,6 +23,9 @@ ingress:
 kaniko: true
 secretStorage: vault
 vault:
+%{ if external_vault }
+  url: ${vault_url}
+%{ else }
   aws:
     iamUserName: "${vault_user}"
     dynamoDBTable: "${vault_dynamodb_table}"
@@ -31,6 +34,7 @@ vault:
     kmsRegion: "${region}"
     s3Bucket: "${vault_bucket}"
     s3Region: "${region}"
+%{ endif }
 storage:
   logs:
     enabled: ${enable_logs_storage}
