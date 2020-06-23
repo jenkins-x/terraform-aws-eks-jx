@@ -33,6 +33,6 @@ pipelineConfig:
           - name: terraform-security-check
             command: make
             args:
-            - run-tfsec
+            - tfsec
           - name: terraform-apply-and-test
             command: ./scripts/ci.sh

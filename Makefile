@@ -12,6 +12,8 @@ endif
 
 SHELL_SPEC_DIR ?= /var/tmp
 TERRAFORM_VAR_FILE ?= terraform.tfvars
+SHELL_SPEC = bin/shellspec/shellspec
+TFSEC = bin/tfsec
 
 .DEFAULT_GOAL := help
 
@@ -42,30 +44,36 @@ lint: init ## Verifies Terraform syntax
 fmt: ## Reformats Terraform files accoring to standard
 	terraform fmt
 
-tfsec: ## Installs tfsec
-	curl -L "$$(curl -s https://api.github.com/repos/liamg/tfsec/releases/latest | grep -o -E "https://.+?-$(OS)-amd64(.exe)?")" > tfsec;\
-	chmod +x ./tfsec
+$(TFSEC): bin ## Installs tfsec
+	curl -L "$$(curl -s https://api.github.com/repos/liamg/tfsec/releases/latest | grep -o -E "https://.+?-$(OS)-amd64(.exe)?")" > $(TFSEC);\
+	chmod +x $(TFSEC)
 
 check-tfsec: ## Check if tfsec is installed
-	./tfsec --version
+	$(TFSEC) --version
 
-.PHONY: run-tfsec
-run-tfsec: tfsec check-tfsec ## Runs tfsec
-	./tfsec . -e AWS002,AWS017
+.PHONY: tfsec
+tfsec: $(TFSEC) check-tfsec ## Runs tfsec
+	$(TFSEC) . -e AWS002,AWS017
+
+bin: ## Create bin directory for test binaries
+	mkdir bin
+
+$(SHELL_SPEC): bin ## Installs shellspec into bin/shellspec
+	git clone https://github.com/shellspec/shellspec.git bin/shellspec
 
 .PHONY: test
-test: ## Runs ShellSpec tests
-	shellspec --format document --warning-as-failure
+test: $(SHELL_SPEC) ## Runs ShellSpec tests
+	$(SHELL_SPEC) --format document --warning-as-failure
 
 .PHONY: test-focus
-test-focus: ## Runs ShellSpec tests
-	shellspec --format document --warning-as-failure --focus
+test-focus: $(SHELL_SPEC) ## Runs ShellSpec tests
+	$(SHELL_SPEC) --format document --warning-as-failure --focus
 
 .PHONY: clean
 clean: ## Deletes temporary files
 	rm -rf report
 	rm -f jx-requirements.yml
-	rm -f tfsec
+	rm -rf bin
 
 .PHONY: markdown-table
 markdown-table: ## Creates markdown tables for in- and output of this module

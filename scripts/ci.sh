@@ -47,10 +47,5 @@ make init
 echo "Creating cluster ${CLUSTER_NAME}"
 make apply
 
-echo "Installing shellspec"
-pushd /var/tmp
-git clone https://github.com/shellspec/shellspec.git
-export PATH=/var/tmp/shellspec/bin:${PATH}
-popd
-
+echo "Running shellspec tests"
 make test

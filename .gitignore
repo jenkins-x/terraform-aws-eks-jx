@@ -38,7 +38,7 @@ kubeconfig*
 
 # Misc
 .DS_Store
-tfsec
+bin
 
 #Intellij
 .idea
