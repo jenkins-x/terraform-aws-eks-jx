@@ -178,6 +178,9 @@ variable "enable_node_group" {
 
 variable "enable_worker_group" {
   description = "Flag to enable worker group"
+  type        = bool
+  default     = true
+}
 
 variable "enable_key_rotation" {
   description = "Flag to enable kms key rotation"

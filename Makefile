@@ -1,3 +1,15 @@
+ifeq ($(OS),Windows_NT)
+    OS := windows
+else
+    UNAME_S := $(shell uname -s)
+    ifeq ($(UNAME_S),Linux)
+        OS := linux
+    endif
+    ifeq ($(UNAME_S),Darwin)
+        OS := darwin
+    endif
+endif
+
 SHELL_SPEC_DIR ?= /var/tmp
 
 .DEFAULT_GOAL := help
@@ -28,15 +40,15 @@ lint: init ## Verifies Terraform syntax
 fmt: ## Reformats Terraform files accoring to standard
 	terraform fmt
 
-install-tfsec: ##Installs tfsec
-	curl -L "$$(curl -s https://api.github.com/repos/liamg/tfsec/releases/latest | grep -o -E "https://.+?-linux-amd64")" > tfsec;\
+tfsec: ## Installs tfsec
+	curl -L "$$(curl -s https://api.github.com/repos/liamg/tfsec/releases/latest | grep -o -E "https://.+?-$(OS)-amd64(.exe)?")" > tfsec;\
 	chmod +x ./tfsec
 
-check-tfsec: # check if tfsec is installed
+check-tfsec: ## Check if tfsec is installed
 	./tfsec --version
 
-.PHONY: tfsec
-tfsec: install-tfsec check-tfsec #Runs tfsec
+.PHONY: run-tfsec
+run-tfsec: tfsec check-tfsec ## Runs tfsec
 	./tfsec . -e AWS002,AWS017
 
 .PHONY: test
@@ -46,8 +58,8 @@ test: ## Runs ShellSpec tests
 .PHONY: clean
 clean: ## Deletes temporary files
 	rm -rf report
-	rm jx-requirements.yml
-	rm ./tfsec
+	rm -f jx-requirements.yml
+	rm -f tfsec
 
 .PHONY: markdown-table
 markdown-table: ## Creates markdown tables for in- and output of this module
