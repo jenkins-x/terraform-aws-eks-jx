@@ -36,7 +36,9 @@ override.tf.json
 jx-requirements.yml
 kubeconfig*
 
+# Misc
 .DS_Store
+tfsec
 
 #Intellij
 .idea
