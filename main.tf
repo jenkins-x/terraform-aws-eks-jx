@@ -105,8 +105,3 @@ locals {
   compact_content = compact(local.split_content)
   content         = join("\n", local.compact_content)
 }
-
-resource "local_file" "jx-requirements" {
-  content  = "${local.content}\n"
-  filename = "${path.cwd}/jx-requirements.yml"
-}

@@ -29,7 +29,7 @@ variable "vault_user" {
 }
 
 variable "vault_url" {
-  description = "URL to an external Vault instance in case Jenkins X shall not create its own system Vault"
+  description = "URL to an external Vault instance in case Jenkins X does not create its own system Vault"
   type        = string
   default     = ""
 }
