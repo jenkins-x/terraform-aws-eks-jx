@@ -56,11 +56,11 @@ A default Jenkins X ready cluster can be provisioned by creating a _main.tf_ fil
 
 ```terraform
 module "eks-jx" {
-  source  = "jenkins-x/eks-jx/aws"
+  source = "jenkins-x/eks-jx/aws"
 }
 
 output "jx_requirements" {
-   value = module.eks-jx.jx_requirements
+  value = module.eks-jx.jx_requirements
 }
 
 output "vault_user_id" {
@@ -85,15 +85,13 @@ If you do not want Terraform to create a new IAM user or you do not have permiss
 
 ```terraform
 module "eks-jx" {
-  source  = "jenkins-x/eks-jx/aws"
-
-  output "jx_requirements" {
-    value = module.eks-jx.jx_requirements
-  }
-
-  vault_user="<your_vault_iam_username>"
+  source     = "jenkins-x/eks-jx/aws"
+  vault_user = "<your_vault_iam_username>"
 }
 ```
+
+You should have your [AWS CLI configured correctly](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).
+In addition, you should make sure to specify the region via the AWS_REGION environment variable. e.g. `export AWS_REGION=us-east-1`
 
 The IAM user does not need any permissions attached to it.
 For more information, refer to [Configuring Vault for EKS](https://jenkins-x.io/docs/install-setup/installing/boot/clouds/amazon/#configuring-vault-for-eks) in the Jenkins X documentation.
