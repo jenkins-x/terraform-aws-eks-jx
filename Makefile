@@ -44,8 +44,9 @@ lint: init ## Verifies Terraform syntax
 fmt: ## Reformats Terraform files accoring to standard
 	terraform fmt
 
+# There is a bug in the latest version which causes a panic.
 $(TFSEC): bin ## Installs tfsec
-	curl -L "$$(curl -s https://api.github.com/repos/liamg/tfsec/releases/latest | grep -o -E "https://.+?-$(OS)-amd64(.exe)?")" > $(TFSEC);\
+	curl -L "$$(curl -s https://api.github.com/repos/liamg/tfsec/releases/tags/v0.21.0 | grep -o -E "https://.+?-$(OS)-amd64(.exe)?")" > $(TFSEC);\
 	chmod +x $(TFSEC)
 
 check-tfsec: ## Check if tfsec is installed
@@ -53,7 +54,7 @@ check-tfsec: ## Check if tfsec is installed
 
 .PHONY: tfsec
 tfsec: $(TFSEC) check-tfsec ## Runs tfsec
-	$(TFSEC) . -e AWS002,AWS017
+	$(TFSEC) -e AWS002,AWS017
 
 bin: ## Create bin directory for test binaries
 	mkdir bin
