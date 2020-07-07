@@ -50,6 +50,9 @@ module "cluster" {
   node_group_disk_size      = var.node_group_disk_size
   enable_worker_group       = var.enable_worker_group
   cluster_in_private_subnet = var.cluster_in_private_subnet
+  map_accounts              = var.map_accounts
+  map_roles                 = var.map_roles
+  map_users                 = var.map_users
 }
 
 // ----------------------------------------------------------------------------

@@ -23,6 +23,7 @@ The module makes use of the [Terraform EKS cluster Module](https://github.com/te
     - [Configuring a Terraform backend](#configuring-a-terraform-backend)
     - [Using Spot Instances](#using-spot-instances)
     - [EKS node groups](#eks-node-groups)
+    - [AWS Auth](#aws-auth)
     - [Examples](#examples)
 - [FAQ: Frequently Asked Questions](#faq-frequently-asked-questions)
     - [IAM Roles for Service Accounts](#iam-roles-for-service-accounts)
@@ -141,6 +142,9 @@ The following sections provide a full list of configuration in- and output varia
 | enable\_tls | Flag to enable TLS in the final `jx-requirements.yml` file | `bool` | `false` | no |
 | enable\_worker\_group | Flag to enable worker group | `bool` | `true` | no |
 | force\_destroy | Flag to determine whether storage buckets get forcefully destroyed. If set to false, empty the bucket first in the aws s3 console, else terraform destroy will fail with BucketNotEmpty error | `bool` | `false` | no |
+| map\_accounts | Additional AWS account numbers to add to the aws-auth configmap. | `list(string)` | `[]` | no |
+| map\_roles | Additional IAM roles to add to the aws-auth configmap. | <pre>list(object({<br>    rolearn  = string<br>    username = string<br>    groups   = list(string)<br>  }))</pre> | `[]` | no |
+| map\_users | Additional IAM users to add to the aws-auth configmap. | <pre>list(object({<br>    userarn  = string<br>    username = string<br>    groups   = list(string)<br>  }))</pre> | `[]` | no |
 | max\_node\_count | The maximum number of worker nodes to use for the cluster | `number` | `5` | no |
 | min\_node\_count | The minimum number of worker nodes to use for the cluster | `number` | `3` | no |
 | node\_group\_ami | ami type for the node group worker intances | `string` | `"AL2_x86_64"` | no |
@@ -362,6 +366,83 @@ output "vault_user_secret" {
 :warning: **Note**: EKS node groups are supported in kubernetes v1.14+ and platform version eks.3
 
 :warning: **Note**: Spot instances are not supported for EKS node groups. Check this AWS [issue](https://github.com/aws/containers-roadmap/issues/583) for more details.
+
+### AWS Auth
+
+When running EKS, authentication for the cluster is controlled by a `configmap` called `aws-auth`. By default, that should look something like this:
+
+```
+apiVersion: v1
+data:
+  mapAccounts: |
+    []
+  mapRoles: |
+    - "groups":
+      - "system:bootstrappers"
+      - "system:nodes"
+      "rolearn": "arn:aws:iam::777777777777:role/project-eks-12345"
+      "username": "system:node:{{EC2PrivateDNSName}}"
+  mapUsers: |
+    []
+kind: ConfigMap
+metadata:
+  name: aws-auth
+  namespace: kube-system
+```
+
+When using this Terraform module, this AWS Auth configmap is generated for you via the EKS module that is used internally. Additional users, roles, and accounts may be mapped into this config map by providing the variables `map_users`, `map_roles` or `map_accounts` respectively.
+
+#### `map_users`
+
+To add an additional AWS IAM user named "patrick", you can create an `aws_iam_user` resource, and then use the `map_users` variable to allow Patrick to access EKS:
+
+```
+resource "aws_iam_user" "patrick" {
+  name = "patrick"
+}
+
+module "eks-jx" {
+  source  = "jenkins-x/eks-jx/aws"
+  map_users = [
+    {
+      userarn  = aws_iam_user.patrick.arn
+      username = aws_iam_user.patrick.name
+      groups   = ["system:masters"]
+    }
+  ]
+}
+```
+
+#### `map_roles`
+
+To map additional roles to the AWS Auth ConfigMap, use `map_roles`:
+
+```terraform
+module "eks-jx" {
+  source  = "jenkins-x/eks-jx/aws"
+  map_roles = [
+    {
+      rolearn  = "arn:aws:iam::66666666666:role/role1"
+      username = "role1"
+      groups   = ["system:masters"]
+    },
+  ]
+}
+```
+
+#### `map_accounts`
+
+To map additional accounts to the AWS Auth ConfigMap, use `map_accounts`:
+
+```terraform
+module "eks-jx" {
+  source  = "jenkins-x/eks-jx/aws"
+  map_accounts = [
+    "777777777777",
+    "888888888888",
+  ]
+}
+```
 
 ### Examples
 
