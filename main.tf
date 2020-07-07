@@ -47,6 +47,7 @@ module "cluster" {
   force_destroy             = var.force_destroy
   enable_spot_instances     = var.enable_spot_instances
   enable_node_group         = var.enable_node_group
+  node_group_disk_size      = var.node_group_disk_size
   enable_worker_group       = var.enable_worker_group
   cluster_in_private_subnet = var.cluster_in_private_subnet
 }
