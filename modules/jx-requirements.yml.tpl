@@ -35,7 +35,18 @@ vault:
     s3Bucket: "${vault_bucket}"
     s3Region: "${region}"
 %{ endif }
+%{ if enable_backup }
+velero:
+  namespace: ${velero_namespace}
+  schedule: "${velero_schedule}"
+  ttl: "${velero_ttl}"  
+%{ endif }
 storage:
+  backup:
+    enabled: ${enable_backup}
+%{ if enable_backup }
+    url: s3://${backup_bucket_url}
+%{ endif }
   logs:
     enabled: ${enable_logs_storage}
     url: s3://${logs_storage_bucket}

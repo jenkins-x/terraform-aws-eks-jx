@@ -35,6 +35,33 @@ variable "vault_url" {
 }
 
 // ----------------------------------------------------------------------------
+// Velero/backup
+// ----------------------------------------------------------------------------
+variable "enable_backup" {
+  description = "Whether or not Velero backups should be enabled"
+  type        = bool
+  default     = false
+}
+
+variable "velero_namespace" {
+  description = "Kubernetes namespace for Velero"
+  type        = string
+  default     = "velero"
+}
+
+variable "velero_schedule" {
+  description = "The Velero backup schedule in cron notation to be set in the Velero Schedule CRD (see [default-backup.yaml](https://github.com/jenkins-x/jenkins-x-boot-config/blob/master/systems/velero-backups/templates/default-backup.yaml))"
+  type        = string
+  default     = "0 * * * *"
+}
+
+variable "velero_ttl" {
+  description = "The the lifetime of a velero backup to be set in the Velero Schedule CRD (see [default-backup.yaml](https://github.com/jenkins-x/jenkins-x-boot-config/blob/master/systems/velero-backups/templates/default-backup))"
+  type        = string
+  default     = "720h0m0s"
+}
+
+// ----------------------------------------------------------------------------
 // Worker Nodes Variables
 // ----------------------------------------------------------------------------
 variable "desired_node_count" {

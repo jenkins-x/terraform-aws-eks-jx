@@ -68,6 +68,17 @@ module "vault" {
 }
 
 // ----------------------------------------------------------------------------
+// Setup all required resources for using Velero for cluster backups
+// ----------------------------------------------------------------------------
+module "backup" {
+  source = "./modules/backup"
+
+  enable_backup = var.enable_backup
+  cluster_name  = local.cluster_name
+  force_destroy = var.force_destroy
+}
+
+// ----------------------------------------------------------------------------
 // Setup all required Route 53 resources if External DNS / Cert Manager is enabled
 // ----------------------------------------------------------------------------
 module "dns" {
@@ -86,20 +97,29 @@ module "dns" {
 // ----------------------------------------------------------------------------
 locals {
   interpolated_content = templatefile("${path.module}/modules/jx-requirements.yml.tpl", {
-    cluster_name               = local.cluster_name
-    region                     = var.region
-    enable_logs_storage        = var.enable_logs_storage
-    logs_storage_bucket        = length(module.cluster.logs_jenkins_x) > 0 ? module.cluster.logs_jenkins_x[0] : ""
-    enable_reports_storage     = var.enable_reports_storage
-    reports_storage_bucket     = length(module.cluster.reports_jenkins_x) > 0 ? module.cluster.reports_jenkins_x[0] : ""
-    enable_repository_storage  = var.enable_repository_storage
-    repository_storage_bucket  = length(module.cluster.repository_jenkins_x) > 0 ? module.cluster.repository_jenkins_x[0] : ""
-    vault_kms_key              = module.vault.kms_vault_unseal
-    vault_bucket               = module.vault.vault_unseal_bucket
-    vault_dynamodb_table       = module.vault.vault_dynamodb_table
-    vault_user                 = var.vault_user
-    vault_url                  = var.vault_url
-    external_vault             = local.external_vault
+    cluster_name = local.cluster_name
+    region       = var.region
+    // Storage Buckets
+    enable_logs_storage       = var.enable_logs_storage
+    logs_storage_bucket       = length(module.cluster.logs_jenkins_x) > 0 ? module.cluster.logs_jenkins_x[0] : ""
+    enable_reports_storage    = var.enable_reports_storage
+    reports_storage_bucket    = length(module.cluster.reports_jenkins_x) > 0 ? module.cluster.reports_jenkins_x[0] : ""
+    enable_repository_storage = var.enable_repository_storage
+    repository_storage_bucket = length(module.cluster.repository_jenkins_x) > 0 ? module.cluster.repository_jenkins_x[0] : ""
+    // Vault
+    vault_kms_key        = module.vault.kms_vault_unseal
+    vault_bucket         = module.vault.vault_unseal_bucket
+    vault_dynamodb_table = module.vault.vault_dynamodb_table
+    vault_user           = var.vault_user
+    vault_url            = var.vault_url
+    external_vault       = local.external_vault
+    // Velero
+    enable_backup     = var.enable_backup
+    backup_bucket_url = module.backup.backup_bucket_url
+    velero_namespace  = var.velero_namespace
+    velero_schedule   = var.velero_schedule
+    velero_ttl        = var.velero_ttl
+    // DNS
     enable_external_dns        = var.enable_external_dns
     domain                     = module.dns.domain
     enable_tls                 = var.enable_tls

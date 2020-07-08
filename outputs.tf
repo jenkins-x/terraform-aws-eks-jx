@@ -7,8 +7,13 @@ output "jx_requirements" {
 }
 
 // ----------------------------------------------------------------------------
-// Storage (logs, reports, repo)
+// Storage (backup, logs, reports, repo)
 // ----------------------------------------------------------------------------
+output "backup_bucket_url" {
+  value       = module.backup.backup_bucket_url
+  description = "The bucket where backups from velero will be stored"
+}
+
 output "lts_logs_bucket" {
   value       = length(module.cluster.logs_jenkins_x) > 0 ? module.cluster.logs_jenkins_x[0] : ""
   description = "The bucket where logs from builds will be stored"
