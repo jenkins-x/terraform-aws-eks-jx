@@ -18,6 +18,7 @@ The module makes use of the [Terraform EKS cluster Module](https://github.com/te
     - [Vault](#vault)
     - [ExternalDNS](#externaldns)
     - [cert-manager](#cert-manager)
+    - [Velero Backups](#velero-backups)
     - [Running `jx boot`](#running-jx-boot)
     - [Production cluster considerations](#production-cluster-considerations)
     - [Configuring a Terraform backend](#configuring-a-terraform-backend)
@@ -253,6 +254,26 @@ If you use staging, you will receive self-signed certificates, but you are not r
 You can choose to use the `production` environment with the `production_letsencrypt` variable:
 
 You need to provide a valid email to register your domain in LetsEncrypt with `tls_email`.
+
+### Velero Backups
+
+This module can set up the resources required for running backups with Velero on your cluster by setting the flag `enable_backup` to `true`.
+
+#### Enabling backups on pre-existing clusters
+
+If your cluster is pre-existing and already contains a namespace named `velero`, then enabling backups will initially fail with an error that you are trying to create a namespace which already exists.
+
+```
+Error: namespaces "velero" already exists
+```
+
+If you get this error, consider it a warning - you may then adjust accordingly by importing that namespace to be managed by Terraform, deleting the previously existing ns if it wasn't actually in use, or setting `enable_backup` back to `false` to continue managing Velero in the previous manner.
+
+The recommended way is to import the namespace and then run another Terraform plan and apply:
+
+```
+terraform import module.eks-jx.module.backup.kubernetes_namespace.velero_namespace velero
+```
 
 ### Running `jx boot`
 
