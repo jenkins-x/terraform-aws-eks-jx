@@ -49,6 +49,16 @@ variable "vpc_cidr_block" {
   default = "10.0.0.0/16"
 }
 
+variable "enable_nat_gateway" {
+  type    = bool
+  default = false
+}
+
+variable "single_nat_gateway" {
+  type    = bool
+  default = false
+}
+
 variable "spot_price" {
   description = "The spot price ceiling for spot instances"
   type        = string

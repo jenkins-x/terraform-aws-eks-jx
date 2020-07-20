@@ -44,6 +44,8 @@ module "cluster" {
   public_subnets            = var.public_subnets
   private_subnets           = var.private_subnets
   vpc_cidr_block            = var.vpc_cidr_block
+  enable_nat_gateway        = var.enable_nat_gateway
+  single_nat_gateway        = var.single_nat_gateway
   force_destroy             = var.force_destroy
   enable_spot_instances     = var.enable_spot_instances
   enable_node_group         = var.enable_node_group

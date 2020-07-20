@@ -37,6 +37,8 @@ module "vpc" {
   public_subnets       = var.public_subnets
   private_subnets      = var.private_subnets
   enable_dns_hostnames = true
+  enable_nat_gateway   = var.enable_nat_gateway
+  single_nat_gateway   = var.single_nat_gateway
 
   tags = {
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
@@ -45,6 +47,11 @@ module "vpc" {
   public_subnet_tags = {
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
     "kubernetes.io/role/elb"                    = "1"
+  }
+
+  private_subnet_tags = {
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+    "kubernetes.io/role/internal-elb"           = "1"
   }
 }
 
