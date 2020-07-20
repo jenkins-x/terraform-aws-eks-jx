@@ -124,8 +124,9 @@ The following sections provide a full list of configuration in- and output varia
 #### Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:-----:|
+|------|-------------|------|---------|:--------:|
 | apex\_domain | The main domain to either use directly or to configure a subdomain from | `string` | `""` | no |
+| cluster\_in\_private\_subnet | Flag to enable installation of cluster on private subnets | `bool` | `false` | no |
 | cluster\_name | Variable to provide your desired name for the cluster. The script will create a random name if this is empty | `string` | `""` | no |
 | cluster\_version | Kubernetes version to use for the EKS cluster. | `string` | `"1.15"` | no |
 | create\_and\_configure\_subdomain | Flag to create an NS record set for the subdomain in the apex domain's Hosted Zone | `bool` | `false` | no |
@@ -133,11 +134,11 @@ The following sections provide a full list of configuration in- and output varia
 | enable\_external\_dns | Flag to enable or disable External DNS in the final `jx-requirements.yml` file | `bool` | `false` | no |
 | enable\_key\_rotation | Flag to enable kms key rotation | `bool` | `true` | no |
 | enable\_logs\_storage | Flag to enable or disable long term storage for logs | `bool` | `true` | no |
+| enable\_nat\_gateway | Should be true if you want to provision NAT Gateways for each of your private networks | `bool` | `false` | no |
 | enable\_node\_group | Flag to enable node group | `bool` | `false` | no |
 | enable\_reports\_storage | Flag to enable or disable long term storage for reports | `bool` | `true` | no |
 | enable\_repository\_storage | Flag to enable or disable the repository bucket storage | `bool` | `true` | no |
 | enable\_spot\_instances | Flag to enable spot instances | `bool` | `false` | no |
-| cluster\_in\_private\_subnet | Flag to enable installation of cluster on private subnets | `bool` | `false` | no |
 | enable\_tls | Flag to enable TLS in the final `jx-requirements.yml` file | `bool` | `false` | no |
 | enable\_worker\_group | Flag to enable worker group | `bool` | `true` | no |
 | force\_destroy | Flag to determine whether storage buckets get forcefully destroyed. If set to false, empty the bucket first in the aws s3 console, else terraform destroy will fail with BucketNotEmpty error | `bool` | `false` | no |
@@ -149,8 +150,11 @@ The following sections provide a full list of configuration in- and output varia
 | node\_group\_ami | ami type for the node group worker intances | `string` | `"AL2_x86_64"` | no |
 | node\_group\_disk\_size | node group worker disk size | `string` | `"50"` | no |
 | node\_machine\_type | The instance type to use for the cluster's worker nodes | `string` | `"m5.large"` | no |
+| private\_subnets | The private subnet CIDR block to use in the created VPC | `list(string)` | <pre>[<br>  "10.0.4.0/24",<br>  "10.0.5.0/24",<br>  "10.0.6.0/24"<br>]</pre> | no |
 | production\_letsencrypt | Flag to use the production environment of letsencrypt in the `jx-requirements.yml` file | `bool` | `false` | no |
+| public\_subnets | The public subnet CIDR block to use in the created VPC | `list(string)` | <pre>[<br>  "10.0.1.0/24",<br>  "10.0.2.0/24",<br>  "10.0.3.0/24"<br>]</pre> | no |
 | region | The region to create the resources into | `string` | `"us-east-1"` | no |
+| single\_nat\_gateway | Should be true if you want to provision a single shared NAT Gateway across all of your private networks | `bool` | `false` | no |
 | spot\_price | The spot price ceiling for spot instances | `string` | `"0.1"` | no |
 | subdomain | The subdomain to be added to the apex domain. If subdomain is set, it will be appended to the apex domain in  `jx-requirements-eks.yml` file | `string` | `""` | no |
 | tls\_email | The email to register the LetsEncrypt certificate with. Added to the `jx-requirements.yml` file | `string` | `""` | no |
@@ -158,8 +162,6 @@ The following sections provide a full list of configuration in- and output varia
 | vault\_user | The AWS IAM Username whose credentials will be used to authenticate the Vault pods against AWS | `string` | `""` | no |
 | vpc\_cidr\_block | The vpc CIDR block | `string` | `"10.0.0.0/16"` | no |
 | vpc\_name | The name of the VPC to be created for the cluster | `string` | `"tf-vpc-eks"` | no |
-| public\_subnets | The public subnet CIDR block to use in the created VPC | `list(string)` | <pre>[<br>  "10.0.1.0/24",<br>  "10.0.2.0/24",<br>  "10.0.3.0/24"<br>]</pre> | no |
-| private\_subnets | The private subnet CIDR block to use in the created VPC. EKS will be deployed here by default. Use `enable_public_subnet` to override.  | `list(string)` | <pre>[<br>  "10.0.3.0/24",<br>  "10.0.4.0/24",<br>  "10.0.5.0/24"<br>]</pre> | no |
 
 #### Outputs
 
