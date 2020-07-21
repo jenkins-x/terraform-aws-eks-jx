@@ -16,18 +16,18 @@ data "aws_iam_policy_document" "tekton-bot-policy" {
     effect = "Allow"
 
     actions = [
-          "cloudformation:ListStacks",
-          "cloudformation:DescribeStacks",
-          "cloudformation:CreateStack",
-          "cloudformation:DeleteStack",
-          "eks:*",
-          "s3:*",
-          "ecr:*",      
-          "iam:DetachRolePolicy",
-          "iam:GetPolicy",
-          "iam:CreatePolicy",
-          "iam:DeleteRole",
-          "iam:GetOpenIDConnectProvider",
+      "cloudformation:ListStacks",
+      "cloudformation:DescribeStacks",
+      "cloudformation:CreateStack",
+      "cloudformation:DeleteStack",
+      "eks:*",
+      "s3:*",
+      "ecr:*",
+      "iam:DetachRolePolicy",
+      "iam:GetPolicy",
+      "iam:CreatePolicy",
+      "iam:DeleteRole",
+      "iam:GetOpenIDConnectProvider",
     ]
 
     resources = ["*"]
@@ -57,7 +57,7 @@ resource "kubernetes_service_account" "tekton-bot" {
     null_resource.kubeconfig
   ]
   metadata {
-    name = "tekton-bot"
+    name      = "tekton-bot"
     namespace = kubernetes_namespace.jx.id
     annotations = {
       "eks.amazonaws.com/role-arn" = module.iam_assumable_role_tekton_bot.this_iam_role_arn
@@ -80,7 +80,7 @@ data "aws_iam_policy_document" "external-dns-policy" {
     effect = "Allow"
 
     actions = [
-          "route53:ChangeResourceRecordSets",
+      "route53:ChangeResourceRecordSets",
     ]
 
     resources = ["arn:aws:route53:::hostedzone/*"]
@@ -90,8 +90,8 @@ data "aws_iam_policy_document" "external-dns-policy" {
     effect = "Allow"
 
     actions = [
-          "route53:ListHostedZones",
-          "route53:ListResourceRecordSets",
+      "route53:ListHostedZones",
+      "route53:ListResourceRecordSets",
     ]
 
     resources = ["*"]
@@ -121,7 +121,7 @@ resource "kubernetes_service_account" "exdns-external-dns" {
     null_resource.kubeconfig
   ]
   metadata {
-    name = "exdns-external-dns"
+    name      = "exdns-external-dns"
     namespace = kubernetes_namespace.jx.id
     annotations = {
       "eks.amazonaws.com/role-arn" = module.iam_assumable_role_external_dns.this_iam_role_arn
@@ -145,7 +145,7 @@ data "aws_iam_policy_document" "cert-manager-policy" {
     effect = "Allow"
 
     actions = [
-          "route53:GetChange",
+      "route53:GetChange",
     ]
 
     resources = ["arn:aws:route53:::change/*"]
@@ -155,17 +155,17 @@ data "aws_iam_policy_document" "cert-manager-policy" {
     effect = "Allow"
 
     actions = [
-          "route53:ChangeResourceRecordSets",
+      "route53:ChangeResourceRecordSets",
     ]
 
     resources = ["arn:aws:route53:::hostedzone/*"]
   }
 
-    statement {
+  statement {
     effect = "Allow"
 
     actions = [
-          "route53:ListHostedZonesByName",
+      "route53:ListHostedZonesByName",
     ]
 
     resources = ["*"]
@@ -194,7 +194,7 @@ resource "kubernetes_service_account" "cm-cert-manager" {
     null_resource.kubeconfig
   ]
   metadata {
-    name = "cm-cert-manager"
+    name      = "cm-cert-manager"
     namespace = kubernetes_namespace.cert_manager.id
     annotations = {
       "eks.amazonaws.com/role-arn" = module.iam_assumable_role_cert_manager.this_iam_role_arn
@@ -229,7 +229,7 @@ resource "kubernetes_service_account" "cm-cainjector" {
     null_resource.kubeconfig
   ]
   metadata {
-    name = "cm-cainjector"
+    name      = "cm-cainjector"
     namespace = kubernetes_namespace.cert_manager.id
     annotations = {
       "eks.amazonaws.com/role-arn" = module.iam_assumable_role_cm_cainjector.this_iam_role_arn
@@ -263,7 +263,7 @@ resource "kubernetes_service_account" "jenkins-x-controllerbuild" {
     null_resource.kubeconfig
   ]
   metadata {
-    name = "jenkins-x-controllerbuild"
+    name      = "jenkins-x-controllerbuild"
     namespace = kubernetes_namespace.jx.id
     annotations = {
       "eks.amazonaws.com/role-arn" = module.iam_assumable_role_controllerbuild.this_iam_role_arn
@@ -297,7 +297,7 @@ resource "kubernetes_service_account" "jxui" {
     null_resource.kubeconfig
   ]
   metadata {
-    name = "jxui"
+    name      = "jxui"
     namespace = kubernetes_namespace.jx.id
     annotations = {
       "eks.amazonaws.com/role-arn" = module.iam_assumable_role_jxui.this_iam_role_arn

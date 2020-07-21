@@ -8,5 +8,5 @@ resource "random_string" "suffix" {
 }
 
 locals {
-    vault_seed = random_string.suffix.result
+  vault_seed = random_string.suffix.result
 }

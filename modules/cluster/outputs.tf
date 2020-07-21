@@ -1,29 +1,29 @@
 
 output "jx_namespace" {
-    value = kubernetes_namespace.jx
+  value = kubernetes_namespace.jx
 }
 
 output "cm_namespace" {
-    value = kubernetes_namespace.cert_manager
+  value = kubernetes_namespace.cert_manager
 }
 
 output "cluster_oidc_issuer_url" {
-    value = local.oidc_provider_url
+  value = local.oidc_provider_url
 }
 
 // ----------------------------------------------------------------------------
 // Long Term Storage S3 Buckets (Logs, Reports, Repository)
 // ----------------------------------------------------------------------------
 output "logs_jenkins_x" {
-    value = aws_s3_bucket.logs_jenkins_x.*.id
+  value = aws_s3_bucket.logs_jenkins_x.*.id
 }
 
 output "reports_jenkins_x" {
-    value = aws_s3_bucket.reports_jenkins_x.*.id
+  value = aws_s3_bucket.reports_jenkins_x.*.id
 }
 
 output "repository_jenkins_x" {
-    value = aws_s3_bucket.repository_jenkins_x.*.id
+  value = aws_s3_bucket.repository_jenkins_x.*.id
 }
 
 // ----------------------------------------------------------------------------

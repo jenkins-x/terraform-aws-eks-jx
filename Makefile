@@ -34,15 +34,17 @@ destroy: ## Destroys Terraform infrastructure w/ auto approve
 init: ## Init the terraform module
 	terraform init
 
-.PHONY: lint 
-lint: init ## Verifies Terraform syntax
+.PHONY: tf-version
+tf-version: ## checks the terraform version
 	terraform version
-	terraform fmt -check -diff
+
+.PHONY: lint
+lint: init tf-version fmt ## Verifies Terraform syntax
 	terraform validate
 
 .PHONY: fmt
 fmt: ## Reformats Terraform files accoring to standard
-	terraform fmt
+	terraform fmt -check -diff -recursive
 
 # There is a bug in the latest version which causes a panic.
 $(TFSEC): bin ## Installs tfsec
