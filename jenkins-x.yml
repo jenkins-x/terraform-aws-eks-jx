@@ -23,7 +23,7 @@ pipelineConfig:
                       path: credentials
             containerOptions:
               volumeMounts:
-                - mountPath: /builder/home/.aws
+                - mountPath: /tekton/home/.aws
                   name: aws-creds
           steps:
           - name: terraform-lint
