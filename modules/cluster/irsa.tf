@@ -43,7 +43,7 @@ resource "aws_iam_policy" "tekton-bot" {
 
 module "iam_assumable_role_tekton_bot" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v2.6.0"
+  version                       = "~> v2.13.0"
   create_role                   = true
   role_name                     = substr("tf-${var.cluster_name}-sa-role-tekton-bot-${local.generated_seed}", 0, 60)
   provider_url                  = local.oidc_provider_url
@@ -107,7 +107,7 @@ resource "aws_iam_policy" "external-dns" {
 
 module "iam_assumable_role_external_dns" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v2.6.0"
+  version                       = "~> v2.13.0"
   create_role                   = true
   role_name                     = substr("tf-${var.cluster_name}-sa-role-external_dns-${local.generated_seed}", 0, 60)
   provider_url                  = local.oidc_provider_url
@@ -180,7 +180,7 @@ resource "aws_iam_policy" "cert-manager" {
 
 module "iam_assumable_role_cert_manager" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v2.6.0"
+  version                       = "~> v2.13.0"
   create_role                   = true
   role_name                     = substr("tf-${var.cluster_name}-sa-role-cert_manager-${local.generated_seed}", 0, 60)
   provider_url                  = local.oidc_provider_url
@@ -215,7 +215,7 @@ resource "kubernetes_service_account" "cm-cert-manager" {
 // ----------------------------------------------------------------------------
 module "iam_assumable_role_cm_cainjector" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v2.6.0"
+  version                       = "~> v2.13.0"
   create_role                   = true
   role_name                     = substr("tf-${var.cluster_name}-sa-role-cm_cainjector-${local.generated_seed}", 0, 60)
   provider_url                  = local.oidc_provider_url
@@ -249,7 +249,7 @@ resource "kubernetes_service_account" "cm-cainjector" {
 // ----------------------------------------------------------------------------
 module "iam_assumable_role_controllerbuild" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v2.6.0"
+  version                       = "~> v2.13.0"
   create_role                   = true
   role_name                     = substr("tf-${var.cluster_name}-sa-role-ctrlb-${local.generated_seed}", 0, 60)
   provider_url                  = local.oidc_provider_url
@@ -283,7 +283,7 @@ resource "kubernetes_service_account" "jenkins-x-controllerbuild" {
 // ----------------------------------------------------------------------------
 module "iam_assumable_role_jxui" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v2.6.0"
+  version                       = "~> v2.13.0"
   create_role                   = true
   role_name                     = substr("tf-${var.cluster_name}-sa-role-jxui-${local.generated_seed}", 0, 60)
   provider_url                  = local.oidc_provider_url
