@@ -2,6 +2,10 @@
 // If the Vault IAM user does exist create one
 // See https://www.terraform.io/docs/providers/aws/r/iam_user.html
 // ----------------------------------------------------------------------------
+locals {
+  encryption_algo = var.use_kms_s3 ? "aws:kms" : "AES256"
+}
+
 resource "aws_iam_user" "jenkins-x-vault" {
   count = var.external_vault == false && var.vault_user == "" ? 1 : 0
 
@@ -37,6 +41,14 @@ resource "aws_s3_bucket" "vault-unseal-bucket" {
   }
   versioning {
     enabled = false
+  }
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm     = local.encryption_algo
+        kms_master_key_id = var.s3_kms_arn
+      }
+    }
   }
   force_destroy = var.force_destroy
 }

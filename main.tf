@@ -39,6 +39,8 @@ module "cluster" {
   volume_type               = var.volume_type
   volume_size               = var.volume_size
   iops                      = var.iops
+  use_kms_s3                = var.use_kms_s3
+  s3_kms_arn                = var.s3_kms_arn
 }
 
 // ----------------------------------------------------------------------------

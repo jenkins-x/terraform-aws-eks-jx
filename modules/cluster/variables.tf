@@ -148,6 +148,12 @@ variable "cluster_in_private_subnet" {
   default     = false
 }
 
+variable "use_kms_s3" {
+  description = "Flag to determine whether kms should be used for encrypting s3 buckets"
+  type        = bool
+  default     = false
+}
+
 variable "map_accounts" {
   description = "Additional AWS account numbers to add to the aws-auth configmap."
   type        = list(string)
@@ -178,4 +184,10 @@ variable "enable_key_name" {
   description = "Flag to enable ssh key pair name"
   type        = bool
   default     = false
+}
+
+variable "s3_kms_arn" {
+  description = "ARN of the kms key used for encrypting s3 buckets"
+  type        = string
+  default     = ""
 }
