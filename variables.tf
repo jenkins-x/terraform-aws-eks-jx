@@ -109,6 +109,7 @@ variable "node_group_disk_size" {
 variable "key_name" {
   description = "The ssh key pair name"
   type        = string
+  default     = ""
 }
 
 variable "volume_type" {
