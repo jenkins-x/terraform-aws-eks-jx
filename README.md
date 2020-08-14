@@ -46,7 +46,7 @@ For more information about modules refer to the Terraform [documentation](https:
 This Terraform module allows you to create an [EKS](https://aws.amazon.com/eks/) cluster ready for the installation of Jenkins X.
 You need the following binaries locally installed and configured on your _PATH_:
 
-- `terraform` (~> 0.12.17)
+- `terraform` (=> 0.12.17, < 0.14.0)
 - `kubectl` (>=1.10)
 - `aws-iam-authenticator`
 - `wget`
@@ -471,13 +471,15 @@ module "eks-jx" {
 ```
 
 ### Using SSH Key Pair
-Import a key pair or use an existing one and take note of the name. Set `key_name` and set `enable_key_pair` to `true`.
+Import a key pair or use an existing one and take note of the name.
+Set `key_name` and set `enable_key_name` to `true`.
 
 ### Using different EBS Volume type and size
 Set `volume_type` to either `standard`, `gp2` or `io1` and `volume_size` to the desired size in GB. If chosing `io1` set desired `iops`.
 
 #### Resizing a disk on existing nodes
-The existing nodes needs to be terminated and replaced with new ones if disk is needed to be resized. You need to execute the following command before `terraform apply` in order to replace the Auto Scaling Launch Configuration.
+The existing nodes needs to be terminated and replaced with new ones if disk is needed to be resized.
+You need to execute the following command before `terraform apply` in order to replace the Auto Scaling Launch Configuration.
 
 `terraform taint module.eks-jx.module.cluster.module.eks.aws_launch_configuration.workers[0]`
 
