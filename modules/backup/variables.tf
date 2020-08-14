@@ -26,3 +26,15 @@ variable "force_destroy" {
   type        = bool
   default     = false
 }
+
+variable "use_kms_s3" {
+  description = "Flag to determine whether kms should be used for encrypting s3 buckets"
+  type        = bool
+  default     = false
+}
+
+variable "s3_kms_arn" {
+  description = "ARN of the kms key used for encrypting s3 buckets"
+  type        = string
+  default     = ""
+}

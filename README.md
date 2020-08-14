@@ -76,6 +76,14 @@ output "vault_user_secret" {
 
 ```
 
+All s3 buckets created by the module use Server-Side Encryption with Amazon S3-Managed Encryption Keys 
+(SSE-S3) by default.
+You can set the value of `use_kms_s3` to true to use server-side encryption with AWS KMS (SSE-KMS).
+If you don't specify the value of `s3_kms_arn`, then the default aws managed cmk is used (aws/s3) 
+
+:warning: **Note**: Using AWS KMS with customer managed keys has cost 
+[considerations](https://aws.amazon.com/blogs/storage/changing-your-amazon-s3-encryption-from-s3-managed-encryption-sse-s3-to-aws-key-management-service-sse-kms/).
+
 Due to the Vault issue [7450](https://github.com/hashicorp/vault/issues/7450), this Terraform module needs for now to create a new IAM user for installing Vault.
 It also creates an IAM access key whose id and secret are defined in the output above.
 You need the id and secret for running [`jx boot`](#running-jx-boot).
@@ -131,9 +139,10 @@ The following sections provide a full list of configuration in- and output varia
 | cluster\_version | Kubernetes version to use for the EKS cluster. | `string` | `"1.15"` | no |
 | create\_and\_configure\_subdomain | Flag to create an NS record set for the subdomain in the apex domain's Hosted Zone | `bool` | `false` | no |
 | desired\_node\_count | The number of worker nodes to use for the cluster | `number` | `3` | no |
+| enable\_backup | Whether or not Velero backups should be enabled | `bool` | `false` | no |
 | enable\_external\_dns | Flag to enable or disable External DNS in the final `jx-requirements.yml` file | `bool` | `false` | no |
+| enable\_key\_name | Flag to enable ssh key pair name | `bool` | `false` | no |
 | enable\_key\_rotation | Flag to enable kms key rotation | `bool` | `true` | no |
-| enable\_key\_name | Flag to enable SSH Key Pair name | `bool` | `false` | no |
 | enable\_logs\_storage | Flag to enable or disable long term storage for logs | `bool` | `true` | no |
 | enable\_nat\_gateway | Should be true if you want to provision NAT Gateways for each of your private networks | `bool` | `false` | no |
 | enable\_node\_group | Flag to enable node group | `bool` | `false` | no |
@@ -143,6 +152,8 @@ The following sections provide a full list of configuration in- and output varia
 | enable\_tls | Flag to enable TLS in the final `jx-requirements.yml` file | `bool` | `false` | no |
 | enable\_worker\_group | Flag to enable worker group | `bool` | `true` | no |
 | force\_destroy | Flag to determine whether storage buckets get forcefully destroyed. If set to false, empty the bucket first in the aws s3 console, else terraform destroy will fail with BucketNotEmpty error | `bool` | `false` | no |
+| iops | The IOPS value | `number` | `0` | no |
+| key\_name | The ssh key pair name | `string` | n/a | yes |
 | map\_accounts | Additional AWS account numbers to add to the aws-auth configmap. | `list(string)` | `[]` | no |
 | map\_roles | Additional IAM roles to add to the aws-auth configmap. | <pre>list(object({<br>    rolearn  = string<br>    username = string<br>    groups   = list(string)<br>  }))</pre> | `[]` | no |
 | map\_users | Additional IAM users to add to the aws-auth configmap. | <pre>list(object({<br>    userarn  = string<br>    username = string<br>    groups   = list(string)<br>  }))</pre> | `[]` | no |
@@ -155,16 +166,19 @@ The following sections provide a full list of configuration in- and output varia
 | production\_letsencrypt | Flag to use the production environment of letsencrypt in the `jx-requirements.yml` file | `bool` | `false` | no |
 | public\_subnets | The public subnet CIDR block to use in the created VPC | `list(string)` | <pre>[<br>  "10.0.1.0/24",<br>  "10.0.2.0/24",<br>  "10.0.3.0/24"<br>]</pre> | no |
 | region | The region to create the resources into | `string` | `"us-east-1"` | no |
+| s3\_kms\_arn | ARN of the kms key used for encrypting s3 buckets | `string` | `""` | no |
 | single\_nat\_gateway | Should be true if you want to provision a single shared NAT Gateway across all of your private networks | `bool` | `false` | no |
 | spot\_price | The spot price ceiling for spot instances | `string` | `"0.1"` | no |
-| key\_name | The SSH Key Pair name | `string` | `""` | no |
-| volume\_type | The EBS Volume type | `string` | `"gp2"` | no |
-| volume\_size | The EBS Volume size in GB | `number` | `10` | no |
-| iops | The IOPS if chosen `volume_type` is `io1` | `number` | `0` | no |
 | subdomain | The subdomain to be added to the apex domain. If subdomain is set, it will be appended to the apex domain in  `jx-requirements-eks.yml` file | `string` | `""` | no |
 | tls\_email | The email to register the LetsEncrypt certificate with. Added to the `jx-requirements.yml` file | `string` | `""` | no |
+| use\_kms\_s3 | Flag to determine whether kms should be used for encrypting s3 buckets | `bool` | `false` | no |
 | vault\_url | URL to an external Vault instance in case Jenkins X does not create its own system Vault | `string` | `""` | no |
 | vault\_user | The AWS IAM Username whose credentials will be used to authenticate the Vault pods against AWS | `string` | `""` | no |
+| velero\_namespace | Kubernetes namespace for Velero | `string` | `"velero"` | no |
+| velero\_schedule | The Velero backup schedule in cron notation to be set in the Velero Schedule CRD (see [default-backup.yaml](https://github.com/jenkins-x/jenkins-x-boot-config/blob/master/systems/velero-backups/templates/default-backup.yaml)) | `string` | `"0 * * * *"` | no |
+| velero\_ttl | The the lifetime of a velero backup to be set in the Velero Schedule CRD (see [default-backup.yaml](https://github.com/jenkins-x/jenkins-x-boot-config/blob/master/systems/velero-backups/templates/default-backup)) | `string` | `"720h0m0s"` | no |
+| volume\_size | The volume size in GB | `number` | `10` | no |
+| volume\_type | The volume type to use. Can be standard, gp2 or io1 | `string` | `"gp2"` | no |
 | vpc\_cidr\_block | The vpc CIDR block | `string` | `"10.0.0.0/16"` | no |
 | vpc\_name | The name of the VPC to be created for the cluster | `string` | `"tf-vpc-eks"` | no |
 
@@ -172,6 +186,7 @@ The following sections provide a full list of configuration in- and output varia
 
 | Name | Description |
 |------|-------------|
+| backup\_bucket\_url | The bucket where backups from velero will be stored |
 | cert\_manager\_iam\_role | The IAM Role that the Cert Manager pod will assume to authenticate |
 | cluster\_name | The name of the created cluster |
 | cm\_cainjector\_iam\_role | The IAM Role that the CM CA Injector pod will assume to authenticate |
@@ -188,6 +203,7 @@ The following sections provide a full list of configuration in- and output varia
 | vault\_unseal\_bucket | The Vault storage bucket |
 | vault\_user\_id | The Vault IAM user id |
 | vault\_user\_secret | The Vault IAM user secret |
+
 
 ### Long Term Storage
 

@@ -1,4 +1,4 @@
-module "jx-eks" {
+module "eks-jx" {
   source = "jenkins-x/eks-jx/aws"
   map_users = [
     {

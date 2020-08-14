@@ -5,12 +5,24 @@
 // https://www.terraform.io/docs/providers/aws/r/s3_bucket.html
 // https://github.com/vmware-tanzu/velero-plugin-for-aws#create-s3-bucket
 // ----------------------------------------------------------------------------
+locals {
+  encryption_algo = var.use_kms_s3 ? "aws:kms" : "AES256"
+}
+
 resource "aws_s3_bucket" "backup_bucket" {
   count         = var.enable_backup ? 1 : 0
   bucket_prefix = "backup-${var.cluster_name}-"
   acl           = "private"
   tags = {
     Owner = "Jenkins-x"
+  }
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm     = local.encryption_algo
+        kms_master_key_id = var.s3_kms_arn
+      }
+    }
   }
   force_destroy = var.force_destroy
 }
@@ -72,7 +84,7 @@ data "aws_iam_policy_document" "velero" {
       "s3:ListBucket"
     ]
 
-    resources = ["${aws_s3_bucket.backup_bucket[0].arn}"]
+    resources = [aws_s3_bucket.backup_bucket[0].arn]
   }
 }
 
