@@ -10,9 +10,7 @@ else
     endif
 endif
 
-SHELL_SPEC_DIR ?= /var/tmp
 TERRAFORM_VAR_FILE ?= terraform.tfvars
-SHELL_SPEC = bin/shellspec/shellspec
 TFSEC = bin/tfsec
 
 .DEFAULT_GOAL := help
@@ -61,16 +59,9 @@ tfsec: $(TFSEC) check-tfsec ## Runs tfsec
 bin: ## Create bin directory for test binaries
 	mkdir bin
 
-$(SHELL_SPEC): bin ## Installs shellspec into bin/shellspec
-	git clone https://github.com/shellspec/shellspec.git bin/shellspec
-
 .PHONY: test
-test: $(SHELL_SPEC) ## Runs ShellSpec tests
-	$(SHELL_SPEC) --format document --warning-as-failure
-
-.PHONY: test-focus
-test-focus: $(SHELL_SPEC) ## Runs ShellSpec tests
-	$(SHELL_SPEC) --format document --warning-as-failure --focus
+test: ## Runs terratest
+	cd test && AWS_REGION=us-east-1 go test -timeout 1h -v
 
 .PHONY: clean
 clean: ## Deletes temporary files
