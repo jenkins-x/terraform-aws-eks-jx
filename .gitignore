@@ -5,6 +5,10 @@
 *.tfstate
 *.tfstate.*
 
+# planfiles
+*.tfplan
+*.tfplan.*
+
 # Terraform variable file
 terraform.tfvars 
 

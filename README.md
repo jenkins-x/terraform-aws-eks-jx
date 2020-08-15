@@ -30,7 +30,7 @@ The module makes use of the [Terraform EKS cluster Module](https://github.com/te
     - [Using SSH Key Pair](#using-ssh-key-pair)
     - [Using different EBS Volume type and size](#using-different-ebs-volume-type-and-size)
     - [Resizing a disk on existing nodes](#resizing-a-disk-on-existing-nodes)
-    - [Support for JX3](#support for JX3)
+    - [Support for JX3](#support-for-jx3)
     - [Examples](#examples)
 - [FAQ: Frequently Asked Questions](#faq-frequently-asked-questions)
     - [IAM Roles for Service Accounts](#iam-roles-for-service-accounts)

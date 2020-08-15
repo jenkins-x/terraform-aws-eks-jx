@@ -30,31 +30,31 @@ output "repository_jenkins_x" {
 // Generated IAM Roles
 // ----------------------------------------------------------------------------
 output "cert_manager_iam_role" {
-  value       = module.iam_assumable_role_cert_manager
+  value       = module.iam_assumable_role_cert_manager.this_iam_role_name
   description = "The IAM Role that the Cert Manager pod will assume to authenticate"
 }
 
 output "tekton_bot_iam_role" {
-  value       = module.iam_assumable_role_tekton_bot
+  value       = module.iam_assumable_role_tekton_bot.this_iam_role_name
   description = "The IAM Role that the build pods will assume to authenticate"
 }
 
 output "external_dns_iam_role" {
-  value       = module.iam_assumable_role_external_dns
+  value       = module.iam_assumable_role_external_dns.this_iam_role_name
   description = "The IAM Role that the External DNS pod will assume to authenticate"
 }
 
 output "cm_cainjector_iam_role" {
-  value       = module.iam_assumable_role_cm_cainjector
+  value       = module.iam_assumable_role_cm_cainjector.this_iam_role_name
   description = "The IAM Role that the CM CA Injector pod will assume to authenticate"
 }
 
 output "controllerbuild_iam_role" {
-  value       = module.iam_assumable_role_controllerbuild
+  value       = module.iam_assumable_role_controllerbuild.this_iam_role_name
   description = "The IAM Role that the ControllerBuild pod will assume to authenticate"
 }
 
 output "cluster_autoscaler_iam_role" {
-  value       = module.iam_assumable_role_cluster_autoscaler
+  value       = module.iam_assumable_role_cluster_autoscaler.this_iam_role_name
   description = "The IAM Role that the Cluster Autoscaler pod will assume to authenticate"
 }
