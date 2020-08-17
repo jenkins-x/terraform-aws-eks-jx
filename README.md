@@ -14,6 +14,7 @@ The module makes use of the [Terraform EKS cluster Module](https://github.com/te
     - [Cluster provisioning](#cluster-provisioning)
         - [Inputs](#inputs)
         - [Outputs](#outputs)
+    - [Cluster Autoscaling](#cluster-autoscaling)
     - [Long Term Storage](#long-term-storage)
     - [Vault](#vault)
     - [ExternalDNS](#externaldns)
@@ -25,6 +26,9 @@ The module makes use of the [Terraform EKS cluster Module](https://github.com/te
     - [Using Spot Instances](#using-spot-instances)
     - [EKS node groups](#eks-node-groups)
     - [AWS Auth](#aws-auth)
+    - [Using SSH Key Pair](#using-ssh-key-pair)
+    - [Using different EBS Volume type and size](#using-different-ebs-volume-type-and-size)
+    - [Resizing a disk on existing nodes](#resizing-a-disk-on-existing-nodes)
     - [Examples](#examples)
 - [FAQ: Frequently Asked Questions](#faq-frequently-asked-questions)
     - [IAM Roles for Service Accounts](#iam-roles-for-service-accounts)
@@ -190,6 +194,7 @@ The following sections provide a full list of configuration in- and output varia
 |------|-------------|
 | backup\_bucket\_url | The bucket where backups from velero will be stored |
 | cert\_manager\_iam\_role | The IAM Role that the Cert Manager pod will assume to authenticate |
+| cluster\_autoscaler\_iam\_role | The IAM role that is used by cluster autoscaler |
 | cluster\_name | The name of the created cluster |
 | cm\_cainjector\_iam\_role | The IAM Role that the CM CA Injector pod will assume to authenticate |
 | connect | "The cluster connection string to use once Terraform apply finishes,<br>this command is already executed as part of the apply, you may have to provide the region and<br>profile as environment variables " |
@@ -206,6 +211,59 @@ The following sections provide a full list of configuration in- and output varia
 | vault\_user\_id | The Vault IAM user id |
 | vault\_user\_secret | The Vault IAM user secret |
 
+### Cluster Autoscaling
+
+This does not automatically install cluster-autoscaler, it installs all of the prerequisite policies and roles required to install autoscaler. 
+The actual autoscaler installation varies depending on what version of kubernetes you are using.
+
+To install cluster autoscaler, first you will need the ARN of the cluster-autoscaler role.
+
+You can create the following output along side your module definition to find this:
+
+```terraform
+output "cluster_autoscaler_iam_role_arn" {
+  value = module.eks-jx.cluster_autoscaler_iam_role.this_iam_role_arn
+}
+```
+
+With the ARN, you may now install the cluster autoscaler using Helm.
+
+Create the file `cluster-autoscaler-values.yaml` with the following content:
+
+```yaml
+awsRegion: us-east-1
+
+rbac:
+  create: true
+  serviceAccount: 
+    name: cluster-autoscaler
+  serviceAccountAnnotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::12345678910:role/tf-your-cluster-name-cluster-autoscaler"
+
+autoDiscovery:
+  clusterName: your-cluster-name
+  enabled: true
+
+image:
+  repository: us.gcr.io/k8s-artifacts-prod/autoscaling/cluster-autoscaler
+  tag: v1.16.6
+```
+
+Notice the image tag is `v1.16.6` - this tag goes with clusters running Kubernetes 1.16. 
+If you are running 1.15, 1.17, etc, you will need to find the image tag that matches your cluster version. 
+To see available tags, visit [this GCR registry](https://console.cloud.google.com/gcr/images/k8s-artifacts-prod/US/autoscaling/cluster-autoscaler?gcrImageListsize=30)
+
+Next, you'll need to fetch the chart, apply your values using `helm template` and then apply the resulting Kubernetes object to your cluster.
+
+```
+helm fetch stable/cluster-autoscaler --untar
+```
+
+And then
+
+```
+helm template --name cluster-autoscaler --namespace kube-system ./cluster-autoscaler -f ./cluster-autoscaler-values.yaml | kubectl apply -n kube-system -f -
+```
 
 
 ### Long Term Storage

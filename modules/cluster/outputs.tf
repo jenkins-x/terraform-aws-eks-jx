@@ -53,3 +53,8 @@ output "controllerbuild_iam_role" {
   value       = module.iam_assumable_role_controllerbuild
   description = "The IAM Role that the ControllerBuild pod will assume to authenticate"
 }
+
+output "cluster_autoscaler_iam_role" {
+  value       = module.iam_assumable_role_cluster_autoscaler
+  description = "The IAM Role that the Cluster Autoscaler pod will assume to authenticate"
+}
