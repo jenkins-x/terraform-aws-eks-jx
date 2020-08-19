@@ -65,11 +65,6 @@ output "controllerbuild_iam_role" {
   description = "The IAM Role that the ControllerBuild pod will assume to authenticate"
 }
 
-output "jxui_iam_role" {
-  value       = module.cluster.jxui_iam_role
-  description = "The IAM Role that the Jenkins X UI pod will assume to authenticate"
-}
-
 // ----------------------------------------------------------------------------
 // Vault Resources
 // ----------------------------------------------------------------------------

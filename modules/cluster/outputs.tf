@@ -53,8 +53,3 @@ output "controllerbuild_iam_role" {
   value       = module.iam_assumable_role_controllerbuild
   description = "The IAM Role that the ControllerBuild pod will assume to authenticate"
 }
-
-output "jxui_iam_role" {
-  value       = module.iam_assumable_role_jxui
-  description = "The IAM Role that the Jenkins X UI pod will assume to authenticate"
-}

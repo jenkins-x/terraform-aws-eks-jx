@@ -277,37 +277,3 @@ resource "kubernetes_service_account" "jenkins-x-controllerbuild" {
     ]
   }
 }
-
-// ----------------------------------------------------------------------------
-// Jenkins X UI IAM Policy, IAM Role and Service Account
-// ----------------------------------------------------------------------------
-module "iam_assumable_role_jxui" {
-  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v2.13.0"
-  create_role                   = true
-  role_name                     = substr("tf-${var.cluster_name}-sa-role-jxui-${local.generated_seed}", 0, 60)
-  provider_url                  = local.oidc_provider_url
-  role_policy_arns              = ["arn:aws:iam::aws:policy/AmazonS3FullAccess"]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${kubernetes_namespace.jx.id}:jxui"]
-}
-
-resource "kubernetes_service_account" "jxui" {
-  automount_service_account_token = true
-  depends_on = [
-    null_resource.kubeconfig
-  ]
-  metadata {
-    name      = "jxui"
-    namespace = kubernetes_namespace.jx.id
-    annotations = {
-      "eks.amazonaws.com/role-arn" = module.iam_assumable_role_jxui.this_iam_role_arn
-    }
-  }
-  lifecycle {
-    ignore_changes = [
-      metadata[0].labels,
-      metadata[0].annotations,
-      secret
-    ]
-  }
-}
