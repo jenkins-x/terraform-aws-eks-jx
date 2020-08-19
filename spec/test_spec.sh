@@ -34,11 +34,6 @@ Describe "AWS"
       When call iam_role_name controllerbuild_iam_role 
       The output should include tf-$(terraform output cluster_name)-sa-role-ctrlb-
     End
-
-    It "The JX UI IAM Role has been created"
-      When call iam_role_name jxui_iam_role 
-      The output should include tf-$(terraform output cluster_name)-sa-role-jxui-
-    End
   End
 
   Describe "Service Accounts"
@@ -60,11 +55,6 @@ Describe "AWS"
     It "The jenkins-x-controllerbuild Service Account contains the IRSA annotation with the correct role"
       When call sa jenkins-x-controllerbuild jx 
       The output should include $(terraform output -json controllerbuild_iam_role | jq '.this_iam_role_arn')
-    End
-
-    It "The jxui Service Account contains the IRSA annotation with the correct role"
-      When call sa jxui jx 
-      The output should include $(terraform output -json jxui_iam_role | jq '.this_iam_role_arn')
     End
 
     It "The exdns-external-dns Service Account contains the IRSA annotation with the correct role"
