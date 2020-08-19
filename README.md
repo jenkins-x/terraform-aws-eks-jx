@@ -48,6 +48,7 @@ You need the following binaries locally installed and configured on your _PATH_:
 
 - `terraform` (=> 0.12.17, < 0.14.0)
 - `kubectl` (>=1.10)
+- `aws-cli`
 - `aws-iam-authenticator`
 - `wget`
 
