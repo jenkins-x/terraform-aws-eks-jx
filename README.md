@@ -146,12 +146,11 @@ The following sections provide a full list of configuration in- and output varia
 | enable\_key\_rotation | Flag to enable kms key rotation | `bool` | `true` | no |
 | enable\_logs\_storage | Flag to enable or disable long term storage for logs | `bool` | `true` | no |
 | enable\_nat\_gateway | Should be true if you want to provision NAT Gateways for each of your private networks | `bool` | `false` | no |
-| enable\_node\_group | Flag to enable node group | `bool` | `false` | no |
 | enable\_reports\_storage | Flag to enable or disable long term storage for reports | `bool` | `true` | no |
 | enable\_repository\_storage | Flag to enable or disable the repository bucket storage | `bool` | `true` | no |
 | enable\_spot\_instances | Flag to enable spot instances | `bool` | `false` | no |
 | enable\_tls | Flag to enable TLS in the final `jx-requirements.yml` file | `bool` | `false` | no |
-| enable\_worker\_group | Flag to enable worker group | `bool` | `true` | no |
+| enable\_worker\_group | Flag to enable worker group. Setting this to false will provision a node group instead | `bool` | `true` | no |
 | force\_destroy | Flag to determine whether storage buckets get forcefully destroyed. If set to false, empty the bucket first in the aws s3 console, else terraform destroy will fail with BucketNotEmpty error | `bool` | `false` | no |
 | iops | The IOPS value | `number` | `0` | no |
 | is\_jx2 | n/a | `bool` | `true` | no |
@@ -387,7 +386,6 @@ In order to provision EKS node groups create a _main.tf_ with the following cont
 ```terraform
 module "eks-jx" {
   source  = "jenkins-x/eks-jx/aws"
-  enable_node_group   = true
   enable_worker_group = false
 }
 
@@ -405,8 +403,6 @@ output "vault_user_secret" {
   description = "The Vault IAM user secret"
 }
 ```
-
-:warning: **Note**: If you forget to set `enable_worker_group = false`, then the module will provision both self managed worker groups and node groups.
 
 :warning: **Note**: EKS node groups are supported in kubernetes v1.14+ and platform version eks.3
 

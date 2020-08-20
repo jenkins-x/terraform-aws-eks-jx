@@ -246,14 +246,8 @@ variable "enable_spot_instances" {
   default     = false
 }
 
-variable "enable_node_group" {
-  description = "Flag to enable node group"
-  type        = bool
-  default     = false
-}
-
 variable "enable_worker_group" {
-  description = "Flag to enable worker group"
+  description = "Flag to enable worker group. Setting this to false will provision a node group instead"
   type        = bool
   default     = true
 }
