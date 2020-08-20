@@ -68,3 +68,8 @@ variable "s3_kms_arn" {
   type        = string
   default     = ""
 }
+
+variable "is_jx2" {
+  default = true
+  type    = bool
+}

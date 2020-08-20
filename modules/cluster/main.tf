@@ -142,6 +142,7 @@ resource "null_resource" "kubeconfig" {
 // Service Accounts later
 // ----------------------------------------------------------------------------
 resource "kubernetes_namespace" "jx" {
+  count = var.is_jx2 ? 1 : 0
   depends_on = [
     null_resource.kubeconfig
   ]
@@ -157,6 +158,7 @@ resource "kubernetes_namespace" "jx" {
 }
 
 resource "kubernetes_namespace" "cert_manager" {
+  count = var.is_jx2 ? 1 : 0
   depends_on = [
     null_resource.kubeconfig
   ]
@@ -169,4 +171,31 @@ resource "kubernetes_namespace" "cert_manager" {
       metadata[0].annotations,
     ]
   }
+}
+
+// ----------------------------------------------------------------------------
+// Add the Terraform generated jx-requirements.yml to a configmap so it can be
+// sync'd with the Git repository
+//
+// https://www.terraform.io/docs/providers/kubernetes/r/namespace.html
+// ----------------------------------------------------------------------------
+resource "kubernetes_config_map" "jenkins_x_requirements" {
+  count = var.is_jx2 ? 0 : 1
+  metadata {
+    name      = "terraform-jx-requirements"
+    namespace = "default"
+  }
+  data = {
+    "jx-requirements.yml" = var.content
+  }
+
+  lifecycle {
+    ignore_changes = [
+      metadata,
+      data
+    ]
+  }
+  depends_on = [
+    module.eks
+  ]
 }
