@@ -154,7 +154,8 @@ The following sections provide a full list of configuration in- and output varia
 | enable\_worker\_group | Flag to enable worker group | `bool` | `true` | no |
 | force\_destroy | Flag to determine whether storage buckets get forcefully destroyed. If set to false, empty the bucket first in the aws s3 console, else terraform destroy will fail with BucketNotEmpty error | `bool` | `false` | no |
 | iops | The IOPS value | `number` | `0` | no |
-| key\_name | The ssh key pair name | `string` | n/a | yes |
+| is\_jx2 | n/a | `bool` | `true` | no |
+| key\_name | The ssh key pair name | `string` | `""` | no |
 | map\_accounts | Additional AWS account numbers to add to the aws-auth configmap. | `list(string)` | `[]` | no |
 | map\_roles | Additional IAM roles to add to the aws-auth configmap. | <pre>list(object({<br>    rolearn  = string<br>    username = string<br>    groups   = list(string)<br>  }))</pre> | `[]` | no |
 | map\_users | Additional IAM users to add to the aws-auth configmap. | <pre>list(object({<br>    userarn  = string<br>    username = string<br>    groups   = list(string)<br>  }))</pre> | `[]` | no |
@@ -191,10 +192,10 @@ The following sections provide a full list of configuration in- and output varia
 | cert\_manager\_iam\_role | The IAM Role that the Cert Manager pod will assume to authenticate |
 | cluster\_name | The name of the created cluster |
 | cm\_cainjector\_iam\_role | The IAM Role that the CM CA Injector pod will assume to authenticate |
+| connect | "The cluster connection string to use once Terraform apply finishes,<br>this command is already executed as part of the apply, you may have to provide the region and<br>profile as environment variables " |
 | controllerbuild\_iam\_role | The IAM Role that the ControllerBuild pod will assume to authenticate |
 | external\_dns\_iam\_role | The IAM Role that the External DNS pod will assume to authenticate |
 | jx\_requirements | The jx-requirements rendered output |
-| jxui\_iam\_role | The IAM Role that the Jenkins X UI pod will assume to authenticate |
 | lts\_logs\_bucket | The bucket where logs from builds will be stored |
 | lts\_reports\_bucket | The bucket where test reports will be stored |
 | lts\_repository\_bucket | The bucket that will serve as artifacts repository |
@@ -204,6 +205,7 @@ The following sections provide a full list of configuration in- and output varia
 | vault\_unseal\_bucket | The Vault storage bucket |
 | vault\_user\_id | The Vault IAM user id |
 | vault\_user\_secret | The Vault IAM user secret |
+
 
 
 ### Long Term Storage

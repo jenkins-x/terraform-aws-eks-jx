@@ -48,7 +48,7 @@ module "iam_assumable_role_tekton_bot" {
   role_name                     = substr("tf-${var.cluster_name}-sa-role-tekton-bot-${local.generated_seed}", 0, 60)
   provider_url                  = local.oidc_provider_url
   role_policy_arns              = [aws_iam_policy.tekton-bot.arn]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${kubernetes_namespace.jx.id}:tekton-bot"]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${kubernetes_namespace.jx[0].id}:tekton-bot"]
 }
 
 resource "kubernetes_service_account" "tekton-bot" {
@@ -58,7 +58,7 @@ resource "kubernetes_service_account" "tekton-bot" {
   ]
   metadata {
     name      = "tekton-bot"
-    namespace = kubernetes_namespace.jx.id
+    namespace = kubernetes_namespace.jx[0].id
     annotations = {
       "eks.amazonaws.com/role-arn" = module.iam_assumable_role_tekton_bot.this_iam_role_arn
     }
@@ -112,7 +112,7 @@ module "iam_assumable_role_external_dns" {
   role_name                     = substr("tf-${var.cluster_name}-sa-role-external_dns-${local.generated_seed}", 0, 60)
   provider_url                  = local.oidc_provider_url
   role_policy_arns              = [aws_iam_policy.external-dns.arn]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${kubernetes_namespace.jx.id}:exdns-external-dns"]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${kubernetes_namespace.jx[0].id}:exdns-external-dns"]
 }
 
 resource "kubernetes_service_account" "exdns-external-dns" {
@@ -122,7 +122,7 @@ resource "kubernetes_service_account" "exdns-external-dns" {
   ]
   metadata {
     name      = "exdns-external-dns"
-    namespace = kubernetes_namespace.jx.id
+    namespace = kubernetes_namespace.jx[0].id
     annotations = {
       "eks.amazonaws.com/role-arn" = module.iam_assumable_role_external_dns.this_iam_role_arn
     }
@@ -185,7 +185,7 @@ module "iam_assumable_role_cert_manager" {
   role_name                     = substr("tf-${var.cluster_name}-sa-role-cert_manager-${local.generated_seed}", 0, 60)
   provider_url                  = local.oidc_provider_url
   role_policy_arns              = [aws_iam_policy.cert-manager.arn]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${kubernetes_namespace.cert_manager.id}:cm-cert-manager"]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${kubernetes_namespace.cert_manager[0].id}:cm-cert-manager"]
 }
 
 resource "kubernetes_service_account" "cm-cert-manager" {
@@ -195,7 +195,7 @@ resource "kubernetes_service_account" "cm-cert-manager" {
   ]
   metadata {
     name      = "cm-cert-manager"
-    namespace = kubernetes_namespace.cert_manager.id
+    namespace = kubernetes_namespace.cert_manager[0].id
     annotations = {
       "eks.amazonaws.com/role-arn" = module.iam_assumable_role_cert_manager.this_iam_role_arn
     }
@@ -220,7 +220,7 @@ module "iam_assumable_role_cm_cainjector" {
   role_name                     = substr("tf-${var.cluster_name}-sa-role-cm_cainjector-${local.generated_seed}", 0, 60)
   provider_url                  = local.oidc_provider_url
   role_policy_arns              = [aws_iam_policy.cert-manager.arn]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${kubernetes_namespace.cert_manager.id}:cm-cainjector"]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${kubernetes_namespace.cert_manager[0].id}:cm-cainjector"]
 }
 
 resource "kubernetes_service_account" "cm-cainjector" {
@@ -230,7 +230,7 @@ resource "kubernetes_service_account" "cm-cainjector" {
   ]
   metadata {
     name      = "cm-cainjector"
-    namespace = kubernetes_namespace.cert_manager.id
+    namespace = kubernetes_namespace.cert_manager[0].id
     annotations = {
       "eks.amazonaws.com/role-arn" = module.iam_assumable_role_cm_cainjector.this_iam_role_arn
     }
@@ -254,7 +254,7 @@ module "iam_assumable_role_controllerbuild" {
   role_name                     = substr("tf-${var.cluster_name}-sa-role-ctrlb-${local.generated_seed}", 0, 60)
   provider_url                  = local.oidc_provider_url
   role_policy_arns              = ["arn:aws:iam::aws:policy/AmazonS3FullAccess"]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${kubernetes_namespace.jx.id}:jenkins-x-controllerbuild"]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${kubernetes_namespace.jx[0].id}:jenkins-x-controllerbuild"]
 }
 
 resource "kubernetes_service_account" "jenkins-x-controllerbuild" {
@@ -264,7 +264,7 @@ resource "kubernetes_service_account" "jenkins-x-controllerbuild" {
   ]
   metadata {
     name      = "jenkins-x-controllerbuild"
-    namespace = kubernetes_namespace.jx.id
+    namespace = kubernetes_namespace.jx[0].id
     annotations = {
       "eks.amazonaws.com/role-arn" = module.iam_assumable_role_controllerbuild.this_iam_role_arn
     }

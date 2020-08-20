@@ -102,7 +102,7 @@ resource "aws_iam_user_policy" "velero" {
 // Setup Kubernetes Velero namespace and service account
 // ----------------------------------------------------------------------------
 resource "kubernetes_namespace" "velero_namespace" {
-  count = var.enable_backup ? 1 : 0
+  count = var.enable_backup && var.is_jx2 ? 1 : 0
 
   metadata {
     name = var.velero_namespace

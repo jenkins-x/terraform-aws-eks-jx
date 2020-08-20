@@ -38,3 +38,8 @@ variable "production_letsencrypt" {
   type    = bool
   default = false
 }
+
+variable "is_jx2" {
+  default = true
+  type    = bool
+}

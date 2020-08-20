@@ -92,3 +92,15 @@ output "vault_user_secret" {
   value       = length(module.vault.vault_user_secret) > 0 ? module.vault.vault_user_secret[0] : ""
   description = "The Vault IAM user secret"
 }
+
+// ----------------------------------------------------------------------------
+// Connection string
+// ----------------------------------------------------------------------------
+output "connect" {
+  description = <<EOT
+"The cluster connection string to use once Terraform apply finishes,
+this command is already executed as part of the apply, you may have to provide the region and
+profile as environment variables "
+EOT
+  value       = "aws eks update-kubeconfig --name ${var.cluster_name}"
+}
