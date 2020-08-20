@@ -97,7 +97,7 @@ module "eks" {
     "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
   ] : []
 
-  node_groups = var.enable_node_group ? {
+  node_groups = ! var.enable_worker_group ? {
     eks-jx-node-group = {
       ami_type         = var.node_group_ami
       disk_size        = var.node_group_disk_size
