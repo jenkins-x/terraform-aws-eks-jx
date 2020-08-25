@@ -130,7 +130,7 @@ Refer to [Production cluster considerations](#production-cluster-considerations)
 
 The following sections provide a full list of configuration in- and output variables.
 
-#### Inputs
+## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -152,8 +152,9 @@ The following sections provide a full list of configuration in- and output varia
 | enable\_tls | Flag to enable TLS in the final `jx-requirements.yml` file | `bool` | `false` | no |
 | enable\_worker\_group | Flag to enable worker group. Setting this to false will provision a node group instead | `bool` | `true` | no |
 | force\_destroy | Flag to determine whether storage buckets get forcefully destroyed. If set to false, empty the bucket first in the aws s3 console, else terraform destroy will fail with BucketNotEmpty error | `bool` | `false` | no |
+| ignoreLoadBalancer | Flag to specify if jx boot will ignore loadbalancer DNS to resolve to an IP | `bool` | `false` | no |
 | iops | The IOPS value | `number` | `0` | no |
-| is\_jx2 | n/a | `bool` | `true` | no |
+| is\_jx2 | Flag to specify if jx2 related resources need to be created | `bool` | `true` | no |
 | key\_name | The ssh key pair name | `string` | `""` | no |
 | map\_accounts | Additional AWS account numbers to add to the aws-auth configmap. | `list(string)` | `[]` | no |
 | map\_roles | Additional IAM roles to add to the aws-auth configmap. | <pre>list(object({<br>    rolearn  = string<br>    username = string<br>    groups   = list(string)<br>  }))</pre> | `[]` | no |
@@ -183,7 +184,7 @@ The following sections provide a full list of configuration in- and output varia
 | vpc\_cidr\_block | The vpc CIDR block | `string` | `"10.0.0.0/16"` | no |
 | vpc\_name | The name of the VPC to be created for the cluster | `string` | `"tf-vpc-eks"` | no |
 
-#### Outputs
+## Outputs
 
 | Name | Description |
 |------|-------------|

@@ -312,6 +312,13 @@ variable "s3_kms_arn" {
 }
 
 variable "is_jx2" {
-  default = true
-  type    = bool
+  default     = true
+  type        = bool
+  description = "Flag to specify if jx2 related resources need to be created"
+}
+
+variable "ignoreLoadBalancer" {
+  default     = false
+  type        = bool
+  description = "Flag to specify if jx boot will ignore loadbalancer DNS to resolve to an IP"
 }

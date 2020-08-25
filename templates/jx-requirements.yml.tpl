@@ -14,7 +14,7 @@ environments:
   - key: production
 ingress:
   domain: "${domain}"
-  ignoreLoadBalancer: true
+  ignoreLoadBalancer: ${ignoreLoadBalancer}
   externalDNS: ${enable_external_dns}
   tls:
     email: "${tls_email}"
