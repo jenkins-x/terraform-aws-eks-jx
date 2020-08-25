@@ -37,6 +37,7 @@ locals {
     enable_tls                 = var.enable_tls
     tls_email                  = var.tls_email
     use_production_letsencrypt = var.production_letsencrypt
+    ignoreLoadBalancer         = var.ignoreLoadBalancer
   })
 
   split_content   = split("\n", local.interpolated_content)
