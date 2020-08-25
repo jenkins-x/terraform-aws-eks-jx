@@ -24,6 +24,7 @@ The module makes use of the [Terraform EKS cluster Module](https://github.com/te
     - [Production cluster considerations](#production-cluster-considerations)
     - [Configuring a Terraform backend](#configuring-a-terraform-backend)
     - [Using Spot Instances](#using-spot-instances)
+    - [Worker Group Launch Templates](#worker-group-launch-templates)
     - [EKS node groups](#eks-node-groups)
     - [AWS Auth](#aws-auth)
     - [Using SSH Key Pair](#using-ssh-key-pair)
@@ -141,6 +142,7 @@ The following sections provide a full list of configuration in- and output varia
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| allowed\_spot\_instance\_types | When `enable_worker_groups_launch_template` is `true` this array of allowed machine types are considered when finding spot instances - the provided machine types must be of the same "size" (large, xlarge, etc) | `list(string)` | `[]` | no |
 | apex\_domain | The main domain to either use directly or to configure a subdomain from | `string` | `""` | no |
 | cluster\_endpoint\_private\_access | Indicates whether or not the Amazon EKS private API server endpoint is enabled. | `bool` | `false` | no |
 | cluster\_endpoint\_private\_access\_cidrs | List of CIDR blocks which can access the Amazon EKS private API server endpoint, when public access is disabled. | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
@@ -162,11 +164,15 @@ The following sections provide a full list of configuration in- and output varia
 | enable\_spot\_instances | Flag to enable spot instances | `bool` | `false` | no |
 | enable\_tls | Flag to enable TLS in the final `jx-requirements.yml` file | `bool` | `false` | no |
 | enable\_worker\_group | Flag to enable worker group. Setting this to false will provision a node group instead | `bool` | `true` | no |
+| enable\_worker\_groups\_launch\_template | Flag to enable worker group launch templates for improved autoscaling per AZ and better spot instance support | `bool` | `false` | no |
 | force\_destroy | Flag to determine whether storage buckets get forcefully destroyed. If set to false, empty the bucket first in the aws s3 console, else terraform destroy will fail with BucketNotEmpty error | `bool` | `false` | no |
 | ignoreLoadBalancer | Flag to specify if jx boot will ignore loadbalancer DNS to resolve to an IP | `bool` | `false` | no |
 | iops | The IOPS value | `number` | `0` | no |
 | is\_jx2 | Flag to specify if jx2 related resources need to be created | `bool` | `true` | no |
 | key\_name | The ssh key pair name | `string` | `""` | no |
+| lt_desired_nodes_per_subnet | When `enable_worker_groups_launch_templates` is `true` this defines the desired number of nodes per Availability Zone | `number` | `1` | no |
+| lt_max_nodes_per_subnet | When `enable_worker_groups_launch_templates` is `true` this defines the maximum number of nodes per Availability Zone | `number` | `2` | no |
+| lt_min_nodes_per_subnet | When `enable_worker_groups_launch_templates` is `true` this defines the minimum number of nodes per Availability Zone | `number` | `1` | no |
 | map\_accounts | Additional AWS account numbers to add to the aws-auth configmap. | `list(string)` | `[]` | no |
 | map\_roles | Additional IAM roles to add to the aws-auth configmap. | <pre>list(object({<br>    rolearn  = string<br>    username = string<br>    groups   = list(string)<br>  }))</pre> | `[]` | no |
 | map\_users | Additional IAM users to add to the aws-auth configmap. | <pre>list(object({<br>    userarn  = string<br>    username = string<br>    groups   = list(string)<br>  }))</pre> | `[]` | no |
@@ -442,6 +448,55 @@ You can use [terraform-aws-tfstate-backend](https://github.com/cloudposse/terraf
 You can save up to 90% of cost when you use Spot Instances. You just need to make sure your applications are resilient. You can set the ceiling `spot_price` of what you want to pay then set `enable_spot_instances` to `true`.
 
 :warning: **Note**: If the price of the instance reaches this point it will be terminated.
+
+### Worker Group Launch Templates
+
+Worker Groups, the default worker node groups for this module, are based on an older AWS tool called "Launch Configurations" which have some limitations around Spot instances and delegating a percentage of a pool of workers to on-demand or spot instances, as well as issues when autoscaling is enabled.
+
+The issue with autoscaling with the default worker group is that it is prone to autoscaling using Nodes from only a single AZ.
+AWS has a "AZRebalance" job that can run to help with this, but it is aggressive in removing nodes.
+
+All of these issues can be resolved by using Worker Group Launch Templates instead, configured with a template for each Availability Zone. 
+Using an ASG for each AZ bypasses the autoscaling issues in AWS.
+Furthermore, we are also able to specify several types of machines that are suitable for spot instances rather than just one.
+Using only one often results in Spot instances not being able to be provisioned, and this greatly reduces the occurence of this happening, as well as allowing for lower spot prices.
+
+#### Enabling Worker Group Launch Templates
+
+To use the Worker Group Launch Template, set the variable `enable_worker_groups_launch_template` to `true`, and define an array of instance types allowed.
+
+When using autoscaling with Launch Templates per AZ, the min and max number of nodes is per zone.
+These values can be adjusted by using the variables `lt_desired_nodes_per_subnet`, `lt_min_nodes_per_subnet`, and `lt_max_nodes_per_subnet`
+
+```terraform
+module "eks-jx" {
+  source  = "jenkins-x/eks-jx/aws"
+  enable_worker_groups_launch_template = true
+  allowed_spot_instance_types          = ["m5.large", "m5a.large", "m5d.large", "m5ad.large", "t3.large", "t3a.large"]
+  lt_desired_nodes_per_subnet          = 2
+  lt_min_nodes_per_subnet              = 2
+  lt_max_nodes_per_subnet              = 3
+}
+```
+
+#### Transitioning from Worker Groups to Worker Groups Launch Templates
+
+In order to prevent any interruption to service, you'll first want to enable Worker Group Launch Templates.
+
+Once you've verified that you are able to see the new Nodes created by the Launch Templates by running `kubectl get nodes`, then you can remove the older Worker Group.
+
+To remove the older worker group, it's recommended to first scale down to zero nodes, one at a time, by adjusting the min/max node capacity. 
+Once you've scaled down to zero nodes for the original worker group, and your workloads have been scheduled on nodes created by the launch templates you can set `enable_worker_group` to `false`.
+
+module "eks-jx" {
+  source  = "jenkins-x/eks-jx/aws"
+  enable_worker_group                  = false
+  enable_worker_groups_launch_template = true
+  allowed_spot_instance_types          = ["m5.large", "m5a.large", "m5d.large", "m5ad.large", "t3.large", "t3a.large"]
+  lt_desired_nodes_per_subnet          = 2
+  lt_min_nodes_per_subnet              = 2
+  lt_max_nodes_per_subnet              = 3
+}
 
 ### EKS node groups
 
