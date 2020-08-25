@@ -37,6 +37,12 @@ output "cluster_name" {
   description = "The name of the created cluster"
 }
 
+output "cluster_oidc_issuer_url" {
+  value       = module.cluster.cluster_oidc_issuer_url
+  description = "The Cluster OIDC Issuer URL"
+}
+
+
 // ----------------------------------------------------------------------------
 // Generated IAM Roles
 // ----------------------------------------------------------------------------

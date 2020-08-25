@@ -191,6 +191,7 @@ The following sections provide a full list of configuration in- and output varia
 | backup\_bucket\_url | The bucket where backups from velero will be stored |
 | cert\_manager\_iam\_role | The IAM Role that the Cert Manager pod will assume to authenticate |
 | cluster\_name | The name of the created cluster |
+| cluster\_oidc\_issuer\_url | The Cluster OIDC Issuer URL |
 | cm\_cainjector\_iam\_role | The IAM Role that the CM CA Injector pod will assume to authenticate |
 | connect | "The cluster connection string to use once Terraform apply finishes,<br>this command is already executed as part of the apply, you may have to provide the region and<br>profile as environment variables " |
 | controllerbuild\_iam\_role | The IAM Role that the ControllerBuild pod will assume to authenticate |
