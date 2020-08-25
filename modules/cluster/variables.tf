@@ -220,3 +220,33 @@ variable "cluster_endpoint_public_access_cidrs" {
   type        = list(string)
   default     = ["0.0.0.0/0"]
 }
+
+variable "allowed_spot_instance_types" {
+  description = "Allowed machine types for spot instances (must be same size)"
+  type        = any
+  default     = []
+}
+
+variable "enable_worker_groups_launch_template" {
+  description = "Flag to enable Worker Group Launch Templates"
+  type        = bool
+  default     = false
+}
+
+variable "lt_desired_nodes_per_subnet" {
+  description = "The number of worker nodes in each Subnet (AZ) if using Launch Templates"
+  type        = number
+  default     = 1
+}
+
+variable "lt_min_nodes_per_subnet" {
+  description = "The minimum number of worker nodes in each Subnet (AZ) if using Launch Templates"
+  type        = number
+  default     = 1
+}
+
+variable "lt_max_nodes_per_subnet" {
+  description = "The maximum number of worker nodes in each Subnet (AZ) if using Launch Templates"
+  type        = number
+  default     = 2
+}

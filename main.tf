@@ -60,6 +60,11 @@ module "cluster" {
   cluster_endpoint_public_access_cidrs  = var.cluster_endpoint_public_access_cidrs
   cluster_endpoint_private_access       = var.cluster_endpoint_private_access
   cluster_endpoint_private_access_cidrs = var.cluster_endpoint_private_access_cidrs
+  enable_worker_groups_launch_template  = var.enable_worker_groups_launch_template
+  allowed_spot_instance_types           = var.allowed_spot_instance_types
+  lt_desired_nodes_per_subnet           = var.lt_desired_nodes_per_subnet
+  lt_min_nodes_per_subnet               = var.lt_min_nodes_per_subnet
+  lt_max_nodes_per_subnet               = var.lt_max_nodes_per_subnet
 }
 
 // ----------------------------------------------------------------------------

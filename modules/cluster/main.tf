@@ -67,6 +67,34 @@ module "eks" {
   subnets         = (var.cluster_in_private_subnet ? module.vpc.private_subnets : module.vpc.public_subnets)
   vpc_id          = module.vpc.vpc_id
   enable_irsa     = true
+
+  worker_groups_launch_template = var.enable_worker_groups_launch_template ? [
+    for subnet in module.vpc.public_subnets :
+    {
+      subnets                 = [subnet]
+      asg_desired_capacity    = var.lt_desired_nodes_per_subnet
+      asg_min_size            = var.lt_min_nodes_per_subnet
+      asg_max_size            = var.lt_max_nodes_per_subnet
+      spot_price              = (var.enable_spot_instances ? var.spot_price : null)
+      instance_type           = var.node_machine_type
+      override_instance_types = var.allowed_spot_instance_types
+      autoscaling_enabled     = "true"
+      public_ip               = true
+      tags = [
+        {
+          key                 = "k8s.io/cluster-autoscaler/enabled"
+          propagate_at_launch = "false"
+          value               = "true"
+        },
+        {
+          key                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
+          propagate_at_launch = "false"
+          value               = "true"
+        }
+      ]
+    }
+  ] : []
+
   worker_groups = var.enable_worker_group ? [
     {
       name                 = "worker-group-${var.cluster_name}"
@@ -93,6 +121,7 @@ module "eks" {
       ]
     }
   ] : []
+
   workers_additional_policies = var.enable_worker_group ? [
     "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
   ] : []
