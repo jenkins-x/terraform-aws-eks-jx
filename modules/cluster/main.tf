@@ -210,8 +210,8 @@ resource "kubernetes_secret" "jx-post-process" {
 
   data = {
     commands : <<EOF
-kubectl annotate --overwrite sa tekton-bot eks.amazonaws.com/role-arn=arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.cluster_name}-default-tekton-bot
-kubectl annotate --overwrite sa controllerbuild eks.amazonaws.com/role-arn=arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.cluster_name}-default-controllerbuild
+kubectl annotate --overwrite sa tekton-bot eks.amazonaws.com/role-arn=arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.cluster_name}-jx-tekton-bot
+kubectl annotate --overwrite sa jxboot-helmfile-resources-controllerbuild eks.amazonaws.com/role-arn=arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.cluster_name}-jx-jxboot-helmfile-resources-controllerbuild
 EOF
   }
 
