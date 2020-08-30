@@ -117,10 +117,11 @@ module "eks" {
     }
   } : {}
 
-  map_users    = var.map_users
-  map_roles    = var.map_roles
-  map_accounts = var.map_accounts
-
+  map_users                       = var.map_users
+  map_roles                       = var.map_roles
+  map_accounts                    = var.map_accounts
+  cluster_endpoint_private_access = var.cluster_endpoint_private_access
+  cluster_endpoint_public_access  = var.cluster_endpoint_public_access
 }
 
 // ----------------------------------------------------------------------------

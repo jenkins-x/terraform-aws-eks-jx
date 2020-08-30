@@ -29,6 +29,7 @@ The module makes use of the [Terraform EKS cluster Module](https://github.com/te
     - [Using SSH Key Pair](#using-ssh-key-pair)
     - [Using different EBS Volume type and size](#using-different-ebs-volume-type-and-size)
     - [Resizing a disk on existing nodes](#resizing-a-disk-on-existing-nodes)
+    - [Support for JX3](#support for JX3)
     - [Examples](#examples)
 - [FAQ: Frequently Asked Questions](#faq-frequently-asked-questions)
     - [IAM Roles for Service Accounts](#iam-roles-for-service-accounts)
@@ -55,6 +56,8 @@ You need the following binaries locally installed and configured on your _PATH_:
 - `aws-cli`
 - `aws-iam-authenticator`
 - `wget`
+
+:warning: **Note**: Support for terraform 0.13 was added in [v1.5.0](https://github.com/jenkins-x/terraform-aws-eks-jx/releases/tag/v1.5.0)
 
 ### Cluster provisioning
 
@@ -134,11 +137,15 @@ Refer to [Production cluster considerations](#production-cluster-considerations)
 
 The following sections provide a full list of configuration in- and output variables.
 
-## Inputs
+#### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | apex\_domain | The main domain to either use directly or to configure a subdomain from | `string` | `""` | no |
+| cluster\_endpoint\_private\_access | Indicates whether or not the Amazon EKS private API server endpoint is enabled. | `bool` | `false` | no |
+| cluster\_endpoint\_private\_access\_cidrs | List of CIDR blocks which can access the Amazon EKS private API server endpoint, when public access is disabled. | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
+| cluster\_endpoint\_public\_access | Indicates whether or not the Amazon EKS public API server endpoint is enabled. | `bool` | `true` | no |
+| cluster\_endpoint\_public\_access\_cidrs | List of CIDR blocks which can access the Amazon EKS public API server endpoint. | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
 | cluster\_in\_private\_subnet | Flag to enable installation of cluster on private subnets | `bool` | `false` | no |
 | cluster\_name | Variable to provide your desired name for the cluster. The script will create a random name if this is empty | `string` | `""` | no |
 | cluster\_version | Kubernetes version to use for the EKS cluster. | `string` | `"1.15"` | no |
@@ -188,13 +195,13 @@ The following sections provide a full list of configuration in- and output varia
 | vpc\_cidr\_block | The vpc CIDR block | `string` | `"10.0.0.0/16"` | no |
 | vpc\_name | The name of the VPC to be created for the cluster | `string` | `"tf-vpc-eks"` | no |
 
-## Outputs
+#### Outputs
 
 | Name | Description |
 |------|-------------|
 | backup\_bucket\_url | The bucket where backups from velero will be stored |
 | cert\_manager\_iam\_role | The IAM Role that the Cert Manager pod will assume to authenticate |
-| cluster\_autoscaler\_iam\_role | The IAM role that is used by cluster autoscaler |
+| cluster\_autoscaler\_iam\_role | The IAM Role that the Jenkins X UI pod will assume to authenticate |
 | cluster\_name | The name of the created cluster |
 | cluster\_oidc\_issuer\_url | The Cluster OIDC Issuer URL |
 | cm\_cainjector\_iam\_role | The IAM Role that the CM CA Injector pod will assume to authenticate |
@@ -415,6 +422,9 @@ The following is a list of considerations for a production use case.
 
 - Setup a Terraform backend to securely store and share the state of your cluster. For more information refer to [Configuring a Terraform backend](#configuring-a-terraform-backend).
 
+- Disable public API for the EKS cluster.
+  If that is not not possible, restrict access to it by specifying the cidr blocks which can access it.
+ 
 ### Configuring a Terraform backend
 
 A "[backend](https://www.terraform.io/docs/backends/index.html)" in Terraform determines how state is loaded and how an operation such as _apply_ is executed.
@@ -557,6 +567,10 @@ The existing nodes needs to be terminated and replaced with new ones if disk is 
 You need to execute the following command before `terraform apply` in order to replace the Auto Scaling Launch Configuration.
 
 `terraform taint module.eks-jx.module.cluster.module.eks.aws_launch_configuration.workers[0]`
+
+#### Support for JX3
+Creation of namespaces and service accounts using terraform is no longer required for JX3. 
+To keep compatibility with JX2, a flag `is_jx2` was introduced, in [v1.6.0](https://github.com/jenkins-x/terraform-aws-eks-jx/releases/tag/v1.6.0).
 
 ### Examples
 
