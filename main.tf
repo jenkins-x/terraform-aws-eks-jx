@@ -25,37 +25,41 @@ resource "random_pet" "current" {
 // See https://www.terraform.io/docs/providers/aws/r/eks_cluster.html
 // ----------------------------------------------------------------------------
 module "cluster" {
-  source                    = "./modules/cluster"
-  cluster_name              = local.cluster_name
-  cluster_version           = var.cluster_version
-  desired_node_count        = var.desired_node_count
-  min_node_count            = var.min_node_count
-  max_node_count            = var.max_node_count
-  node_machine_type         = var.node_machine_type
-  spot_price                = var.spot_price
-  vpc_name                  = var.vpc_name
-  public_subnets            = var.public_subnets
-  private_subnets           = var.private_subnets
-  vpc_cidr_block            = var.vpc_cidr_block
-  enable_nat_gateway        = var.enable_nat_gateway
-  single_nat_gateway        = var.single_nat_gateway
-  force_destroy             = var.force_destroy
-  enable_spot_instances     = var.enable_spot_instances
-  node_group_disk_size      = var.node_group_disk_size
-  enable_worker_group       = var.enable_worker_group
-  cluster_in_private_subnet = var.cluster_in_private_subnet
-  map_accounts              = var.map_accounts
-  map_roles                 = var.map_roles
-  map_users                 = var.map_users
-  enable_key_name           = var.enable_key_name
-  key_name                  = var.key_name
-  volume_type               = var.volume_type
-  volume_size               = var.volume_size
-  iops                      = var.iops
-  use_kms_s3                = var.use_kms_s3
-  s3_kms_arn                = var.s3_kms_arn
-  is_jx2                    = var.is_jx2
-  content                   = local.content
+  source                                = "./modules/cluster"
+  cluster_name                          = local.cluster_name
+  cluster_version                       = var.cluster_version
+  desired_node_count                    = var.desired_node_count
+  min_node_count                        = var.min_node_count
+  max_node_count                        = var.max_node_count
+  node_machine_type                     = var.node_machine_type
+  spot_price                            = var.spot_price
+  vpc_name                              = var.vpc_name
+  public_subnets                        = var.public_subnets
+  private_subnets                       = var.private_subnets
+  vpc_cidr_block                        = var.vpc_cidr_block
+  enable_nat_gateway                    = var.enable_nat_gateway
+  single_nat_gateway                    = var.single_nat_gateway
+  force_destroy                         = var.force_destroy
+  enable_spot_instances                 = var.enable_spot_instances
+  node_group_disk_size                  = var.node_group_disk_size
+  enable_worker_group                   = var.enable_worker_group
+  cluster_in_private_subnet             = var.cluster_in_private_subnet
+  map_accounts                          = var.map_accounts
+  map_roles                             = var.map_roles
+  map_users                             = var.map_users
+  enable_key_name                       = var.enable_key_name
+  key_name                              = var.key_name
+  volume_type                           = var.volume_type
+  volume_size                           = var.volume_size
+  iops                                  = var.iops
+  use_kms_s3                            = var.use_kms_s3
+  s3_kms_arn                            = var.s3_kms_arn
+  is_jx2                                = var.is_jx2
+  content                               = local.content
+  cluster_endpoint_public_access        = var.cluster_endpoint_public_access
+  cluster_endpoint_public_access_cidrs  = var.cluster_endpoint_public_access_cidrs
+  cluster_endpoint_private_access       = var.cluster_endpoint_private_access
+  cluster_endpoint_private_access_cidrs = var.cluster_endpoint_private_access_cidrs
 }
 
 // ----------------------------------------------------------------------------
