@@ -24,6 +24,7 @@ data "aws_iam_policy_document" "tekton-bot-policy" {
       "iam:CreatePolicy",
       "iam:DeleteRole",
       "iam:GetOpenIDConnectProvider",
+      "sts:AssumeRoleWithWebIdentity",
     ]
     resources = ["*"]
   }
