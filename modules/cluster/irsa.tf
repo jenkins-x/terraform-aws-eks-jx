@@ -37,10 +37,10 @@ module "iam_assumable_role_tekton_bot" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v2.13.0"
   create_role                   = true
-  role_name                     = substr("tf-${var.cluster_name}-sa-role-tekton-bot-${local.generated_seed}", 0, 60)
+  role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-tekton-bot-${local.generated_seed}", 0, 60) : "${var.cluster_name}-${local.jenkins-x-namespace}-tekton-bot"
   provider_url                  = local.oidc_provider_url
   role_policy_arns              = [aws_iam_policy.tekton-bot.arn]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:jx:tekton-bot"]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.jenkins-x-namespace}:tekton-bot"]
 }
 resource "kubernetes_service_account" "tekton-bot" {
   count                           = var.is_jx2 ? 1 : 0
@@ -95,7 +95,7 @@ module "iam_assumable_role_external_dns" {
   role_name                     = substr("tf-${var.cluster_name}-sa-role-external_dns-${local.generated_seed}", 0, 60)
   provider_url                  = local.oidc_provider_url
   role_policy_arns              = [aws_iam_policy.external-dns.arn]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:jx:exdns-external-dns"]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.jenkins-x-namespace}:exdns-external-dns"]
 }
 resource "kubernetes_service_account" "exdns-external-dns" {
   count                           = var.is_jx2 ? 1 : 0
