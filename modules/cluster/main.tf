@@ -122,10 +122,6 @@ module "eks" {
     }
   ] : []
 
-  workers_additional_policies = var.enable_worker_group ? [
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
-  ] : []
-
   node_groups = ! var.enable_worker_group ? {
     eks-jx-node-group = {
       ami_type         = var.node_group_ami
@@ -145,6 +141,10 @@ module "eks" {
       }
     }
   } : {}
+
+  workers_additional_policies = [
+    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
+  ]
 
   map_users                       = var.map_users
   map_roles                       = var.map_roles
