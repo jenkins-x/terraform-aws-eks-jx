@@ -3,6 +3,7 @@ locals {
   generated_seed    = random_string.suffix.result
   oidc_provider_url = module.cluster.cluster_oidc_issuer_url
   external_vault    = var.vault_url != "" ? true : false
+  registry          = var.registry != "" ? var.registry : "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.region}.amazonaws.com"
 
   // ----------------------------------------------------------------------------
   // Let's generate jx-requirements.yml
@@ -38,6 +39,7 @@ locals {
     tls_email                  = var.tls_email
     use_production_letsencrypt = var.production_letsencrypt
     ignoreLoadBalancer         = var.ignoreLoadBalancer
+    registry                   = local.registry
   })
 
   split_content   = split("\n", local.interpolated_content)

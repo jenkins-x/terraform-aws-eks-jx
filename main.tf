@@ -19,6 +19,8 @@ resource "random_pet" "current" {
   }
 }
 
+data "aws_caller_identity" "current" {}
+
 // ----------------------------------------------------------------------------
 // Setup all required AWS resources as well as the EKS cluster and any k8s resources
 // See https://www.terraform.io/docs/providers/aws/r/vpc.html

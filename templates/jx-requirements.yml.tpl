@@ -7,6 +7,7 @@ cluster:
   environmentGitOwner: ""
   provider: eks
   region: "${region}"
+  registry: "${registry}"
 gitops: true
 environments:
   - key: dev
