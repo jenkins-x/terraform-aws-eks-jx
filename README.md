@@ -142,7 +142,7 @@ The following sections provide a full list of configuration in- and output varia
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| allowed\_spot\_instance\_types | When `enable_worker_groups_launch_template` is `true` this array of allowed machine types are considered when finding spot instances - the provided machine types must be of the same "size" (large, xlarge, etc) | `list(string)` | `[]` | no |
+| allowed\_spot\_instance\_types | Allowed machine types for spot instances (must be same size) | `any` | `[]` | no |
 | apex\_domain | The main domain to either use directly or to configure a subdomain from | `string` | `""` | no |
 | cluster\_endpoint\_private\_access | Indicates whether or not the Amazon EKS private API server endpoint is enabled. | `bool` | `false` | no |
 | cluster\_endpoint\_private\_access\_cidrs | List of CIDR blocks which can access the Amazon EKS private API server endpoint, when public access is disabled. | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
@@ -164,15 +164,15 @@ The following sections provide a full list of configuration in- and output varia
 | enable\_spot\_instances | Flag to enable spot instances | `bool` | `false` | no |
 | enable\_tls | Flag to enable TLS in the final `jx-requirements.yml` file | `bool` | `false` | no |
 | enable\_worker\_group | Flag to enable worker group. Setting this to false will provision a node group instead | `bool` | `true` | no |
-| enable\_worker\_groups\_launch\_template | Flag to enable worker group launch templates for improved autoscaling per AZ and better spot instance support | `bool` | `false` | no |
+| enable\_worker\_groups\_launch\_template | Flag to enable Worker Group Launch Templates | `bool` | `false` | no |
 | force\_destroy | Flag to determine whether storage buckets get forcefully destroyed. If set to false, empty the bucket first in the aws s3 console, else terraform destroy will fail with BucketNotEmpty error | `bool` | `false` | no |
 | ignoreLoadBalancer | Flag to specify if jx boot will ignore loadbalancer DNS to resolve to an IP | `bool` | `false` | no |
 | iops | The IOPS value | `number` | `0` | no |
 | is\_jx2 | Flag to specify if jx2 related resources need to be created | `bool` | `true` | no |
 | key\_name | The ssh key pair name | `string` | `""` | no |
-| lt_desired_nodes_per_subnet | When `enable_worker_groups_launch_templates` is `true` this defines the desired number of nodes per Availability Zone | `number` | `1` | no |
-| lt_max_nodes_per_subnet | When `enable_worker_groups_launch_templates` is `true` this defines the maximum number of nodes per Availability Zone | `number` | `2` | no |
-| lt_min_nodes_per_subnet | When `enable_worker_groups_launch_templates` is `true` this defines the minimum number of nodes per Availability Zone | `number` | `1` | no |
+| lt\_desired\_nodes\_per\_subnet | The number of worker nodes in each Subnet (AZ) if using Launch Templates | `number` | `1` | no |
+| lt\_max\_nodes\_per\_subnet | The maximum number of worker nodes in each Subnet (AZ) if using Launch Templates | `number` | `2` | no |
+| lt\_min\_nodes\_per\_subnet | The minimum number of worker nodes in each Subnet (AZ) if using Launch Templates | `number` | `1` | no |
 | map\_accounts | Additional AWS account numbers to add to the aws-auth configmap. | `list(string)` | `[]` | no |
 | map\_roles | Additional IAM roles to add to the aws-auth configmap. | <pre>list(object({<br>    rolearn  = string<br>    username = string<br>    groups   = list(string)<br>  }))</pre> | `[]` | no |
 | map\_users | Additional IAM users to add to the aws-auth configmap. | <pre>list(object({<br>    userarn  = string<br>    username = string<br>    groups   = list(string)<br>  }))</pre> | `[]` | no |
@@ -185,6 +185,7 @@ The following sections provide a full list of configuration in- and output varia
 | production\_letsencrypt | Flag to use the production environment of letsencrypt in the `jx-requirements.yml` file | `bool` | `false` | no |
 | public\_subnets | The public subnet CIDR block to use in the created VPC | `list(string)` | <pre>[<br>  "10.0.1.0/24",<br>  "10.0.2.0/24",<br>  "10.0.3.0/24"<br>]</pre> | no |
 | region | The region to create the resources into | `string` | `"us-east-1"` | no |
+| registry | Registry used to store images | `string` | `""` | no |
 | s3\_kms\_arn | ARN of the kms key used for encrypting s3 buckets | `string` | `""` | no |
 | single\_nat\_gateway | Should be true if you want to provision a single shared NAT Gateway across all of your private networks | `bool` | `false` | no |
 | spot\_price | The spot price ceiling for spot instances | `string` | `"0.1"` | no |

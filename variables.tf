@@ -376,3 +376,9 @@ variable "lt_max_nodes_per_subnet" {
   type        = number
   default     = 2
 }
+
+variable "registry" {
+  description = "Registry used to store images"
+  type        = string
+  default     = ""
+}
