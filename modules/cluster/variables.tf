@@ -92,7 +92,7 @@ variable "volume_type" {
 variable "volume_size" {
   description = "The volume size in GB"
   type        = number
-  default     = 10
+  default     = 50
 }
 
 variable "iops" {
