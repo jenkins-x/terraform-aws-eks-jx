@@ -150,7 +150,7 @@ The following sections provide a full list of configuration in- and output varia
 | cluster\_endpoint\_public\_access\_cidrs | List of CIDR blocks which can access the Amazon EKS public API server endpoint. | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
 | cluster\_in\_private\_subnet | Flag to enable installation of cluster on private subnets | `bool` | `false` | no |
 | cluster\_name | Variable to provide your desired name for the cluster. The script will create a random name if this is empty | `string` | `""` | no |
-| cluster\_version | Kubernetes version to use for the EKS cluster. | `string` | `"1.15"` | no |
+| cluster\_version | Kubernetes version to use for the EKS cluster. | `string` | `"1.17"` | no |
 | create\_and\_configure\_subdomain | Flag to create an NS record set for the subdomain in the apex domain's Hosted Zone | `bool` | `false` | no |
 | desired\_node\_count | The number of worker nodes to use for the cluster | `number` | `3` | no |
 | enable\_backup | Whether or not Velero backups should be enabled | `bool` | `false` | no |
