@@ -219,10 +219,10 @@ module "iam_assumable_role_controllerbuild" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v2.13.0"
   create_role                   = true
-  role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-ctrlb-${local.generated_seed}", 0, 60) : "${local.cluster_trunc}-${local.jx_namespace_trunc}-ctrlb"
+  role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-ctrlb-${local.generated_seed}", 0, 60) : "${local.cluster_trunc}-${local.jx_namespace_trunc}-jxboot-helmfile-resources-controllerbuild"
   provider_url                  = local.oidc_provider_url
   role_policy_arns              = ["arn:aws:iam::aws:policy/AmazonS3FullAccess"]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:jx:jenkins-x-controllerbuild"]
+  oidc_fully_qualified_subjects = var.is_jx2 ? ["system:serviceaccount:jx:jenkins-x-controllerbuild"] : ["system:serviceaccount:jx:jxboot-helmfile-resources-controllerbuild"]
 }
 resource "kubernetes_service_account" "jenkins-x-controllerbuild" {
   count                           = var.is_jx2 ? 1 : 0
