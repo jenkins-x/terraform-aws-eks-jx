@@ -92,10 +92,10 @@ module "iam_assumable_role_external_dns" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v2.13.0"
   create_role                   = true
-  role_name                     = substr("tf-${var.cluster_name}-sa-role-external_dns-${local.generated_seed}", 0, 60)
+  role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-external_dns-${local.generated_seed}", 0, 60) : substr("${var.cluster_name}-${local.jenkins-x-namespace}-external-dns", 0, 60)
   provider_url                  = local.oidc_provider_url
   role_policy_arns              = [aws_iam_policy.external-dns.arn]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.jenkins-x-namespace}:exdns-external-dns"]
+  oidc_fully_qualified_subjects = var.is_jx2 ? ["system:serviceaccount:${local.jenkins-x-namespace}:exdns-external-dns"] : ["system:serviceaccount:${local.jenkins-x-namespace}:external-dns"]
 }
 resource "kubernetes_service_account" "exdns-external-dns" {
   count                           = var.is_jx2 ? 1 : 0
@@ -153,10 +153,10 @@ module "iam_assumable_role_cert_manager" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v2.13.0"
   create_role                   = true
-  role_name                     = substr("tf-${var.cluster_name}-sa-role-cert_manager-${local.generated_seed}", 0, 60)
+  role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-cert_manager-${local.generated_seed}", 0, 60) : substr("${var.cluster_name}-cert-manager-cert-manager", 0, 60)
   provider_url                  = local.oidc_provider_url
   role_policy_arns              = [aws_iam_policy.cert-manager.arn]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:cert-manager:cm-cert-manager"]
+  oidc_fully_qualified_subjects = var.is_jx2 ? ["system:serviceaccount:cert-manager:cm-cert-manager"] : ["system:serviceaccount:cert-manager:cert-manager"]
 }
 resource "kubernetes_service_account" "cm-cert-manager" {
   count                           = var.is_jx2 ? 1 : 0
