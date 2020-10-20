@@ -8,6 +8,7 @@ cluster:
   provider: eks
   region: "${region}"
   registry: "${registry}"
+  project: "${project}"
 gitops: true
 environments:
   - key: dev
