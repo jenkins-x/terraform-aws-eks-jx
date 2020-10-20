@@ -37,7 +37,7 @@ module "iam_assumable_role_tekton_bot" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v2.13.0"
   create_role                   = true
-  role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-tekton-bot-${local.generated_seed}", 0, 60) : "${local.cluster_trunc}-${local.jx_namespace_trunc}-tekton-bot"
+  role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-tekton-bot-${local.generated_seed}", 0, 60) : "${local.cluster_trunc}-tekton-bot"
   provider_url                  = local.oidc_provider_url
   role_policy_arns              = [aws_iam_policy.tekton-bot.arn]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.jenkins-x-namespace}:tekton-bot"]
@@ -92,7 +92,7 @@ module "iam_assumable_role_external_dns" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v2.13.0"
   create_role                   = true
-  role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-external_dns-${local.generated_seed}", 0, 60) : "${local.cluster_trunc}-${local.jx_namespace_trunc}-external-dns"
+  role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-external_dns-${local.generated_seed}", 0, 60) : "${local.cluster_trunc}-external-dns"
   provider_url                  = local.oidc_provider_url
   role_policy_arns              = [aws_iam_policy.external-dns.arn]
   oidc_fully_qualified_subjects = var.is_jx2 ? ["system:serviceaccount:${local.jenkins-x-namespace}:exdns-external-dns"] : ["system:serviceaccount:${local.jenkins-x-namespace}:external-dns"]

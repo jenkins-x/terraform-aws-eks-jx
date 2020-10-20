@@ -169,6 +169,9 @@ The following sections provide a full list of configuration in- and output varia
 | ignoreLoadBalancer | Flag to specify if jx boot will ignore loadbalancer DNS to resolve to an IP | `bool` | `false` | no |
 | iops | The IOPS value | `number` | `0` | no |
 | is\_jx2 | Flag to specify if jx2 related resources need to be created | `bool` | `true` | no |
+| jx\_bot\_token | Bot token used to interact with the Jenkins X cluster git repository | `string` | `""` | no |
+| jx\_bot\_username | Bot username used to interact with the Jenkins X cluster git repository | `string` | `""` | no |
+| jx\_git\_url | URL for the Jenkins X cluster git repository | `string` | `""` | no |
 | key\_name | The ssh key pair name | `string` | `""` | no |
 | lt\_desired\_nodes\_per\_subnet | The number of worker nodes in each Subnet (AZ) if using Launch Templates | `number` | `1` | no |
 | lt\_max\_nodes\_per\_subnet | The maximum number of worker nodes in each Subnet (AZ) if using Launch Templates | `number` | `2` | no |

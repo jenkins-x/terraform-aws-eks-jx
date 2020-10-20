@@ -229,29 +229,3 @@ resource "kubernetes_config_map" "jenkins_x_requirements" {
     module.eks
   ]
 }
-
-resource "kubernetes_secret" "jx-post-process" {
-  count = var.is_jx2 ? 0 : 1
-
-  metadata {
-    name      = "jx-post-process"
-    namespace = "default"
-  }
-
-  data = {
-    commands : <<EOF
-kubectl annotate --overwrite sa tekton-bot eks.amazonaws.com/role-arn=arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.cluster_name}-jx-tekton-bot
-kubectl annotate --overwrite sa jxboot-helmfile-resources-controllerbuild eks.amazonaws.com/role-arn=arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.cluster_name}-jx-jxboot-helmfile-resources-controllerbuild
-EOF
-  }
-
-  lifecycle {
-    ignore_changes = [
-      metadata,
-      data
-    ]
-  }
-  depends_on = [
-    module.eks
-  ]
-}
