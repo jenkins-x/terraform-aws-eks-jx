@@ -12,6 +12,14 @@ output "cluster_oidc_issuer_url" {
 }
 
 // ----------------------------------------------------------------------------
+// VPC Outputs
+// ----------------------------------------------------------------------------
+output "vpc" {
+  description = "All outputs from the VPC module"
+  value       = module.vpc
+}
+
+// ----------------------------------------------------------------------------
 // Long Term Storage S3 Buckets (Logs, Reports, Repository)
 // ----------------------------------------------------------------------------
 output "logs_jenkins_x" {
