@@ -68,7 +68,7 @@ module "eks" {
   vpc_id          = module.vpc.vpc_id
   enable_irsa     = true
 
-  worker_groups_launch_template = var.enable_worker_groups_launch_template ? [
+  worker_groups_launch_template = var.enable_worker_group && var.enable_worker_groups_launch_template ? [
     for subnet in module.vpc.public_subnets :
     {
       subnets                 = [subnet]
@@ -95,7 +95,7 @@ module "eks" {
     }
   ] : []
 
-  worker_groups = var.enable_worker_group ? [
+  worker_groups = var.enable_worker_group && ! var.enable_worker_groups_launch_template ? [
     {
       name                 = "worker-group-${var.cluster_name}"
       instance_type        = var.node_machine_type
