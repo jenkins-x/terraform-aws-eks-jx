@@ -31,6 +31,7 @@ provider "kubernetes" {
 module "vpc" {
   source               = "terraform-aws-modules/vpc/aws"
   version              = "2.46.0"
+  create_vpc           = var.create_vpc
   name                 = var.vpc_name
   cidr                 = var.vpc_cidr_block
   azs                  = data.aws_availability_zones.available.names
@@ -62,6 +63,7 @@ module "vpc" {
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   version         = "12.1.0"
+  create_eks      = var.create_eks
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
   subnets         = (var.cluster_in_private_subnet ? module.vpc.private_subnets : module.vpc.public_subnets)

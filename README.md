@@ -152,6 +152,8 @@ The following sections provide a full list of configuration in- and output varia
 | cluster\_name | Variable to provide your desired name for the cluster. The script will create a random name if this is empty | `string` | `""` | no |
 | cluster\_version | Kubernetes version to use for the EKS cluster. | `string` | `"1.17"` | no |
 | create\_and\_configure\_subdomain | Flag to create an NS record set for the subdomain in the apex domain's Hosted Zone | `bool` | `false` | no |
+| create\_eks | Controls if EKS cluster and associated resources should be created or not. If you have an existing eks cluster for jx, set it to false | `bool` | `true` | no |
+| create\_vpc | Controls if VPC and related resources should be created. If you have an existing vpc for jx, set it to false | `bool` | `true` | no |
 | desired\_node\_count | The number of worker nodes to use for the cluster | `number` | `3` | no |
 | enable\_backup | Whether or not Velero backups should be enabled | `bool` | `false` | no |
 | enable\_external\_dns | Flag to enable or disable External DNS in the final `jx-requirements.yml` file | `bool` | `false` | no |

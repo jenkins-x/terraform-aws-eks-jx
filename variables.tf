@@ -400,3 +400,15 @@ variable "jx_bot_token" {
   type        = string
   default     = ""
 }
+
+variable "create_eks" {
+  description = "Controls if EKS cluster and associated resources should be created or not. If you have an existing eks cluster for jx, set it to false"
+  type        = bool
+  default     = true
+}
+
+variable "create_vpc" {
+  description = "Controls if VPC and related resources should be created. If you have an existing vpc for jx, set it to false"
+  type        = bool
+  default     = true
+}
