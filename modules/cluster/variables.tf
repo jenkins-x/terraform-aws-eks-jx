@@ -1,3 +1,9 @@
+variable "region" {
+  description = "The region to create the resources into"
+  type        = string
+  default     = "us-east-1"
+}
+
 variable "cluster_name" {
   type = string
 }

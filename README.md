@@ -110,7 +110,8 @@ module "eks-jx" {
 ```
 
 You should have your [AWS CLI configured correctly](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).
-In addition, you should make sure to specify the region via the AWS_REGION environment variable. e.g. `export AWS_REGION=us-east-1`
+In addition, you should make sure to specify the region via the AWS_REGION environment variable. e.g. 
+`export AWS_REGION=us-east-1` and the region variable (make sure the region variable matches the environment variable)
 
 The IAM user does not need any permissions attached to it.
 For more information, refer to [Configuring Vault for EKS](https://jenkins-x.io/docs/install-setup/installing/boot/clouds/amazon/#configuring-vault-for-eks) in the Jenkins X documentation.
