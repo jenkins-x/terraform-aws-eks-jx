@@ -28,6 +28,7 @@ data "aws_caller_identity" "current" {}
 // ----------------------------------------------------------------------------
 module "cluster" {
   source                                = "./modules/cluster"
+  region                                = var.region
   create_eks                            = var.create_eks
   create_vpc                            = var.create_vpc
   cluster_name                          = local.cluster_name
