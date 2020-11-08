@@ -26,6 +26,9 @@ locals {
     vault_user           = var.vault_user
     vault_url            = var.vault_url
     external_vault       = local.external_vault
+    use_vault            = var.use_vault
+    // AWS Secrets Manager
+    use_asm = var.use_asm
     // Velero
     enable_backup     = var.enable_backup
     backup_bucket_url = module.backup.backup_bucket_url

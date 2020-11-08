@@ -73,3 +73,9 @@ variable "is_jx2" {
   default = true
   type    = bool
 }
+
+variable "use_vault" {
+  description = "Flag to control vault resource creation"
+  type        = bool
+  default     = true
+}

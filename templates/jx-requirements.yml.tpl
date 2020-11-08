@@ -23,6 +23,7 @@ ingress:
     enabled: ${enable_tls}
     production: ${use_production_letsencrypt}
 kaniko: true
+%{ if use_vault }
 secretStorage: vault
 vault:
 %{ if external_vault }
@@ -36,6 +37,10 @@ vault:
     kmsRegion: "${region}"
     s3Bucket: "${vault_bucket}"
     s3Region: "${region}"
+%{ endif }
+%{ endif }
+%{ if use_asm }
+secretStorage: asm
 %{ endif }
 %{ if enable_backup }
 velero:
