@@ -196,7 +196,9 @@ The following sections provide a full list of configuration in- and output varia
 | spot\_price | The spot price ceiling for spot instances | `string` | `"0.1"` | no |
 | subdomain | The subdomain to be added to the apex domain. If subdomain is set, it will be appended to the apex domain in  `jx-requirements-eks.yml` file | `string` | `""` | no |
 | tls\_email | The email to register the LetsEncrypt certificate with. Added to the `jx-requirements.yml` file | `string` | `""` | no |
+| use\_asm | Flag to specify if AWS Secrets manager is being used | `bool` | `false` | no |
 | use\_kms\_s3 | Flag to determine whether kms should be used for encrypting s3 buckets | `bool` | `false` | no |
+| use\_vault | Flag to control vault resource creation | `bool` | `true` | no |
 | vault\_url | URL to an external Vault instance in case Jenkins X does not create its own system Vault | `string` | `""` | no |
 | vault\_user | The AWS IAM Username whose credentials will be used to authenticate the Vault pods against AWS | `string` | `""` | no |
 | velero\_namespace | Kubernetes namespace for Velero | `string` | `"velero"` | no |
@@ -310,14 +312,18 @@ This allows you to remove all generated buckets when running terraform destroy.
 
 :warning: **Note**: If you set `force_destroy` to false, and run a `terraform destroy`, it will fail. In that case empty the s3 buckets from the aws s3 console, and re run `terraform destroy`.
 
-### Vault
+### Secrets Management
 
-Vault is used by Jenkins X for managing secrets.
+Vault is the default tool used by Jenkins X for managing secrets.
 Part of this module's responsibilities is the creation of all resources required to run the [Vault Operator](https://github.com/banzaicloud/bank-vaults).
 These resources are An S3 Bucket, a DynamoDB Table and a KMS Key.
 
 You can also configure an existing Vault instance for use with Jenkins X.
-In this case provide the Vault URL via the _vault_url_  input variable and follow the Jenkins X documentation around the instllation of an [external Vault](https://jenkins-x.io/docs/install-setup/installing/boot/secrets/#external) instance.
+In this case provide the Vault URL via the _vault_url_  input variable and follow the Jenkins X documentation around the installation of an [external Vault](https://jenkins-x.io/docs/install-setup/installing/boot/secrets/#external) instance.
+
+To use other secret backends such as AWS Secrets Manager, set `use_vault` variable to false, and `use_asm` variable to true.
+
+:warning: **Note**: AWS Secrets Manager is not supported yet, but will be functional soon. The `use_asm` just sets the `secretStorage` to `asm` instead of vault for now.
 
 ### ExternalDNS
 

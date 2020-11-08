@@ -412,3 +412,15 @@ variable "create_vpc" {
   type        = bool
   default     = true
 }
+
+variable "use_vault" {
+  description = "Flag to control vault resource creation"
+  type        = bool
+  default     = true
+}
+
+variable "use_asm" {
+  description = "Flag to specify if AWS Secrets manager is being used"
+  type        = bool
+  default     = false
+}

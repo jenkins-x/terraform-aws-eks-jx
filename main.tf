@@ -84,6 +84,7 @@ module "vault" {
   vault_user     = var.vault_user
   force_destroy  = var.force_destroy
   external_vault = local.external_vault
+  use_vault      = var.use_vault
 }
 
 // ----------------------------------------------------------------------------
