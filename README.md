@@ -31,6 +31,7 @@ The module makes use of the [Terraform EKS cluster Module](https://github.com/te
     - [Using different EBS Volume type and size](#using-different-ebs-volume-type-and-size)
     - [Resizing a disk on existing nodes](#resizing-a-disk-on-existing-nodes)
     - [Support for JX3](#support-for-jx3)
+    - [Existing EKS cluster](#existing-eks-cluster)
     - [Examples](#examples)
 - [FAQ: Frequently Asked Questions](#faq-frequently-asked-questions)
     - [IAM Roles for Service Accounts](#iam-roles-for-service-accounts)
@@ -635,9 +636,16 @@ You need to execute the following command before `terraform apply` in order to r
 
 `terraform taint module.eks-jx.module.cluster.module.eks.aws_launch_configuration.workers[0]`
 
-#### Support for JX3
+### Support for JX3
 Creation of namespaces and service accounts using terraform is no longer required for JX3. 
 To keep compatibility with JX2, a flag `is_jx2` was introduced, in [v1.6.0](https://github.com/jenkins-x/terraform-aws-eks-jx/releases/tag/v1.6.0).
+
+### Existing EKS cluster
+It is very common to have another module used to create EKS clusters for all your AWS accounts, in that case, you can 
+set `create_eks` and `create_vpc` to false and `cluster_name` to the id/name of the EKS cluster where jx components 
+need to be installed in.
+This will prevent creating a new vpc and eks cluster for jx.
+See [this](./examples/existing-cluster) for a complete example.
 
 ### Examples
 
