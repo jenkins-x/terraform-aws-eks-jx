@@ -112,3 +112,9 @@ module "dns" {
   enable_tls                     = var.enable_tls
   production_letsencrypt         = var.production_letsencrypt
 }
+
+module "health" {
+  source               = "./modules/health"
+  is_jx2               = var.is_jx2
+  install_kuberhealthy = var.install_kuberhealthy
+}
