@@ -430,3 +430,9 @@ variable "install_kuberhealthy" {
   type        = bool
   default     = true
 }
+
+variable "encrypt_volume_self" {
+  description = "Encrypt the ebs and root volume for the self managed worker nodes. This is only valid for the worker group launch template"
+  type        = bool
+  default     = false
+}

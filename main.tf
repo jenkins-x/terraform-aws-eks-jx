@@ -38,6 +38,7 @@ module "cluster" {
   max_node_count                        = var.max_node_count
   node_machine_type                     = var.node_machine_type
   spot_price                            = var.spot_price
+  encrypt_volume_self                   = var.encrypt_volume_self
   vpc_name                              = var.vpc_name
   public_subnets                        = var.public_subnets
   private_subnets                       = var.private_subnets
