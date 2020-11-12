@@ -24,7 +24,7 @@ resource "helm_release" "jx-git-operator" {
     name  = "username"
     value = var.jx_bot_username
   }
-  set {
+  set_sensitive {
     name  = "password"
     value = var.jx_bot_token
   }
