@@ -154,6 +154,7 @@ module "eks" {
   map_accounts                    = var.map_accounts
   cluster_endpoint_private_access = var.cluster_endpoint_private_access
   cluster_endpoint_public_access  = var.cluster_endpoint_public_access
+  cluster_encryption_config       = var.cluster_encryption_config
 }
 
 // ----------------------------------------------------------------------------
