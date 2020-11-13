@@ -436,3 +436,12 @@ variable "encrypt_volume_self" {
   type        = bool
   default     = false
 }
+
+variable "cluster_encryption_config" {
+  description = "Configuration block with encryption configuration for the cluster."
+  type = list(object({
+    provider_key_arn = string
+    resources        = list(string)
+  }))
+  default = []
+}

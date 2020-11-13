@@ -74,6 +74,7 @@ module "cluster" {
   jx_git_url                            = var.jx_git_url
   jx_bot_username                       = var.jx_bot_username
   jx_bot_token                          = var.jx_bot_token
+  cluster_encryption_config             = var.cluster_encryption_config
 }
 
 // ----------------------------------------------------------------------------
