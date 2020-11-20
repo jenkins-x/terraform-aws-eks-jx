@@ -96,9 +96,10 @@ module "vault" {
 module "backup" {
   source = "./modules/backup"
 
-  enable_backup = var.enable_backup
-  cluster_name  = local.cluster_name
-  force_destroy = var.force_destroy
+  enable_backup   = var.enable_backup
+  cluster_name    = local.cluster_name
+  force_destroy   = var.force_destroy
+  velero_username = var.velero_username
 }
 
 // ----------------------------------------------------------------------------

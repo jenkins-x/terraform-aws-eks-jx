@@ -61,6 +61,12 @@ variable "velero_ttl" {
   default     = "720h0m0s"
 }
 
+variable "velero_username" {
+  description = "The username to be assigned to the Velero IAM user"
+  type        = string
+  default     = "velero"
+}
+
 // ----------------------------------------------------------------------------
 // Worker Nodes Variables
 // ----------------------------------------------------------------------------

@@ -34,7 +34,7 @@ resource "aws_s3_bucket" "backup_bucket" {
 // ----------------------------------------------------------------------------
 resource "aws_iam_user" "velero" {
   count = var.enable_backup ? 1 : 0
-  name  = "velero"
+  name  = var.velero_username
 }
 
 resource "aws_iam_access_key" "velero" {

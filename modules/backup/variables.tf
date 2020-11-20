@@ -43,3 +43,10 @@ variable "is_jx2" {
   default = true
   type    = bool
 }
+
+variable "velero_username" {
+  description = "The username to be assigned to the Velero IAM user"
+  type        = string
+  default     = "velero"
+}
+
