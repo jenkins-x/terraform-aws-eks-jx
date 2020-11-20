@@ -209,6 +209,7 @@ The following sections provide a full list of configuration in- and output varia
 | velero\_namespace | Kubernetes namespace for Velero | `string` | `"velero"` | no |
 | velero\_schedule | The Velero backup schedule in cron notation to be set in the Velero Schedule CRD (see [default-backup.yaml](https://github.com/jenkins-x/jenkins-x-boot-config/blob/master/systems/velero-backups/templates/default-backup.yaml)) | `string` | `"0 * * * *"` | no |
 | velero\_ttl | The the lifetime of a velero backup to be set in the Velero Schedule CRD (see [default-backup.yaml](https://github.com/jenkins-x/jenkins-x-boot-config/blob/master/systems/velero-backups/templates/default-backup)) | `string` | `"720h0m0s"` | no |
+| velero\_username | The username to be assigned to the Velero IAM user | `string` | `"velero"` | no |
 | volume\_size | The volume size in GB | `number` | `50` | no |
 | volume\_type | The volume type to use. Can be standard, gp2 or io1 | `string` | `"gp2"` | no |
 | vpc\_cidr\_block | The vpc CIDR block | `string` | `"10.0.0.0/16"` | no |
