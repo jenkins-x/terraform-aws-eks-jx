@@ -1,16 +1,12 @@
-variable "region" {
-  description = "The region to create the resources into"
-  type        = string
-  default     = "us-east-1"
-}
-
 variable "cluster_name" {
-  type = string
+  type    = string
+  default = "existing-cluster"
 }
 
 variable "cluster_version" {
   description = "Kubernetes version to use for the EKS cluster."
   type        = string
+  default     = "1.18"
 }
 
 # Worker Nodes
@@ -287,17 +283,18 @@ variable "create_vpc" {
   default     = true
 }
 
-variable "encrypt_volume_self" {
-  description = "Encrypt the ebs and root volume for the self managed worker nodes. This is only valid for the worker group launch template"
-  type        = bool
-  default     = false
+variable "region" {
+  type    = string
+  default = "us-east-2"
 }
 
-variable "cluster_encryption_config" {
-  description = "Configuration block with encryption configuration for the cluster."
-  type = list(object({
-    provider_key_arn = string
-    resources        = list(string)
-  }))
-  default = []
+variable "use_vault" {
+  type    = bool
+  default = false
 }
+
+variable "use_asm" {
+  type    = bool
+  default = true
+}
+

@@ -28,6 +28,9 @@ data "aws_caller_identity" "current" {}
 // ----------------------------------------------------------------------------
 module "cluster" {
   source                                = "./modules/cluster"
+  region                                = var.region
+  create_eks                            = var.create_eks
+  create_vpc                            = var.create_vpc
   cluster_name                          = local.cluster_name
   cluster_version                       = var.cluster_version
   desired_node_count                    = var.desired_node_count
@@ -35,6 +38,7 @@ module "cluster" {
   max_node_count                        = var.max_node_count
   node_machine_type                     = var.node_machine_type
   spot_price                            = var.spot_price
+  encrypt_volume_self                   = var.encrypt_volume_self
   vpc_name                              = var.vpc_name
   public_subnets                        = var.public_subnets
   private_subnets                       = var.private_subnets
@@ -70,6 +74,7 @@ module "cluster" {
   jx_git_url                            = var.jx_git_url
   jx_bot_username                       = var.jx_bot_username
   jx_bot_token                          = var.jx_bot_token
+  cluster_encryption_config             = var.cluster_encryption_config
 }
 
 // ----------------------------------------------------------------------------
@@ -82,6 +87,7 @@ module "vault" {
   vault_user     = var.vault_user
   force_destroy  = var.force_destroy
   external_vault = local.external_vault
+  use_vault      = var.use_vault
 }
 
 // ----------------------------------------------------------------------------
@@ -107,4 +113,10 @@ module "dns" {
   create_and_configure_subdomain = var.create_and_configure_subdomain
   enable_tls                     = var.enable_tls
   production_letsencrypt         = var.production_letsencrypt
+}
+
+module "health" {
+  source               = "./modules/health"
+  is_jx2               = var.is_jx2
+  install_kuberhealthy = var.install_kuberhealthy
 }

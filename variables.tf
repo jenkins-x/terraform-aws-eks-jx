@@ -400,3 +400,48 @@ variable "jx_bot_token" {
   type        = string
   default     = ""
 }
+
+variable "create_eks" {
+  description = "Controls if EKS cluster and associated resources should be created or not. If you have an existing eks cluster for jx, set it to false"
+  type        = bool
+  default     = true
+}
+
+variable "create_vpc" {
+  description = "Controls if VPC and related resources should be created. If you have an existing vpc for jx, set it to false"
+  type        = bool
+  default     = true
+}
+
+variable "use_vault" {
+  description = "Flag to control vault resource creation"
+  type        = bool
+  default     = true
+}
+
+variable "use_asm" {
+  description = "Flag to specify if AWS Secrets manager is being used"
+  type        = bool
+  default     = false
+}
+
+variable "install_kuberhealthy" {
+  description = "Flag to specify if kuberhealthy operator should be installed"
+  type        = bool
+  default     = true
+}
+
+variable "encrypt_volume_self" {
+  description = "Encrypt the ebs and root volume for the self managed worker nodes. This is only valid for the worker group launch template"
+  type        = bool
+  default     = false
+}
+
+variable "cluster_encryption_config" {
+  description = "Configuration block with encryption configuration for the cluster."
+  type = list(object({
+    provider_key_arn = string
+    resources        = list(string)
+  }))
+  default = []
+}

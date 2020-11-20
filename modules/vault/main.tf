@@ -7,13 +7,13 @@ locals {
 }
 
 resource "aws_iam_user" "jenkins-x-vault" {
-  count = var.external_vault == false && var.vault_user == "" ? 1 : 0
+  count = ! var.external_vault && var.vault_user == "" && var.use_vault ? 1 : 0
 
   name = "jenkins-x-vault"
 }
 
 resource "aws_iam_access_key" "jenkins-x-vault" {
-  count = var.external_vault == false && var.vault_user == "" ? 1 : 0
+  count = ! var.external_vault && var.vault_user == "" && var.use_vault ? 1 : 0
 
   user = aws_iam_user.jenkins-x-vault[0].name
 }
@@ -21,7 +21,7 @@ resource "aws_iam_access_key" "jenkins-x-vault" {
 data "aws_caller_identity" "current" {}
 
 data "aws_iam_user" "vault_user" {
-  count = var.external_vault ? 0 : 1
+  count = local.create_vault_resources ? 1 : 0
 
   user_name  = var.vault_user == "" ? aws_iam_user.jenkins-x-vault[0].name : var.vault_user
   depends_on = [aws_iam_user.jenkins-x-vault]
@@ -32,7 +32,7 @@ data "aws_iam_user" "vault_user" {
 // See https://www.terraform.io/docs/providers/aws/r/s3_bucket.html
 // ----------------------------------------------------------------------------
 resource "aws_s3_bucket" "vault-unseal-bucket" {
-  count = var.external_vault ? 0 : 1
+  count = local.create_vault_resources ? 1 : 0
 
   bucket_prefix = "vault-unseal-${var.cluster_name}-"
   acl           = "private"
@@ -58,7 +58,7 @@ resource "aws_s3_bucket" "vault-unseal-bucket" {
 // See https://www.terraform.io/docs/providers/aws/r/dynamodb_table.html
 // ----------------------------------------------------------------------------
 resource "aws_dynamodb_table" "vault-dynamodb-table" {
-  count = var.external_vault ? 0 : 1
+  count = local.create_vault_resources ? 1 : 0
 
   name           = "vault-unseal-${var.cluster_name}-${local.vault_seed}"
   billing_mode   = (var.enable_provisioned_dynamodb ? "PROVISIONED" : "PAY_PER_REQUEST")
@@ -87,7 +87,7 @@ resource "aws_dynamodb_table" "vault-dynamodb-table" {
 // See https://www.terraform.io/docs/providers/aws/r/kms_key.html
 // ----------------------------------------------------------------------------
 resource "aws_kms_key" "kms_vault_unseal" {
-  count = var.external_vault ? 0 : 1
+  count = local.create_vault_resources ? 1 : 0
 
   description         = "KMS Key for bank vault unseal"
   enable_key_rotation = var.enable_key_rotation
@@ -118,7 +118,7 @@ POLICY
 // against AWS
 // ----------------------------------------------------------------------------
 data "aws_iam_policy_document" "vault_iam_user_policy_document" {
-  count = var.external_vault ? 0 : 1
+  count = local.create_vault_resources ? 1 : 0
 
   depends_on = [
     aws_dynamodb_table.vault-dynamodb-table,
@@ -190,7 +190,7 @@ data "aws_iam_policy_document" "vault_iam_user_policy_document" {
 }
 
 resource "aws_iam_policy" "aws_vault_user_policy" {
-  count = var.external_vault ? 0 : 1
+  count = local.create_vault_resources ? 1 : 0
 
   name_prefix = "vault_${var.region}-"
   description = "Vault Policy for the provided IAM User"
@@ -198,7 +198,7 @@ resource "aws_iam_policy" "aws_vault_user_policy" {
 }
 
 resource "aws_iam_user_policy_attachment" "attach_vault_policy_to_user" {
-  count = var.external_vault ? 0 : 1
+  count = local.create_vault_resources ? 1 : 0
 
   user       = data.aws_iam_user.vault_user[0].user_name
   policy_arn = aws_iam_policy.aws_vault_user_policy[0].arn

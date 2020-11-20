@@ -1,37 +1,25 @@
-// ----------------------------------------------------------------------------
-// Query necessary data for the module
-// ----------------------------------------------------------------------------
+data "aws_availability_zones" "available" {}
+
 data "aws_eks_cluster" "cluster" {
-  name = var.create_eks ? module.eks.cluster_id : var.cluster_name
+  name = module.eks.cluster_id
 }
 
 data "aws_eks_cluster_auth" "cluster" {
-  name = var.create_eks ? module.eks.cluster_id : var.cluster_name
+  name = module.eks.cluster_id
 }
 
-data "aws_availability_zones" "available" {}
-
-data "aws_caller_identity" "current" {}
-
-// ----------------------------------------------------------------------------
-// Define K8s cluster configuration
-// ----------------------------------------------------------------------------
 provider "kubernetes" {
   host                   = data.aws_eks_cluster.cluster.endpoint
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
   token                  = data.aws_eks_cluster_auth.cluster.token
   load_config_file       = false
-  version                = "1.11.1"
+  version                = "~> 1.11"
 }
 
-// ----------------------------------------------------------------------------
-// Create the AWS VPC
-// See https://github.com/terraform-aws-modules/terraform-aws-vpc
-// ----------------------------------------------------------------------------
+// This will create a vpc using the official vpc module
 module "vpc" {
   source               = "terraform-aws-modules/vpc/aws"
   version              = "2.46.0"
-  create_vpc           = var.create_vpc
   name                 = var.vpc_name
   cidr                 = var.vpc_cidr_block
   azs                  = data.aws_availability_zones.available.names
@@ -56,14 +44,11 @@ module "vpc" {
   }
 }
 
-// ----------------------------------------------------------------------------
-// Create the EKS cluster with extra EC2ContainerRegistryPowerUser policy
-// See https://github.com/terraform-aws-modules/terraform-aws-eks
-// ----------------------------------------------------------------------------
+// This will create the eks cluster using the official eks module
 module "eks" {
+  depends_on      = [module.vpc]
   source          = "terraform-aws-modules/eks/aws"
   version         = "12.1.0"
-  create_eks      = var.create_eks
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
   subnets         = (var.cluster_in_private_subnet ? module.vpc.private_subnets : module.vpc.public_subnets)
@@ -79,7 +64,6 @@ module "eks" {
       asg_max_size            = var.lt_max_nodes_per_subnet
       spot_price              = (var.enable_spot_instances ? var.spot_price : null)
       instance_type           = var.node_machine_type
-      root_encrypted          = var.encrypt_volume_self
       override_instance_types = var.allowed_spot_instance_types
       autoscaling_enabled     = "true"
       public_ip               = true
@@ -154,82 +138,16 @@ module "eks" {
   map_accounts                    = var.map_accounts
   cluster_endpoint_private_access = var.cluster_endpoint_private_access
   cluster_endpoint_public_access  = var.cluster_endpoint_public_access
-  cluster_encryption_config       = var.cluster_encryption_config
 }
 
-// ----------------------------------------------------------------------------
-// Update the kube configuration after the cluster has been created so we can
-// connect to it and create the K8s resources
-// ----------------------------------------------------------------------------
-resource "null_resource" "kubeconfig" {
-  depends_on = [
-    module.eks
-  ]
-  provisioner "local-exec" {
-    command     = "aws eks update-kubeconfig --name ${var.cluster_name} --region=${var.region}"
-    interpreter = ["/bin/bash", "-c"]
-  }
-}
-
-// ----------------------------------------------------------------------------
-// Create the necessary K8s namespaces that we will need to add the
-// Service Accounts later
-// ----------------------------------------------------------------------------
-resource "kubernetes_namespace" "jx" {
-  count = var.is_jx2 ? 1 : 0
-  depends_on = [
-    null_resource.kubeconfig
-  ]
-  metadata {
-    name = "jx"
-  }
-  lifecycle {
-    ignore_changes = [
-      metadata[0].labels,
-      metadata[0].annotations,
-    ]
-  }
-}
-
-resource "kubernetes_namespace" "cert_manager" {
-  count = var.is_jx2 ? 1 : 0
-  depends_on = [
-    null_resource.kubeconfig
-  ]
-  metadata {
-    name = "cert-manager"
-  }
-  lifecycle {
-    ignore_changes = [
-      metadata[0].labels,
-      metadata[0].annotations,
-    ]
-  }
-}
-
-// ----------------------------------------------------------------------------
-// Add the Terraform generated jx-requirements.yml to a configmap so it can be
-// sync'd with the Git repository
-//
-// https://www.terraform.io/docs/providers/kubernetes/r/namespace.html
-// ----------------------------------------------------------------------------
-resource "kubernetes_config_map" "jenkins_x_requirements" {
-  count = var.is_jx2 ? 0 : 1
-  metadata {
-    name      = "terraform-jx-requirements"
-    namespace = "default"
-  }
-  data = {
-    "jx-requirements.yml" = var.content
-  }
-
-  lifecycle {
-    ignore_changes = [
-      metadata,
-      data
-    ]
-  }
-  depends_on = [
-    module.eks
-  ]
+// The VPC and EKS resources have been created, just install the cloud resources required by jx
+module "eks-jx" {
+  source       = "../../"
+  region       = var.region
+  use_vault    = var.use_vault
+  use_asm      = var.use_asm
+  cluster_name = module.eks.cluster_id // Cluster ID/Name of the EKS cluster where we want to install the jx cloud resources in
+  is_jx2       = false
+  create_eks   = false // Skip EKS creation
+  create_vpc   = false // skip VPC creation
 }

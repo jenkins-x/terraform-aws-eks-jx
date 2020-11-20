@@ -31,6 +31,7 @@ The module makes use of the [Terraform EKS cluster Module](https://github.com/te
     - [Using different EBS Volume type and size](#using-different-ebs-volume-type-and-size)
     - [Resizing a disk on existing nodes](#resizing-a-disk-on-existing-nodes)
     - [Support for JX3](#support-for-jx3)
+    - [Existing EKS cluster](#existing-eks-cluster)
     - [Examples](#examples)
 - [FAQ: Frequently Asked Questions](#faq-frequently-asked-questions)
     - [IAM Roles for Service Accounts](#iam-roles-for-service-accounts)
@@ -109,7 +110,8 @@ module "eks-jx" {
 ```
 
 You should have your [AWS CLI configured correctly](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).
-In addition, you should make sure to specify the region via the AWS_REGION environment variable. e.g. `export AWS_REGION=us-east-1`
+In addition, you should make sure to specify the region via the AWS_REGION environment variable. e.g. 
+`export AWS_REGION=us-east-1` and the region variable (make sure the region variable matches the environment variable)
 
 The IAM user does not need any permissions attached to it.
 For more information, refer to [Configuring Vault for EKS](https://jenkins-x.io/docs/install-setup/installing/boot/clouds/amazon/#configuring-vault-for-eks) in the Jenkins X documentation.
@@ -144,6 +146,7 @@ The following sections provide a full list of configuration in- and output varia
 |------|-------------|------|---------|:--------:|
 | allowed\_spot\_instance\_types | Allowed machine types for spot instances (must be same size) | `any` | `[]` | no |
 | apex\_domain | The main domain to either use directly or to configure a subdomain from | `string` | `""` | no |
+| cluster\_encryption\_config | Configuration block with encryption configuration for the cluster. | <pre>list(object({<br>    provider_key_arn = string<br>    resources        = list(string)<br>  }))</pre> | `[]` | no |
 | cluster\_endpoint\_private\_access | Indicates whether or not the Amazon EKS private API server endpoint is enabled. | `bool` | `false` | no |
 | cluster\_endpoint\_private\_access\_cidrs | List of CIDR blocks which can access the Amazon EKS private API server endpoint, when public access is disabled. | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
 | cluster\_endpoint\_public\_access | Indicates whether or not the Amazon EKS public API server endpoint is enabled. | `bool` | `true` | no |
@@ -152,6 +155,8 @@ The following sections provide a full list of configuration in- and output varia
 | cluster\_name | Variable to provide your desired name for the cluster. The script will create a random name if this is empty | `string` | `""` | no |
 | cluster\_version | Kubernetes version to use for the EKS cluster. | `string` | `"1.17"` | no |
 | create\_and\_configure\_subdomain | Flag to create an NS record set for the subdomain in the apex domain's Hosted Zone | `bool` | `false` | no |
+| create\_eks | Controls if EKS cluster and associated resources should be created or not. If you have an existing eks cluster for jx, set it to false | `bool` | `true` | no |
+| create\_vpc | Controls if VPC and related resources should be created. If you have an existing vpc for jx, set it to false | `bool` | `true` | no |
 | desired\_node\_count | The number of worker nodes to use for the cluster | `number` | `3` | no |
 | enable\_backup | Whether or not Velero backups should be enabled | `bool` | `false` | no |
 | enable\_external\_dns | Flag to enable or disable External DNS in the final `jx-requirements.yml` file | `bool` | `false` | no |
@@ -165,8 +170,10 @@ The following sections provide a full list of configuration in- and output varia
 | enable\_tls | Flag to enable TLS in the final `jx-requirements.yml` file | `bool` | `false` | no |
 | enable\_worker\_group | Flag to enable worker group. Setting this to false will provision a node group instead | `bool` | `true` | no |
 | enable\_worker\_groups\_launch\_template | Flag to enable Worker Group Launch Templates | `bool` | `false` | no |
+| encrypt\_volume\_self | Encrypt the ebs and root volume for the self managed worker nodes. This is only valid for the worker group launch template | `bool` | `false` | no |
 | force\_destroy | Flag to determine whether storage buckets get forcefully destroyed. If set to false, empty the bucket first in the aws s3 console, else terraform destroy will fail with BucketNotEmpty error | `bool` | `false` | no |
 | ignoreLoadBalancer | Flag to specify if jx boot will ignore loadbalancer DNS to resolve to an IP | `bool` | `false` | no |
+| install\_kuberhealthy | Flag to specify if kuberhealthy operator should be installed | `bool` | `true` | no |
 | iops | The IOPS value | `number` | `0` | no |
 | is\_jx2 | Flag to specify if jx2 related resources need to be created | `bool` | `true` | no |
 | jx\_bot\_token | Bot token used to interact with the Jenkins X cluster git repository | `string` | `""` | no |
@@ -194,7 +201,9 @@ The following sections provide a full list of configuration in- and output varia
 | spot\_price | The spot price ceiling for spot instances | `string` | `"0.1"` | no |
 | subdomain | The subdomain to be added to the apex domain. If subdomain is set, it will be appended to the apex domain in  `jx-requirements-eks.yml` file | `string` | `""` | no |
 | tls\_email | The email to register the LetsEncrypt certificate with. Added to the `jx-requirements.yml` file | `string` | `""` | no |
+| use\_asm | Flag to specify if AWS Secrets manager is being used | `bool` | `false` | no |
 | use\_kms\_s3 | Flag to determine whether kms should be used for encrypting s3 buckets | `bool` | `false` | no |
+| use\_vault | Flag to control vault resource creation | `bool` | `true` | no |
 | vault\_url | URL to an external Vault instance in case Jenkins X does not create its own system Vault | `string` | `""` | no |
 | vault\_user | The AWS IAM Username whose credentials will be used to authenticate the Vault pods against AWS | `string` | `""` | no |
 | velero\_namespace | Kubernetes namespace for Velero | `string` | `"velero"` | no |
@@ -308,14 +317,18 @@ This allows you to remove all generated buckets when running terraform destroy.
 
 :warning: **Note**: If you set `force_destroy` to false, and run a `terraform destroy`, it will fail. In that case empty the s3 buckets from the aws s3 console, and re run `terraform destroy`.
 
-### Vault
+### Secrets Management
 
-Vault is used by Jenkins X for managing secrets.
+Vault is the default tool used by Jenkins X for managing secrets.
 Part of this module's responsibilities is the creation of all resources required to run the [Vault Operator](https://github.com/banzaicloud/bank-vaults).
 These resources are An S3 Bucket, a DynamoDB Table and a KMS Key.
 
 You can also configure an existing Vault instance for use with Jenkins X.
-In this case provide the Vault URL via the _vault_url_  input variable and follow the Jenkins X documentation around the instllation of an [external Vault](https://jenkins-x.io/docs/install-setup/installing/boot/secrets/#external) instance.
+In this case provide the Vault URL via the _vault_url_  input variable and follow the Jenkins X documentation around the installation of an [external Vault](https://jenkins-x.io/docs/install-setup/installing/boot/secrets/#external) instance.
+
+To use other secret backends such as AWS Secrets Manager, set `use_vault` variable to false, and `use_asm` variable to true.
+
+:warning: **Note**: AWS Secrets Manager is not supported yet, but will be functional soon. The `use_asm` just sets the `secretStorage` to `asm` instead of vault for now.
 
 ### ExternalDNS
 
@@ -627,9 +640,16 @@ You need to execute the following command before `terraform apply` in order to r
 
 `terraform taint module.eks-jx.module.cluster.module.eks.aws_launch_configuration.workers[0]`
 
-#### Support for JX3
+### Support for JX3
 Creation of namespaces and service accounts using terraform is no longer required for JX3. 
 To keep compatibility with JX2, a flag `is_jx2` was introduced, in [v1.6.0](https://github.com/jenkins-x/terraform-aws-eks-jx/releases/tag/v1.6.0).
+
+### Existing EKS cluster
+It is very common to have another module used to create EKS clusters for all your AWS accounts, in that case, you can 
+set `create_eks` and `create_vpc` to false and `cluster_name` to the id/name of the EKS cluster where jx components 
+need to be installed in.
+This will prevent creating a new vpc and eks cluster for jx.
+See [this](./examples/existing-cluster) for a complete example.
 
 ### Examples
 
