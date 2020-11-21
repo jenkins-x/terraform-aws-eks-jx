@@ -155,7 +155,14 @@ The following sections provide a full list of configuration in- and output varia
 | cluster\_name | Variable to provide your desired name for the cluster. The script will create a random name if this is empty | `string` | `""` | no |
 | cluster\_version | Kubernetes version to use for the EKS cluster. | `string` | `"1.17"` | no |
 | create\_and\_configure\_subdomain | Flag to create an NS record set for the subdomain in the apex domain's Hosted Zone | `bool` | `false` | no |
+| create\_autoscaler\_role | Flag to control cluster autoscaler iam role creation | `bool` | `true` | no |
+| create\_cm\_role | Flag to control cert manager iam role creation | `bool` | `true` | no |
+| create\_cmcainjector\_role | Flag to control cert manager ca-injector iam role creation | `bool` | `true` | no |
+| create\_ctrlb\_role | Flag to control controller build iam role creation | `bool` | `true` | no |
 | create\_eks | Controls if EKS cluster and associated resources should be created or not. If you have an existing eks cluster for jx, set it to false | `bool` | `true` | no |
+| create\_exdns\_role | Flag to control external dns iam role creation | `bool` | `true` | no |
+| create\_tekton\_role | Flag to control tekton iam role creation | `bool` | `true` | no |
+| create\_velero\_role | Flag to control velero iam role creation | `bool` | `true` | no |
 | create\_vpc | Controls if VPC and related resources should be created. If you have an existing vpc for jx, set it to false | `bool` | `true` | no |
 | desired\_node\_count | The number of worker nodes to use for the cluster | `number` | `3` | no |
 | enable\_backup | Whether or not Velero backups should be enabled | `bool` | `false` | no |
@@ -650,6 +657,7 @@ It is very common to have another module used to create EKS clusters for all you
 set `create_eks` and `create_vpc` to false and `cluster_name` to the id/name of the EKS cluster where jx components 
 need to be installed in.
 This will prevent creating a new vpc and eks cluster for jx.
+There are also flags to control the creation of IAM roles.
 See [this](./examples/existing-cluster) for a complete example.
 
 ### Examples

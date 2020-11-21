@@ -8,6 +8,7 @@
 // Tekton Bot IAM Policy, IAM Role and Service Account
 // ----------------------------------------------------------------------------
 data "aws_iam_policy_document" "tekton-bot-policy" {
+  count = var.create_tekton_role ? 1 : 0
   statement {
     sid    = "tektonBotPolicy"
     effect = "Allow"
@@ -29,17 +30,18 @@ data "aws_iam_policy_document" "tekton-bot-policy" {
   }
 }
 resource "aws_iam_policy" "tekton-bot" {
+  count       = var.create_tekton_role ? 1 : 0
   name_prefix = "jenkins-x-tekton-bot"
   description = "EKS tekton-bot policy for cluster ${var.cluster_name}"
-  policy      = data.aws_iam_policy_document.tekton-bot-policy.json
+  policy      = data.aws_iam_policy_document.tekton-bot-policy[count.index].json
 }
 module "iam_assumable_role_tekton_bot" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v2.13.0"
-  create_role                   = true
+  create_role                   = var.create_tekton_role
   role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-tekton-bot-${local.generated_seed}", 0, 60) : "${local.cluster_trunc}-tekton-bot"
   provider_url                  = local.oidc_provider_url
-  role_policy_arns              = [aws_iam_policy.tekton-bot.arn]
+  role_policy_arns              = [aws_iam_policy.tekton-bot[0].arn]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.jenkins-x-namespace}:tekton-bot"]
 }
 resource "kubernetes_service_account" "tekton-bot" {
@@ -67,6 +69,7 @@ resource "kubernetes_service_account" "tekton-bot" {
 // External DNS IAM Policy, IAM Role and Service Account
 // ----------------------------------------------------------------------------
 data "aws_iam_policy_document" "external-dns-policy" {
+  count = var.create_exdns_role ? 1 : 0
   statement {
     effect = "Allow"
     actions = [
@@ -84,17 +87,18 @@ data "aws_iam_policy_document" "external-dns-policy" {
   }
 }
 resource "aws_iam_policy" "external-dns" {
+  count       = var.create_exdns_role ? 1 : 0
   name_prefix = "jenkins-x-external-dns"
   description = "EKS external-dns policy for cluster ${var.cluster_name}"
-  policy      = data.aws_iam_policy_document.external-dns-policy.json
+  policy      = data.aws_iam_policy_document.external-dns-policy[count.index].json
 }
 module "iam_assumable_role_external_dns" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v2.13.0"
-  create_role                   = true
+  create_role                   = var.create_exdns_role
   role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-external_dns-${local.generated_seed}", 0, 60) : "${local.cluster_trunc}-external-dns"
   provider_url                  = local.oidc_provider_url
-  role_policy_arns              = [aws_iam_policy.external-dns.arn]
+  role_policy_arns              = [aws_iam_policy.external-dns[0].arn]
   oidc_fully_qualified_subjects = var.is_jx2 ? ["system:serviceaccount:${local.jenkins-x-namespace}:exdns-external-dns"] : ["system:serviceaccount:${local.jenkins-x-namespace}:external-dns"]
 }
 resource "kubernetes_service_account" "exdns-external-dns" {
@@ -122,6 +126,7 @@ resource "kubernetes_service_account" "exdns-external-dns" {
 // Cert Manager IAM Policy, IAM Role and Service Account
 // ----------------------------------------------------------------------------
 data "aws_iam_policy_document" "cert-manager-policy" {
+  count = var.create_cm_role ? 1 : 0
   statement {
     effect = "Allow"
     actions = [
@@ -145,17 +150,18 @@ data "aws_iam_policy_document" "cert-manager-policy" {
   }
 }
 resource "aws_iam_policy" "cert-manager" {
+  count       = var.create_cm_role ? 1 : 0
   name_prefix = "jenkins-x-cert-manager"
   description = "EKS cert-manager policy for cluster ${var.cluster_name}"
-  policy      = data.aws_iam_policy_document.cert-manager-policy.json
+  policy      = data.aws_iam_policy_document.cert-manager-policy[count.index].json
 }
 module "iam_assumable_role_cert_manager" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v2.13.0"
-  create_role                   = true
+  create_role                   = var.create_cm_role
   role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-cert_manager-${local.generated_seed}", 0, 60) : "${local.cluster_trunc}-cert-manager-cert-manager"
   provider_url                  = local.oidc_provider_url
-  role_policy_arns              = [aws_iam_policy.cert-manager.arn]
+  role_policy_arns              = [aws_iam_policy.cert-manager[0].arn]
   oidc_fully_qualified_subjects = var.is_jx2 ? ["system:serviceaccount:cert-manager:cm-cert-manager"] : ["system:serviceaccount:cert-manager:cert-manager"]
 }
 resource "kubernetes_service_account" "cm-cert-manager" {
@@ -185,10 +191,10 @@ resource "kubernetes_service_account" "cm-cert-manager" {
 module "iam_assumable_role_cm_cainjector" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v2.13.0"
-  create_role                   = true
+  create_role                   = var.create_cmcainjector_role
   role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-cm_cainjector-${local.generated_seed}", 0, 60) : "${local.cluster_trunc}-cert-manager-cert-manager-cainjector"
   provider_url                  = local.oidc_provider_url
-  role_policy_arns              = [aws_iam_policy.cert-manager.arn]
+  role_policy_arns              = [aws_iam_policy.cert-manager[0].arn]
   oidc_fully_qualified_subjects = var.is_jx2 ? ["system:serviceaccount:cert-manager:cm-cainjector"] : ["system:serviceaccount:cert-manager:cert-manager-cainjector"]
 }
 resource "kubernetes_service_account" "cm-cainjector" {
@@ -218,7 +224,7 @@ resource "kubernetes_service_account" "cm-cainjector" {
 module "iam_assumable_role_controllerbuild" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v2.13.0"
-  create_role                   = true
+  create_role                   = var.create_ctrlb_role
   role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-ctrlb-${local.generated_seed}", 0, 60) : "${local.cluster_trunc}-build-ctrl"
   provider_url                  = local.oidc_provider_url
   role_policy_arns              = ["arn:aws:iam::aws:policy/AmazonS3FullAccess"]
@@ -253,20 +259,22 @@ resource "kubernetes_service_account" "jenkins-x-controllerbuild" {
 module "iam_assumable_role_cluster_autoscaler" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v2.13.0"
-  create_role                   = true
+  create_role                   = var.create_autoscaler_role
   role_name                     = var.is_jx2 ? "tf-${var.cluster_name}-cluster-autoscaler" : "${local.cluster_trunc}-cluster-autoscaler-cluster-autoscaler"
   provider_url                  = local.oidc_provider_url
-  role_policy_arns              = [aws_iam_policy.cluster_autoscaler.arn]
+  role_policy_arns              = [aws_iam_policy.cluster_autoscaler[0].arn]
   oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:cluster-autoscaler"]
 }
 
 resource "aws_iam_policy" "cluster_autoscaler" {
+  count       = var.create_autoscaler_role ? 1 : 0
   name_prefix = "cluster-autoscaler"
   description = "EKS cluster-autoscaler policy for cluster ${module.eks.cluster_id}"
-  policy      = data.aws_iam_policy_document.cluster_autoscaler.json
+  policy      = data.aws_iam_policy_document.cluster_autoscaler[count.index].json
 }
 
 data "aws_iam_policy_document" "cluster_autoscaler" {
+  count = var.create_autoscaler_role ? 1 : 0
   statement {
     sid    = "clusterAutoscalerAll"
     effect = "Allow"

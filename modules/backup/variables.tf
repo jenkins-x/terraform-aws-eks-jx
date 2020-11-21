@@ -50,3 +50,8 @@ variable "velero_username" {
   default     = "velero"
 }
 
+variable "create_velero_role" {
+  description = "Flag to control velero iam role creation"
+  type        = bool
+  default     = true
+}
