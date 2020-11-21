@@ -46,7 +46,7 @@ resource "aws_iam_access_key" "velero" {
 }
 
 data "aws_iam_policy_document" "velero" {
-  count = var.enable_backup ? 1 : 0
+  count = var.enable_backup && var.create_velero_role ? 1 : 0
   statement {
     sid    = "veleroPolicyEC2"
     effect = "Allow"
@@ -89,7 +89,7 @@ data "aws_iam_policy_document" "velero" {
 }
 
 resource "aws_iam_user_policy" "velero" {
-  count  = var.enable_backup ? 1 : 0
+  count  = var.enable_backup && var.create_velero_role ? 1 : 0
   name   = "velero"
   user   = aws_iam_user.velero[0].name
   policy = data.aws_iam_policy_document.velero[0].json

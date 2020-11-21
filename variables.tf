@@ -451,3 +451,45 @@ variable "cluster_encryption_config" {
   }))
   default = []
 }
+
+variable "create_tekton_role" {
+  description = "Flag to control tekton iam role creation"
+  type        = bool
+  default     = true
+}
+
+variable "create_exdns_role" {
+  description = "Flag to control external dns iam role creation"
+  type        = bool
+  default     = true
+}
+
+variable "create_cm_role" {
+  description = "Flag to control cert manager iam role creation"
+  type        = bool
+  default     = true
+}
+
+variable "create_cmcainjector_role" {
+  description = "Flag to control cert manager ca-injector iam role creation"
+  type        = bool
+  default     = true
+}
+
+variable "create_ctrlb_role" {
+  description = "Flag to control controller build iam role creation"
+  type        = bool
+  default     = true
+}
+
+variable "create_autoscaler_role" {
+  description = "Flag to control cluster autoscaler iam role creation"
+  type        = bool
+  default     = true
+}
+
+variable "create_velero_role" {
+  description = "Flag to control velero iam role creation"
+  type        = bool
+  default     = true
+}
