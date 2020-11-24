@@ -269,7 +269,7 @@ module "iam_assumable_role_cluster_autoscaler" {
 resource "aws_iam_policy" "cluster_autoscaler" {
   count       = var.create_autoscaler_role ? 1 : 0
   name_prefix = "cluster-autoscaler"
-  description = "EKS cluster-autoscaler policy for cluster ${module.eks.cluster_id}"
+  description = "EKS cluster-autoscaler policy for cluster ${local.cluster_trunc}"
   policy      = data.aws_iam_policy_document.cluster_autoscaler[count.index].json
 }
 
@@ -304,7 +304,7 @@ data "aws_iam_policy_document" "cluster_autoscaler" {
 
     condition {
       test     = "StringEquals"
-      variable = "autoscaling:ResourceTag/kubernetes.io/cluster/${module.eks.cluster_id}"
+      variable = "autoscaling:ResourceTag/kubernetes.io/cluster/${local.cluster_trunc}"
       values   = ["owned"]
     }
 
