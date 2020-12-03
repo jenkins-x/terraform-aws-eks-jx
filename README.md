@@ -190,6 +190,8 @@ The following sections provide a full list of configuration in- and output varia
 | lt\_desired\_nodes\_per\_subnet | The number of worker nodes in each Subnet (AZ) if using Launch Templates | `number` | `1` | no |
 | lt\_max\_nodes\_per\_subnet | The maximum number of worker nodes in each Subnet (AZ) if using Launch Templates | `number` | `2` | no |
 | lt\_min\_nodes\_per\_subnet | The minimum number of worker nodes in each Subnet (AZ) if using Launch Templates | `number` | `1` | no |
+| manage\_apex\_domain | Flag to control if apex domain should be managed/updated by this module. Set this to false,if your apex domain is managed in a different AWS account or different provider | `bool` | `true` | no |
+| manage\_subdomain | Flag to control subdomain creation/management | `bool` | `true` | no |
 | map\_accounts | Additional AWS account numbers to add to the aws-auth configmap. | `list(string)` | `[]` | no |
 | map\_roles | Additional IAM roles to add to the aws-auth configmap. | <pre>list(object({<br>    rolearn  = string<br>    username = string<br>    groups   = list(string)<br>  }))</pre> | `[]` | no |
 | map\_users | Additional IAM users to add to the aws-auth configmap. | <pre>list(object({<br>    userarn  = string<br>    username = string<br>    groups   = list(string)<br>  }))</pre> | `[]` | no |
@@ -239,12 +241,13 @@ The following sections provide a full list of configuration in- and output varia
 | lts\_logs\_bucket | The bucket where logs from builds will be stored |
 | lts\_reports\_bucket | The bucket where test reports will be stored |
 | lts\_repository\_bucket | The bucket that will serve as artifacts repository |
+| subdomain\_nameservers | ---------------------------------------------------------------------------- DNS ---------------------------------------------------------------------------- |
 | tekton\_bot\_iam\_role | The IAM Role that the build pods will assume to authenticate |
 | vault\_dynamodb\_table | The Vault DynamoDB table |
 | vault\_kms\_unseal | The Vault KMS Key for encryption |
 | vault\_unseal\_bucket | The Vault storage bucket |
 | vault\_user\_id | The Vault IAM user id |
-| vault\_user\_secret | The Vault IAM user secret |
+| vault\_user\_secret | The Vault IAM user secret 
 
 ### Cluster Autoscaling
 

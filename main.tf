@@ -114,6 +114,8 @@ module "dns" {
   create_and_configure_subdomain = var.create_and_configure_subdomain
   enable_tls                     = var.enable_tls
   production_letsencrypt         = var.production_letsencrypt
+  manage_apex_domain             = var.manage_apex_domain
+  manage_subdomain               = var.manage_subdomain
 }
 
 module "health" {

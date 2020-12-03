@@ -43,3 +43,15 @@ variable "is_jx2" {
   default = true
   type    = bool
 }
+
+variable "manage_apex_domain" {
+  description = "Flag to control if apex domain should be managed/updated by this module. Set this to false,if your apex domain is managed in a different AWS account or different provider"
+  default     = true
+  type        = bool
+}
+
+variable "manage_subdomain" {
+  description = "Flag to control subdomain creation/management"
+  default     = true
+  type        = bool
+}
