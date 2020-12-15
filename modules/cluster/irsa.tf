@@ -315,3 +315,34 @@ data "aws_iam_policy_document" "cluster_autoscaler" {
     }
   }
 }
+
+// Pipeline visualizer
+data "aws_iam_policy_document" "pipelines-visualizer-policy" {
+  count = var.create_pipeline_vis_role ? 1 : 0
+  statement {
+    sid    = "JxPipelineVisualizerPolicy"
+    effect = "Allow"
+    actions = [
+      "s3:Get*",
+      "s3:List*",
+    ]
+    resources = [aws_s3_bucket.logs_jenkins_x.*.arn[0]]
+  }
+}
+
+resource "aws_iam_policy" "pipeline-visualizer" {
+  count       = var.create_pipeline_vis_role ? 1 : 0
+  name_prefix = "jx-pipelines-visualizer"
+  description = "JenkinsX pipline visualizer policy for cluster ${var.cluster_name}"
+  policy      = data.aws_iam_policy_document.pipelines-visualizer-policy[count.index].json
+}
+
+module "iam_assumable_role_pipeline_visualizer" {
+  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version                       = "~> v2.13.0"
+  create_role                   = var.create_pipeline_vis_role
+  role_name                     = "${local.cluster_trunc}-jx-pipelines-visualizer"
+  provider_url                  = local.oidc_provider_url
+  role_policy_arns              = [aws_iam_policy.pipeline-visualizer[0].arn]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.jenkins-x-namespace}:jx-pipelines-visualizer"]
+}

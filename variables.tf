@@ -505,3 +505,9 @@ variable "manage_subdomain" {
   default     = true
   type        = bool
 }
+
+variable "create_pipeline_vis_role" {
+  description = "Flag to control pipeline visualizer role"
+  type        = bool
+  default     = true
+}
