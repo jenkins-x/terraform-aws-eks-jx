@@ -161,6 +161,7 @@ The following sections provide a full list of configuration in- and output varia
 | create\_ctrlb\_role | Flag to control controller build iam role creation | `bool` | `true` | no |
 | create\_eks | Controls if EKS cluster and associated resources should be created or not. If you have an existing eks cluster for jx, set it to false | `bool` | `true` | no |
 | create\_exdns\_role | Flag to control external dns iam role creation | `bool` | `true` | no |
+| create\_pipeline\_vis\_role | Flag to control pipeline visualizer role | `bool` | `true` | no |
 | create\_tekton\_role | Flag to control tekton iam role creation | `bool` | `true` | no |
 | create\_velero\_role | Flag to control velero iam role creation | `bool` | `true` | no |
 | create\_vpc | Controls if VPC and related resources should be created. If you have an existing vpc for jx, set it to false | `bool` | `true` | no |
@@ -241,13 +242,14 @@ The following sections provide a full list of configuration in- and output varia
 | lts\_logs\_bucket | The bucket where logs from builds will be stored |
 | lts\_reports\_bucket | The bucket where test reports will be stored |
 | lts\_repository\_bucket | The bucket that will serve as artifacts repository |
+| pipeline\_viz\_iam\_role | The IAM Role that the pipeline visualizer pod will assume to authenticate |
 | subdomain\_nameservers | ---------------------------------------------------------------------------- DNS ---------------------------------------------------------------------------- |
 | tekton\_bot\_iam\_role | The IAM Role that the build pods will assume to authenticate |
 | vault\_dynamodb\_table | The Vault DynamoDB table |
 | vault\_kms\_unseal | The Vault KMS Key for encryption |
 | vault\_unseal\_bucket | The Vault storage bucket |
 | vault\_user\_id | The Vault IAM user id |
-| vault\_user\_secret | The Vault IAM user secret 
+| vault\_user\_secret | The Vault IAM user secret |
 
 ### Cluster Autoscaling
 

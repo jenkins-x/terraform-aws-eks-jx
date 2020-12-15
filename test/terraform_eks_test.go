@@ -91,6 +91,12 @@ func TestTerraformEksJX(t *testing.T) {
 	})
 	assert.NoError(t, err)
 
+	pVizRole := terraform.Output(t, tfOptions, "pipeline_viz_iam_role")
+	_, err = iamClient.GetRole(&iam.GetRoleInput{
+		RoleName: aws.String(pVizRole),
+	})
+	assert.NoError(t, err)
+
 	// Vault
 	vaultBucket := terraform.Output(t, tfOptions, "vault_unseal_bucket")
 	aws2.AssertS3BucketExists(t, region, vaultBucket)
