@@ -326,7 +326,7 @@ data "aws_iam_policy_document" "pipelines-visualizer-policy" {
       "s3:Get*",
       "s3:List*",
     ]
-    resources = [aws_s3_bucket.logs_jenkins_x.*.arn[0]]
+    resources = [aws_s3_bucket.logs_jenkins_x.*.arn[0] , "${aws_s3_bucket.logs_jenkins_x.*.arn[0]}/*"]
   }
 }
 
