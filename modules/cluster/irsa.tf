@@ -37,7 +37,7 @@ resource "aws_iam_policy" "tekton-bot" {
 }
 module "iam_assumable_role_tekton_bot" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v2.13.0"
+  version                       = "~> v3.6.0"
   create_role                   = var.create_tekton_role
   role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-tekton-bot-${local.generated_seed}", 0, 60) : "${local.cluster_trunc}-tekton-bot"
   provider_url                  = local.oidc_provider_url
@@ -94,7 +94,7 @@ resource "aws_iam_policy" "external-dns" {
 }
 module "iam_assumable_role_external_dns" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v2.13.0"
+  version                       = "~> v3.6.0"
   create_role                   = var.create_exdns_role
   role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-external_dns-${local.generated_seed}", 0, 60) : "${local.cluster_trunc}-external-dns"
   provider_url                  = local.oidc_provider_url
@@ -157,7 +157,7 @@ resource "aws_iam_policy" "cert-manager" {
 }
 module "iam_assumable_role_cert_manager" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v2.13.0"
+  version                       = "~> v3.6.0"
   create_role                   = var.create_cm_role
   role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-cert_manager-${local.generated_seed}", 0, 60) : "${local.cluster_trunc}-cert-manager-cert-manager"
   provider_url                  = local.oidc_provider_url
@@ -190,7 +190,7 @@ resource "kubernetes_service_account" "cm-cert-manager" {
 // ----------------------------------------------------------------------------
 module "iam_assumable_role_cm_cainjector" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v2.13.0"
+  version                       = "~> v3.6.0"
   create_role                   = var.create_cmcainjector_role
   role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-cm_cainjector-${local.generated_seed}", 0, 60) : "${local.cluster_trunc}-cert-manager-cert-manager-cainjector"
   provider_url                  = local.oidc_provider_url
@@ -223,7 +223,7 @@ resource "kubernetes_service_account" "cm-cainjector" {
 // ----------------------------------------------------------------------------
 module "iam_assumable_role_controllerbuild" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v2.13.0"
+  version                       = "~> v3.6.0"
   create_role                   = var.create_ctrlb_role
   role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-ctrlb-${local.generated_seed}", 0, 60) : "${local.cluster_trunc}-build-ctrl"
   provider_url                  = local.oidc_provider_url
@@ -258,7 +258,7 @@ resource "kubernetes_service_account" "jenkins-x-controllerbuild" {
 
 module "iam_assumable_role_cluster_autoscaler" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v2.13.0"
+  version                       = "~> v3.6.0"
   create_role                   = var.create_autoscaler_role
   role_name                     = var.is_jx2 ? "tf-${var.cluster_name}-cluster-autoscaler" : "${local.cluster_trunc}-cluster-autoscaler-cluster-autoscaler"
   provider_url                  = local.oidc_provider_url
@@ -339,7 +339,7 @@ resource "aws_iam_policy" "pipeline-visualizer" {
 
 module "iam_assumable_role_pipeline_visualizer" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v2.13.0"
+  version                       = "~> v3.6.0"
   create_role                   = var.create_pipeline_vis_role
   role_name                     = "${local.cluster_trunc}-jx-pipelines-visualizer"
   provider_url                  = local.oidc_provider_url
