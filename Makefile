@@ -42,7 +42,7 @@ lint: init tf-version fmt ## Verifies Terraform syntax
 
 .PHONY: fmt
 fmt: ## Reformats Terraform files accoring to standard
-	terraform fmt -check -diff -recursive
+	terraform fmt -diff -recursive
 
 # There is a bug in the latest version which causes a panic.
 $(TFSEC): bin ## Installs tfsec

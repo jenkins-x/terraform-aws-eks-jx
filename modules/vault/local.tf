@@ -1,7 +1,3 @@
-provider "random" {
-  version = "~> 2.1"
-}
-
 resource "random_string" "suffix" {
   length  = 8
   special = false
@@ -9,5 +5,5 @@ resource "random_string" "suffix" {
 
 locals {
   vault_seed             = random_string.suffix.result
-  create_vault_resources = var.use_vault && ! var.external_vault
+  create_vault_resources = var.use_vault && !var.external_vault
 }
