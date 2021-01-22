@@ -8,5 +8,6 @@ terraform {
     null       = "~> 2.1"
     template   = "~> 2.1"
     random     = "~> 2.1"
+    helm       = "~> 1.11.0"
   }
 }
