@@ -110,6 +110,9 @@ module "eks-jx" {
 ```
 
 You should have your [AWS CLI configured correctly](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).
+
+#### AWS_REGION
+
 In addition, you should make sure to specify the region via the AWS_REGION environment variable. e.g. 
 `export AWS_REGION=us-east-1` and the region variable (make sure the region variable matches the environment variable)
 
