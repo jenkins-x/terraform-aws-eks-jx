@@ -159,6 +159,7 @@ The following sections provide a full list of configuration in- and output varia
 | cluster\_version | Kubernetes version to use for the EKS cluster. | `string` | `"1.17"` | no |
 | create\_and\_configure\_subdomain | Flag to create an NS record set for the subdomain in the apex domain's Hosted Zone | `bool` | `false` | no |
 | create\_autoscaler\_role | Flag to control cluster autoscaler iam role creation | `bool` | `true` | no |
+| create\_bucketrepo\_role | Flag to control bucketrepo role | `bool` | `true` | no |
 | create\_cm\_role | Flag to control cert manager iam role creation | `bool` | `true` | no |
 | create\_cmcainjector\_role | Flag to control cert manager ca-injector iam role creation | `bool` | `true` | no |
 | create\_ctrlb\_role | Flag to control controller build iam role creation | `bool` | `true` | no |

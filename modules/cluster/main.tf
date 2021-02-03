@@ -97,7 +97,7 @@ module "eks" {
     }
   ] : []
 
-  worker_groups = var.enable_worker_group && !var.enable_worker_groups_launch_template ? [
+  worker_groups = var.enable_worker_group && ! var.enable_worker_groups_launch_template ? [
     {
       name                 = "worker-group-${var.cluster_name}"
       instance_type        = var.node_machine_type
@@ -124,7 +124,7 @@ module "eks" {
     }
   ] : []
 
-  node_groups = !var.enable_worker_group ? {
+  node_groups = ! var.enable_worker_group ? {
     eks-jx-node-group = {
       ami_type         = var.node_group_ami
       disk_size        = var.node_group_disk_size

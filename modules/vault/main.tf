@@ -7,13 +7,13 @@ locals {
 }
 
 resource "aws_iam_user" "jenkins-x-vault" {
-  count = !var.external_vault && var.vault_user == "" && var.use_vault ? 1 : 0
+  count = ! var.external_vault && var.vault_user == "" && var.use_vault ? 1 : 0
 
   name = "jenkins-x-vault"
 }
 
 resource "aws_iam_access_key" "jenkins-x-vault" {
-  count = !var.external_vault && var.vault_user == "" && var.use_vault ? 1 : 0
+  count = ! var.external_vault && var.vault_user == "" && var.use_vault ? 1 : 0
 
   user = aws_iam_user.jenkins-x-vault[0].name
 }
