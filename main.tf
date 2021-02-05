@@ -76,12 +76,14 @@ module "cluster" {
   jx_bot_token                          = var.jx_bot_token
   cluster_encryption_config             = var.cluster_encryption_config
   create_autoscaler_role                = var.create_autoscaler_role
+  create_bucketrepo_role                = var.create_bucketrepo_role
   create_cm_role                        = var.create_cm_role
   create_cmcainjector_role              = var.create_cmcainjector_role
   create_ctrlb_role                     = var.create_ctrlb_role
   create_exdns_role                     = var.create_exdns_role
   create_pipeline_vis_role              = var.create_pipeline_vis_role
   create_tekton_role                    = var.create_tekton_role
+  additional_tekton_role_policy_arns    = var.additional_tekton_role_policy_arns
 }
 
 // ----------------------------------------------------------------------------
