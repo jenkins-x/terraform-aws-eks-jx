@@ -147,6 +147,7 @@ The following sections provide a full list of configuration in- and output varia
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| additional\_tekton\_role\_policy\_arns | Additional Policy ARNs to attach to Tekton IRSA Role | `list(string)` | `[]` | no |
 | allowed\_spot\_instance\_types | Allowed machine types for spot instances (must be same size) | `any` | `[]` | no |
 | apex\_domain | The main domain to either use directly or to configure a subdomain from | `string` | `""` | no |
 | cluster\_encryption\_config | Configuration block with encryption configuration for the cluster. | <pre>list(object({<br>    provider_key_arn = string<br>    resources        = list(string)<br>  }))</pre> | `[]` | no |

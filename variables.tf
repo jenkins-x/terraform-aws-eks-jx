@@ -517,3 +517,9 @@ variable "create_bucketrepo_role" {
   type        = bool
   default     = true
 }
+
+variable "additional_tekton_role_policy_arns" {
+  description = "Additional Policy ARNs to attach to Tekton IRSA Role"
+  type        = list(string)
+  default     = []
+}
