@@ -3,6 +3,9 @@
 set -e
 set -u
 
+# ensure we have curl
+apk add curl
+
 echo "Installing aws-iam-authenticator"
 # Install aws-iam-authenticator to be able to connect to the cluster
 curl -o aws-iam-authenticator https://amazon-eks.s3-us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/aws-iam-authenticator
