@@ -26,9 +26,9 @@ pipelineConfig:
                 - mountPath: /tekton/home/.aws
                   name: aws-creds
           steps:
-          - name: terraform-lint
-            command: /workspace/source/scripts/lint.sh
           - name: terraform-apply-and-test
-            command: /workspace/source/scripts/ci.sh
+            command: ./scripts/ci.sh
+          - name: terraform-lint
+            command: ./scripts/lint.sh
           - name: terraform-security-check
-            command: /workspace/source/scripts/security.sh
+            command: ./scripts/security.sh
