@@ -3,9 +3,6 @@
 set -e
 set -u
 
-# ensure we have curl
-apk add curl
-
 # Checking AWS Installation
 aws --version
 
