@@ -10,7 +10,7 @@ pipelineConfig:
                 name: aws-bdd-user-creds
                 key: vault_user
         agent:
-          image: gcr.io/jenkinsxio/builder-terraform:2.1.155-778
+          image: ghcr.io/jenkins-x/terraform-aws:4.0.12
         stages:
         - name: ci
           options:
