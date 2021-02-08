@@ -27,8 +27,8 @@ pipelineConfig:
                   name: aws-creds
           steps:
           - name: terraform-lint
-            command: ./scripts/lint.sh
+            command: /workspace/source/scripts/lint.sh
           - name: terraform-apply-and-test
-            command: ./scripts/ci.sh
+            command: /workspace/source/scripts/ci.sh
           - name: terraform-security-check
-            command: ./scripts/security.sh
+            command: /workspace/source/scripts/security.sh
