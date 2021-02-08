@@ -28,7 +28,7 @@ pipelineConfig:
           steps:
           - name: terraform-lint
             command: ./scripts/lint.sh
-          - name: terraform-apply-and-test
-            command: ./scripts/ci.sh
           - name: terraform-security-check
             command: ./scripts/security.sh
+          - name: terraform-apply-and-test
+            command: ./scripts/ci.sh
