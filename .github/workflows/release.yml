@@ -30,6 +30,7 @@ jobs:
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
         tag_name: v${{ steps.prep.outputs.version }}
         release_name: ${{ steps.prep.outputs.version }}
         body: |
