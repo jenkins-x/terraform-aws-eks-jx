@@ -10,7 +10,7 @@ pipelineConfig:
                 name: aws-bdd-user-creds
                 key: vault_user
         agent:
-          image: gcr.io/jenkinsxio/builder-terraform:2.1.155-778
+          image: ghcr.io/jenkins-x/terraform-aws:4.0.13
         stages:
         - name: ci
           options:
@@ -27,12 +27,8 @@ pipelineConfig:
                   name: aws-creds
           steps:
           - name: terraform-lint
-            command: make
-            args:
-            - lint
+            command: ./scripts/lint.sh
           - name: terraform-security-check
-            command: make
-            args:
-            - tfsec
+            command: ./scripts/security.sh
           - name: terraform-apply-and-test
             command: ./scripts/ci.sh
