@@ -343,3 +343,9 @@ variable "create_pipeline_vis_role" {
   type        = bool
   default     = true
 }
+
+variable "create_bucketrepo_role" {
+  description = "Flag to control bucketrepo role"
+  type        = bool
+  default     = true
+}
