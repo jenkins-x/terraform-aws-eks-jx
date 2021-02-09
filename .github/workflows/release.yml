@@ -1,0 +1,32 @@
+name: Release
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: "0"
+        token: ${{ secrets.GHCR_TOKEN }}
+    - uses: fusion-engineering/setup-git-credentials@v2
+      with:
+        credentials: ${{ format('https://x-access-token:{0}@github.com/', secrets.GHCR_TOKEN) }}
+    - id: prep
+      name: Set the release version
+      uses: docker://gcr.io/jenkinsxio/jx-release-version:1.0.46
+      with:
+        args: -c "echo ::set-output name=version::$(jx-release-version)"
+        entrypoint: bash
+    - env:
+        VERSION: ${{ steps.prep.outputs.version }}
+      run: |
+        echo "tagging version $VERSION"
+        git config --global user.email "james.strachan@gmail.com"
+        git config --global user.name "jstrachan"
+        git tag -fa v$VERSION -m "Release version $VERSION"
+        git push --force origin v$VERSION
+"on":
+  push:
+    branches:
+    - main
+    - master
