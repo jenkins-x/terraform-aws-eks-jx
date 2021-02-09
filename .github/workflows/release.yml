@@ -25,6 +25,18 @@ jobs:
         git config --global user.name "jstrachan"
         git tag -fa v$VERSION -m "Release version $VERSION"
         git push --force origin v$VERSION
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        tag_name: v${{ steps.prep.outputs.version }}
+        release_name: ${{ steps.prep.outputs.version }}
+        body: |
+          New release
+        draft: false
+        prerelease: false
+
 "on":
   push:
     branches:
