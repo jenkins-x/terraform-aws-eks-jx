@@ -5,6 +5,14 @@ provider "aws" {
   region = var.region
 }
 
+provider "helm" {
+  kubernetes {
+    host                   = module.cluster.cluster_host
+    cluster_ca_certificate = module.cluster.cluster_ca_certificate
+    token                  = module.cluster.cluster_token
+  }
+}
+
 resource "random_string" "suffix" {
   length  = 8
   special = false
