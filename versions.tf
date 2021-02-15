@@ -3,11 +3,11 @@ terraform {
 
   required_providers {
     aws        = ">= 2.53.0, < 4.0"
-    kubernetes = "1.13.3"
-    local      = "~> 1.2"
-    null       = "~> 2.1"
-    template   = "~> 2.1"
-    random     = "~> 2.1"
-    helm       = "~> 1.3.2"
+    kubernetes = "~> 2.0"
+    local      = "~> 2.0"
+    null       = "~> 3.0"
+    template   = "~> 2.0"
+    random     = "~> 3.0"
+    helm       = "~> 2.0"
   }
 }
