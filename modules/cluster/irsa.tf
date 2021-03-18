@@ -98,7 +98,7 @@ module "iam_assumable_role_external_dns" {
   create_role                   = var.create_exdns_role
   role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-external_dns-${local.generated_seed}", 0, 60) : "${local.cluster_trunc}-external-dns"
   provider_url                  = local.oidc_provider_url
-  role_policy_arns              = [aws_iam_policy.external-dns[0].arn]
+  role_policy_arns              = [var.create_exdns_role ? aws_iam_policy.external-dns[0].arn : ""]
   oidc_fully_qualified_subjects = var.is_jx2 ? ["system:serviceaccount:${local.jenkins-x-namespace}:exdns-external-dns"] : ["system:serviceaccount:${local.jenkins-x-namespace}:external-dns"]
 }
 resource "kubernetes_service_account" "exdns-external-dns" {
@@ -161,7 +161,7 @@ module "iam_assumable_role_cert_manager" {
   create_role                   = var.create_cm_role
   role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-cert_manager-${local.generated_seed}", 0, 60) : "${local.cluster_trunc}-cert-manager-cert-manager"
   provider_url                  = local.oidc_provider_url
-  role_policy_arns              = [aws_iam_policy.cert-manager[0].arn]
+  role_policy_arns              = [var.create_cm_role ? aws_iam_policy.cert-manager[0].arn : ""]
   oidc_fully_qualified_subjects = var.is_jx2 ? ["system:serviceaccount:cert-manager:cm-cert-manager"] : ["system:serviceaccount:cert-manager:cert-manager"]
 }
 resource "kubernetes_service_account" "cm-cert-manager" {
@@ -194,7 +194,7 @@ module "iam_assumable_role_cm_cainjector" {
   create_role                   = var.create_cmcainjector_role
   role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-cm_cainjector-${local.generated_seed}", 0, 60) : "${local.cluster_trunc}-cert-manager-cert-manager-cainjector"
   provider_url                  = local.oidc_provider_url
-  role_policy_arns              = [aws_iam_policy.cert-manager[0].arn]
+  role_policy_arns              = [var.create_cmcainjector_role ? aws_iam_policy.cert-manager[0].arn : ""]
   oidc_fully_qualified_subjects = var.is_jx2 ? ["system:serviceaccount:cert-manager:cm-cainjector"] : ["system:serviceaccount:cert-manager:cert-manager-cainjector"]
 }
 resource "kubernetes_service_account" "cm-cainjector" {
@@ -262,7 +262,7 @@ module "iam_assumable_role_cluster_autoscaler" {
   create_role                   = var.create_autoscaler_role
   role_name                     = var.is_jx2 ? "tf-${var.cluster_name}-cluster-autoscaler" : "${local.cluster_trunc}-cluster-autoscaler-cluster-autoscaler"
   provider_url                  = local.oidc_provider_url
-  role_policy_arns              = [aws_iam_policy.cluster_autoscaler[0].arn]
+  role_policy_arns              = [var.create_autoscaler_role ? aws_iam_policy.cluster_autoscaler[0].arn : ""]
   oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:cluster-autoscaler"]
 }
 
@@ -343,7 +343,7 @@ module "iam_assumable_role_pipeline_visualizer" {
   create_role                   = var.create_pipeline_vis_role
   role_name                     = "${local.cluster_trunc}-jx-pipelines-visualizer"
   provider_url                  = local.oidc_provider_url
-  role_policy_arns              = [aws_iam_policy.pipeline-visualizer[0].arn]
+  role_policy_arns              = [var.create_pipeline_vis_role ? aws_iam_policy.pipeline-visualizer[0].arn : ""]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.jenkins-x-namespace}:jx-pipelines-visualizer"]
 }
 
@@ -373,6 +373,6 @@ module "iam_assumable_role_bucketrepo" {
   create_role                   = var.create_bucketrepo_role
   role_name                     = "${local.cluster_trunc}-jx-bucketrepo"
   provider_url                  = local.oidc_provider_url
-  role_policy_arns              = [aws_iam_policy.bucketrepo[0].arn]
+  role_policy_arns              = [var.create_bucketrepo_role ? aws_iam_policy.bucketrepo[0].arn : ""]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.jenkins-x-namespace}:bucketrepo-bucketrepo"]
 }
