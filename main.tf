@@ -45,6 +45,7 @@ module "cluster" {
   min_node_count                        = var.min_node_count
   max_node_count                        = var.max_node_count
   node_machine_type                     = var.node_machine_type
+  node_groups                           = var.node_groups_managed
   spot_price                            = var.spot_price
   encrypt_volume_self                   = var.encrypt_volume_self
   vpc_name                              = var.vpc_name
