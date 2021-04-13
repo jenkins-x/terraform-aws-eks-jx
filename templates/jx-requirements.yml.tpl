@@ -10,10 +10,6 @@ cluster:
   registry: "${registry}"
   project: "${project}"
 gitops: true
-environments:
-  - key: dev
-  - key: staging
-  - key: production
 ingress:
   domain: "${domain}"
   ignoreLoadBalancer: ${ignoreLoadBalancer}
