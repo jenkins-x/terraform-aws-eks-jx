@@ -80,6 +80,13 @@ resource "aws_dynamodb_table" "vault-dynamodb-table" {
   tags = {
     Name = "vault-dynamo-db-table"
   }
+
+  lifecycle {
+    ignore_changes = [
+      read_capacity,
+      write_capacity
+    ]
+  }
 }
 
 // ----------------------------------------------------------------------------
