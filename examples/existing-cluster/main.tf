@@ -130,7 +130,7 @@ module "eks" {
   } : {}
 
   workers_additional_policies = [
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
+    "arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
   ]
 
   map_users                       = var.map_users
