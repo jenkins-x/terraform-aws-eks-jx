@@ -8,7 +8,7 @@ locals {
 
 resource "aws_s3_bucket" "logs_jenkins_x" {
   count         = var.enable_logs_storage ? 1 : 0
-  bucket_prefix = "logs-${var.cluster_name}-"
+  bucket_prefix = "logs-${lower(var.cluster_name)}-"
   acl           = "private"
   tags = {
     Owner = "Jenkins-x"
@@ -26,7 +26,7 @@ resource "aws_s3_bucket" "logs_jenkins_x" {
 
 resource "aws_s3_bucket" "reports_jenkins_x" {
   count         = var.enable_reports_storage ? 1 : 0
-  bucket_prefix = "reports-${var.cluster_name}-"
+  bucket_prefix = "reports-${lower(var.cluster_name)}-"
   acl           = "private"
   tags = {
     Owner = "Jenkins-x"
@@ -44,7 +44,7 @@ resource "aws_s3_bucket" "reports_jenkins_x" {
 
 resource "aws_s3_bucket" "repository_jenkins_x" {
   count         = var.enable_repository_storage ? 1 : 0
-  bucket_prefix = "repository-${var.cluster_name}-"
+  bucket_prefix = "repository-${lower(var.cluster_name)}-"
   acl           = "private"
   tags = {
     Owner = "Jenkins-x"

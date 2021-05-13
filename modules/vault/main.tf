@@ -36,7 +36,7 @@ data "aws_iam_user" "vault_user" {
 resource "aws_s3_bucket" "vault-unseal-bucket" {
   count = local.create_vault_resources ? 1 : 0
 
-  bucket_prefix = "vault-unseal-${var.cluster_name}-"
+  bucket_prefix = "vault-unseal-${lower(var.cluster_name)}-"
   acl           = "private"
   tags = {
     Name = "Vault unseal bucket"

@@ -11,7 +11,7 @@ locals {
 
 resource "aws_s3_bucket" "backup_bucket" {
   count         = var.enable_backup ? 1 : 0
-  bucket_prefix = "backup-${var.cluster_name}-"
+  bucket_prefix = "backup-${lower(var.cluster_name)}-"
   acl           = "private"
   tags = {
     Owner = "Jenkins-x"
