@@ -60,7 +60,7 @@ module "vpc" {
 // ----------------------------------------------------------------------------
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
-  version         = "~> 14.0"
+  version         = ">= 14.0, < 16.0"
   create_eks      = var.create_eks
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version

@@ -7,6 +7,7 @@ output "vault_user_id" {
 output "vault_user_secret" {
   value       = module.eks-jx.vault_user_secret
   description = "The Vault IAM user secret"
+  sensitive   = true
 }
 
 output "vault_unseal_bucket" {
