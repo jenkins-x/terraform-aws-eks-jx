@@ -13,6 +13,8 @@ data "aws_availability_zones" "available" {}
 
 data "aws_caller_identity" "current" {}
 
+data "aws_partition" "current" {}
+
 // ----------------------------------------------------------------------------
 // Define K8s cluster configuration
 // ----------------------------------------------------------------------------
@@ -144,7 +146,7 @@ module "eks" {
   } : {}
 
   workers_additional_policies = [
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
+    "arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
   ]
 
   map_users                       = var.map_users

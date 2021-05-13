@@ -2,6 +2,8 @@
 // If the Vault IAM user does exist create one
 // See https://www.terraform.io/docs/providers/aws/r/iam_user.html
 // ----------------------------------------------------------------------------
+
+data "aws_partition" "current" {}
 locals {
   encryption_algo = var.use_kms_s3 ? "aws:kms" : "AES256"
 }
@@ -108,7 +110,7 @@ resource "aws_kms_key" "kms_vault_unseal" {
             "Principal": {
                 "AWS": [
                     "${length(data.aws_iam_user.vault_user) > 0 ? data.aws_iam_user.vault_user[0].arn : ""}",
-                    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+                    "arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:root"
                 ]
             },
             "Action": "kms:*",

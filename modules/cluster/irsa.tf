@@ -7,6 +7,8 @@
 // ----------------------------------------------------------------------------
 // Tekton Bot IAM Policy, IAM Role and Service Account
 // ----------------------------------------------------------------------------
+
+data "aws_partition" "current" {}
 data "aws_iam_policy_document" "tekton-bot-policy" {
   count = var.create_tekton_role ? 1 : 0
   statement {
@@ -75,7 +77,7 @@ data "aws_iam_policy_document" "external-dns-policy" {
     actions = [
       "route53:ChangeResourceRecordSets",
     ]
-    resources = ["arn:aws:route53:::hostedzone/*"]
+    resources = ["arn:${data.aws_partition.current.partition}:route53:::hostedzone/*"]
   }
   statement {
     effect = "Allow"
@@ -132,14 +134,14 @@ data "aws_iam_policy_document" "cert-manager-policy" {
     actions = [
       "route53:GetChange",
     ]
-    resources = ["arn:aws:route53:::change/*"]
+    resources = ["arn:${data.aws_partition.current.partition}:route53:::change/*"]
   }
   statement {
     effect = "Allow"
     actions = [
       "route53:ChangeResourceRecordSets",
     ]
-    resources = ["arn:aws:route53:::hostedzone/*"]
+    resources = ["arn:${data.aws_partition.current.partition}:route53:::hostedzone/*"]
   }
   statement {
     effect = "Allow"
@@ -227,7 +229,7 @@ module "iam_assumable_role_controllerbuild" {
   create_role                   = var.create_ctrlb_role
   role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-ctrlb-${local.generated_seed}", 0, 60) : "${local.cluster_trunc}-build-ctrl"
   provider_url                  = local.oidc_provider_url
-  role_policy_arns              = ["arn:aws:iam::aws:policy/AmazonS3FullAccess"]
+  role_policy_arns              = ["arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonS3FullAccess"]
   oidc_fully_qualified_subjects = ["system:serviceaccount:jx:jenkins-x-controllerbuild"]
 }
 resource "kubernetes_service_account" "jenkins-x-controllerbuild" {
