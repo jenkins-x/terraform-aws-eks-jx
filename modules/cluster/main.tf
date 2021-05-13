@@ -125,25 +125,7 @@ module "eks" {
     }
   ] : []
 
-  node_groups = !var.enable_worker_group ? {
-    eks-jx-node-group = {
-      ami_type         = var.node_group_ami
-      disk_size        = var.node_group_disk_size
-      desired_capacity = var.desired_node_count
-      max_capacity     = var.max_node_count
-      min_capacity     = var.min_node_count
-
-      instance_type = var.node_machine_type
-      k8s_labels = {
-        "jenkins-x.io/name"       = var.cluster_name
-        "jenkins-x.io/part-of"    = "jx-platform"
-        "jenkins-x.io/managed-by" = "terraform"
-      }
-      additional_tags = {
-        aws_managed = "true"
-      }
-    }
-  } : {}
+  node_groups = !var.enable_worker_group ? local.node_groups_extended : {}
 
   workers_additional_policies = [
     "arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"

@@ -112,6 +112,22 @@ variable "node_group_disk_size" {
   default     = "50"
 }
 
+variable "node_groups_managed" {
+  description = "List of managed node groups to be created and their respective settings"
+  type = map(object({
+    ami_type                = string
+    disk_size               = number
+    desired_capacity        = number
+    max_capacity            = number
+    min_capacity            = number
+    instance_types          = list(string)
+    launch_template_id      = string
+    launch_template_version = string
+    k8s_labels              = map(string)
+  }))
+  default = {}
+}
+
 variable "key_name" {
   description = "The ssh key pair name"
   type        = string

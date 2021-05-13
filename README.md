@@ -205,6 +205,7 @@ The following sections provide a full list of configuration in- and output varia
 | min\_node\_count | The minimum number of worker nodes to use for the cluster | `number` | `3` | no |
 | node\_group\_ami | ami type for the node group worker intances | `string` | `"AL2_x86_64"` | no |
 | node\_group\_disk\_size | node group worker disk size | `string` | `"50"` | no |
+| node\_groups\_managed | Optionally set custom node groups to be created when using `enable_worker_group = false`, a default node group will be created if this input is not set  | `map` | `{}` | no |
 | node\_machine\_type | The instance type to use for the cluster's worker nodes | `string` | `"m5.large"` | no |
 | private\_subnets | The private subnet CIDR block to use in the created VPC | `list(string)` | <pre>[<br>  "10.0.4.0/24",<br>  "10.0.5.0/24",<br>  "10.0.6.0/24"<br>]</pre> | no |
 | production\_letsencrypt | Flag to use the production environment of letsencrypt in the `jx-requirements.yml` file | `bool` | `false` | no |
@@ -564,9 +565,73 @@ output "vault_user_secret" {
 }
 ```
 
-:warning: **Note**: EKS node groups are supported in kubernetes v1.14+ and platform version eks.3
+**Note**: EKS node groups now support using [spot instances](https://aws.amazon.com/blogs/containers/amazon-eks-now-supports-provisioning-and-managing-ec2-spot-instances-in-managed-node-groups/) and [launch templates](https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html) (will be set accordingly with the use of the  `enable_spot_instances` variable)
 
-:warning: **Note**: Spot instances are not supported for EKS node groups. Check this AWS [issue](https://github.com/aws/containers-roadmap/issues/583) for more details.
+#### Custom EKS node groups
+A single node group will be created by default when using EKS node groups. Supply values for the `node_groups_managed` variable to override this behaviour:
+
+```terraform
+module "eks-jx" {
+  source  = "jenkins-x/eks-jx/aws"
+  enable_worker_group = false
+  node_groups_managed = {
+    node-group-name = {
+      ami_type                = "AL2_x86_64"
+      disk_size               = 50
+      desired_capacity        = 3
+      max_capacity            = 5
+      min_capacity            = 3
+      instance_types          = [ "m5.large" ]
+      launce_template_id      = null
+      launch_template_version = null
+      
+      k8s_labels = {
+        purpose = "application"
+      }
+    },
+    second-node-group-name = {
+      # ...
+    },
+    # ...
+  }
+}
+```
+
+One can use launch templates with node groups by specifying the template id and version in the parameters.
+
+```terraform
+resource "aws_launch_template" "foo" {
+  name = "foo"
+  # ...
+}
+
+module "eks-jx" {
+  source  = "jenkins-x/eks-jx/aws"
+  enable_worker_group = false
+  node_groups_managed = {
+    node-group-name = {
+      ami_type                = "AL2_x86_64"
+      disk_size               = 50
+      desired_capacity        = 3
+      max_capacity            = 5
+      min_capacity            = 3
+      instance_types          = [ "m5.large" ]
+      launce_template_id      = aws_launch_template.foo.id
+      launch_template_version = aws_launch_template.foo.latest_version
+      
+      k8s_labels = {
+        purpose = "application"
+      }
+    },
+    second-node-group-name = {
+      # ...
+    },
+    # ...
+  }
+}
+```
+
+:warning: **Note**: EKS node groups are supported in kubernetes v1.14+ and platform version eks.3
 
 ### AWS Auth
 
