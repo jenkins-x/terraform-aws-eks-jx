@@ -1,10 +1,6 @@
 // ----------------------------------------------------------------------------
 // Configure providers
 // ----------------------------------------------------------------------------
-provider "aws" {
-  region = var.region
-}
-
 provider "helm" {
   kubernetes {
     host                   = module.cluster.cluster_host
