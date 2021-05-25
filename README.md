@@ -157,7 +157,7 @@ The following sections provide a full list of configuration in- and output varia
 | cluster\_endpoint\_public\_access\_cidrs | List of CIDR blocks which can access the Amazon EKS public API server endpoint. | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
 | cluster\_in\_private\_subnet | Flag to enable installation of cluster on private subnets | `bool` | `false` | no |
 | cluster\_name | Variable to provide your desired name for the cluster. The script will create a random name if this is empty | `string` | `""` | no |
-| cluster\_version | Kubernetes version to use for the EKS cluster. | `string` | `"1.17"` | no |
+| cluster\_version | Kubernetes version to use for the EKS cluster. | `string` | n/a | yes |
 | create\_and\_configure\_subdomain | Flag to create an NS record set for the subdomain in the apex domain's Hosted Zone | `bool` | `false` | no |
 | create\_autoscaler\_role | Flag to control cluster autoscaler iam role creation | `bool` | `true` | no |
 | create\_bucketrepo\_role | Flag to control bucketrepo role | `bool` | `true` | no |
@@ -205,7 +205,7 @@ The following sections provide a full list of configuration in- and output varia
 | min\_node\_count | The minimum number of worker nodes to use for the cluster | `number` | `3` | no |
 | node\_group\_ami | ami type for the node group worker intances | `string` | `"AL2_x86_64"` | no |
 | node\_group\_disk\_size | node group worker disk size | `string` | `"50"` | no |
-| node\_groups\_managed | Optionally set custom node groups to be created when using `enable_worker_group = false`, a default node group will be created if this input is not set  | `map` | `{}` | no |
+| node\_groups\_managed | List of managed node groups to be created and their respective settings | <pre>map(object({<br>    ami_type                = string<br>    disk_size               = number<br>    desired_capacity        = number<br>    max_capacity            = number<br>    min_capacity            = number<br>    instance_types          = list(string)<br>    launch_template_id      = string<br>    launch_template_version = string<br>    k8s_labels              = map(string)<br>  }))</pre> | `{}` | no |
 | node\_machine\_type | The instance type to use for the cluster's worker nodes | `string` | `"m5.large"` | no |
 | private\_subnets | The private subnet CIDR block to use in the created VPC | `list(string)` | <pre>[<br>  "10.0.4.0/24",<br>  "10.0.5.0/24",<br>  "10.0.6.0/24"<br>]</pre> | no |
 | production\_letsencrypt | Flag to use the production environment of letsencrypt in the `jx-requirements.yml` file | `bool` | `false` | no |

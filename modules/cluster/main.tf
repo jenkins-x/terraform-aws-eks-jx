@@ -129,12 +129,14 @@ module "eks" {
     "arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
   ]
 
-  map_users                       = var.map_users
-  map_roles                       = var.map_roles
-  map_accounts                    = var.map_accounts
-  cluster_endpoint_private_access = var.cluster_endpoint_private_access
-  cluster_endpoint_public_access  = var.cluster_endpoint_public_access
-  cluster_encryption_config       = var.cluster_encryption_config
+  map_users                             = var.map_users
+  map_roles                             = var.map_roles
+  map_accounts                          = var.map_accounts
+  cluster_endpoint_private_access       = var.cluster_endpoint_private_access
+  cluster_endpoint_public_access        = var.cluster_endpoint_public_access
+  cluster_endpoint_private_access_cidrs = var.cluster_endpoint_private_access_cidrs
+  cluster_endpoint_public_access_cidrs  = var.cluster_endpoint_public_access_cidrs
+  cluster_encryption_config             = var.cluster_encryption_config
 }
 
 // ----------------------------------------------------------------------------
