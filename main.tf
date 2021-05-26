@@ -87,6 +87,7 @@ module "cluster" {
   create_ctrlb_role                     = var.create_ctrlb_role
   create_exdns_role                     = var.create_exdns_role
   create_pipeline_vis_role              = var.create_pipeline_vis_role
+  create_secrets_role                   = var.create_secrets_role
   create_tekton_role                    = var.create_tekton_role
   additional_tekton_role_policy_arns    = var.additional_tekton_role_policy_arns
 }

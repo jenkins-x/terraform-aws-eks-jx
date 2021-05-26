@@ -354,6 +354,12 @@ variable "create_autoscaler_role" {
   default     = true
 }
 
+variable "create_secrets_role" {
+  description = "Flag to control cluster secrets iam role creation"
+  type        = bool
+  default     = true
+}
+
 variable "create_pipeline_vis_role" {
   description = "Flag to control pipeline visualizer role"
   type        = bool

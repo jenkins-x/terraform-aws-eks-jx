@@ -56,6 +56,11 @@ output "external_dns_iam_role" {
   description = "The IAM Role that the External DNS pod will assume to authenticate"
 }
 
+output "external_secrets_iam_role" {
+  value       = module.iam_assumable_role_external_secrets.this_iam_role_name
+  description = "The IAM Role that the External Secrets pod will assume to authenticate"
+}
+
 output "cm_cainjector_iam_role" {
   value       = module.iam_assumable_role_cm_cainjector.this_iam_role_name
   description = "The IAM Role that the CM CA Injector pod will assume to authenticate"
