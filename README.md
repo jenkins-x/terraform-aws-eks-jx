@@ -17,6 +17,7 @@ The module makes use of the [Terraform EKS cluster Module](https://github.com/te
     - [Cluster Autoscaling](#cluster-autoscaling)
     - [Long Term Storage](#long-term-storage)
     - [Vault](#vault)
+    - [Nginx](#nginx)
     - [ExternalDNS](#externaldns)
     - [cert-manager](#cert-manager)
     - [Velero Backups](#velero-backups)
@@ -166,6 +167,8 @@ The following sections provide a full list of configuration in- and output varia
 | create\_ctrlb\_role | Flag to control controller build iam role creation | `bool` | `true` | no |
 | create\_eks | Controls if EKS cluster and associated resources should be created or not. If you have an existing eks cluster for jx, set it to false | `bool` | `true` | no |
 | create\_exdns\_role | Flag to control external dns iam role creation | `bool` | `true` | no |
+| create\_nginx | Decides whether we want to create nginx resources using terraform or not | `bool` | `false` | no |
+| create\_nginx\_namespace | Boolean to control nginx namespace creation | `bool` | `true` | no |
 | create\_pipeline\_vis\_role | Flag to control pipeline visualizer role | `bool` | `true` | no |
 | create\_tekton\_role | Flag to control tekton iam role creation | `bool` | `true` | no |
 | create\_velero\_role | Flag to control velero iam role creation | `bool` | `true` | no |
@@ -203,6 +206,10 @@ The following sections provide a full list of configuration in- and output varia
 | map\_users | Additional IAM users to add to the aws-auth configmap. | <pre>list(object({<br>    userarn  = string<br>    username = string<br>    groups   = list(string)<br>  }))</pre> | `[]` | no |
 | max\_node\_count | The maximum number of worker nodes to use for the cluster | `number` | `5` | no |
 | min\_node\_count | The minimum number of worker nodes to use for the cluster | `number` | `3` | no |
+| nginx\_chart\_version | nginx chart version | `string` | n/a | yes |
+| nginx\_namespace | Name of the nginx namespace | `string` | `"nginx"` | no |
+| nginx\_release\_name | Name of the nginx release name | `string` | `"nginx-ingress"` | no |
+| nginx\_values\_file | Name of the values file which holds the helm chart values | `string` | `"values.yaml"` | no |
 | node\_group\_ami | ami type for the node group worker intances | `string` | `"AL2_x86_64"` | no |
 | node\_group\_disk\_size | node group worker disk size | `string` | `"50"` | no |
 | node\_groups\_managed | List of managed node groups to be created and their respective settings | <pre>map(object({<br>    ami_type                = string<br>    disk_size               = number<br>    desired_capacity        = number<br>    max_capacity            = number<br>    min_capacity            = number<br>    instance_types          = list(string)<br>    launch_template_id      = string<br>    launch_template_version = string<br>    k8s_labels              = map(string)<br>  }))</pre> | `{}` | no |
@@ -348,6 +355,10 @@ In this case provide the Vault URL via the _vault_url_  input variable and follo
 To use other secret backends such as AWS Secrets Manager, set `use_vault` variable to false, and `use_asm` variable to true.
 
 :warning: **Note**: AWS Secrets Manager is not supported yet, but will be functional soon. The `use_asm` just sets the `secretStorage` to `asm` instead of vault for now.
+
+### NGINX
+The module can install the nginx chart. Example can be found [here](./example/jx3).
+You can specify a nginx_values.yaml file or the module will use the default one stored [here](./modules/nginx/nginx_values.yaml).
 
 ### ExternalDNS
 

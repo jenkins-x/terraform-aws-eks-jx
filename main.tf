@@ -138,3 +138,15 @@ module "health" {
   is_jx2               = var.is_jx2
   install_kuberhealthy = var.install_kuberhealthy
 }
+
+module "nginx" {
+  source                 = "./modules/nginx"
+  is_jx2                 = var.is_jx2
+  create_nginx           = var.create_nginx
+  nginx_release_name     = var.nginx_release_name
+  nginx_namespace        = var.nginx_namespace
+  nginx_chart_version    = var.nginx_chart_version
+  create_nginx_namespace = var.create_nginx_namespace
+  nginx_values_file            = var.nginx_values_file
+
+}
