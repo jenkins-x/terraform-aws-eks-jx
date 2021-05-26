@@ -503,10 +503,10 @@ variable "create_autoscaler_role" {
   default     = true
 }
 
-variable "create_secrets_role" {
-  description = "Flag to control cluster secrets iam role creation"
+variable "create_secrets_roles" {
+  description = "Flag to control cluster secrets iam roles creation"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "create_velero_role" {
