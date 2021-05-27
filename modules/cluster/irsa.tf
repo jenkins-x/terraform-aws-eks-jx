@@ -43,7 +43,7 @@ module "iam_assumable_role_tekton_bot" {
   create_role                   = var.create_tekton_role
   role_name                     = var.is_jx2 ? substr("tf-${var.cluster_name}-sa-role-tekton-bot-${local.generated_seed}", 0, 60) : "${local.cluster_trunc}-tekton-bot"
   provider_url                  = local.oidc_provider_url
-  role_policy_arns              = concat([aws_iam_policy.tekton-bot[0].arn], var.additional_tekton_role_policy_arns)
+  role_policy_arns              = var.create_tekton_role ? concat([aws_iam_policy.tekton-bot[0].arn], var.additional_tekton_role_policy_arns) : [""]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.jenkins-x-namespace}:tekton-bot"]
 }
 resource "kubernetes_service_account" "tekton-bot" {
