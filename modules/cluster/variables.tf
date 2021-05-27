@@ -303,6 +303,18 @@ variable "create_vpc" {
   default     = true
 }
 
+variable "vpc_id" {
+    description = "The VPC to create EKS cluster in if create_vpc is false"
+    type        = string
+    default     = ""
+}
+
+variable "subnets" {
+    description = "The subnet ids to create EKS cluster in if create_vpc is false"    
+    type        = list(string)
+    default     = []
+}
+
 variable "encrypt_volume_self" {
   description = "Encrypt the ebs and root volume for the self managed worker nodes. This is only valid for the worker group launch template"
   type        = bool

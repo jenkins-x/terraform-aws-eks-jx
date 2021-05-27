@@ -434,6 +434,18 @@ variable "create_vpc" {
   default     = true
 }
 
+variable "vpc_id" {
+    description = "The VPC to create EKS cluster in if create_vpc is false"
+    type        = string
+    default     = ""
+}
+
+variable "subnets" {
+    description = "The subnet ids to create EKS cluster in if create_vpc is false"    
+    type        = list(string)
+    default     = []
+}
+
 variable "use_vault" {
   description = "Flag to control vault resource creation"
   type        = bool

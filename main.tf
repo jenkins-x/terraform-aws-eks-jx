@@ -35,6 +35,8 @@ module "cluster" {
   region                                = var.region
   create_eks                            = var.create_eks
   create_vpc                            = var.create_vpc
+  vpc_id                                = var.vpc_id
+  subnets                               = var.subnets
   cluster_name                          = local.cluster_name
   cluster_version                       = var.cluster_version
   desired_node_count                    = var.desired_node_count
