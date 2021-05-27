@@ -503,8 +503,14 @@ variable "create_autoscaler_role" {
   default     = true
 }
 
-variable "create_secrets_roles" {
-  description = "Flag to control cluster secrets iam roles creation"
+variable "create_ssm_role" {
+  description = "Flag to control AWS Parameter Store iam roles creation"
+  type        = bool
+  default     = false
+}
+
+variable "create_asm_role" {
+  description = "Flag to control AWS Secrets Manager iam roles creation"
   type        = bool
   default     = false
 }
