@@ -354,6 +354,18 @@ variable "create_autoscaler_role" {
   default     = true
 }
 
+variable "create_ssm_role" {
+  description = "Flag to control AWS Parameter Store iam roles creation"
+  type        = bool
+  default     = false
+}
+
+variable "create_asm_role" {
+  description = "Flag to control AWS Secrets Manager iam roles creation"
+  type        = bool
+  default     = false
+}
+
 variable "create_pipeline_vis_role" {
   description = "Flag to control pipeline visualizer role"
   type        = bool

@@ -503,6 +503,18 @@ variable "create_autoscaler_role" {
   default     = true
 }
 
+variable "create_ssm_role" {
+  description = "Flag to control AWS Parameter Store iam roles creation"
+  type        = bool
+  default     = false
+}
+
+variable "create_asm_role" {
+  description = "Flag to control AWS Secrets Manager iam roles creation"
+  type        = bool
+  default     = false
+}
+
 variable "create_velero_role" {
   description = "Flag to control velero iam role creation"
   type        = bool

@@ -81,6 +81,16 @@ output "pipeline_viz_iam_role" {
   description = "The IAM Role that the pipeline visualizer pod will assume to authenticate"
 }
 
+output "cluster_asm_iam_role" {
+  value       = module.cluster.cluster_asm_iam_role
+  description = "The IAM Role that the External Secrets pod will assume to authenticate (Secrets Manager)"
+}
+
+output "cluster_ssm_iam_role" {
+  value       = module.cluster.cluster_ssm_iam_role
+  description = "The IAM Role that the External Secrets pod will assume to authenticate (Parameter Store)"
+}
+
 // ----------------------------------------------------------------------------
 // Vault Resources
 // ----------------------------------------------------------------------------

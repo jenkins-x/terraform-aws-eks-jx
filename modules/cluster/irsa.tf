@@ -378,3 +378,84 @@ module "iam_assumable_role_bucketrepo" {
   role_policy_arns              = [var.create_bucketrepo_role ? aws_iam_policy.bucketrepo[0].arn : ""]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.jenkins-x-namespace}:bucketrepo-bucketrepo"]
 }
+
+// ----------------------------------------------------------------------------
+// External Secrets - SecretsManager
+// ----------------------------------------------------------------------------
+data "aws_iam_policy_document" "secrets-manager-policy" {
+  count = var.create_asm_role ? 1 : 0
+  statement {
+    effect = "Allow"
+    actions = [
+      "secretsmanager:CreateSecret",
+      "secretsmanager:DescribeSecret",
+      "secretsmanager:GetResourcePolicy",
+      "secretsmanager:GetSecretValue",
+      "secretsmanager:ListSecretVersionIds",
+      "secretsmanager:ListSecrets",
+      "secretsmanager:PutSecretValue",
+      "secretsmanager:UpdateSecret",
+    ]
+    resources = [
+      "arn:${data.aws_partition.current.partition}:secretsmanager:${var.region}:${local.project}:secret:secret/data/lighthouse/*",
+      "arn:${data.aws_partition.current.partition}:secretsmanager:${var.region}:${local.project}:secret:secret/data/jx/*",
+      "arn:${data.aws_partition.current.partition}:secretsmanager:${var.region}:${local.project}:secret:secret/data/nexus/*"
+    ]
+  }
+}
+resource "aws_iam_policy" "secrets-manager" {
+  count       = var.create_asm_role ? 1 : 0
+  name_prefix = "jx-external-secrets-secrets-manager"
+  description = "external-secrets policy for cluster ${var.cluster_name} for Secrets Manager ServiceAccount"
+  policy      = data.aws_iam_policy_document.secrets-manager-policy[count.index].json
+}
+module "iam_assumable_role_secrets-secrets-manager" {
+  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version                       = "~> v3.8.0"
+  create_role                   = var.create_asm_role
+  role_name                     = "${local.cluster_trunc}-external-secrets-secrets-manager"
+  provider_url                  = local.oidc_provider_url
+  role_policy_arns              = [var.create_asm_role ? aws_iam_policy.secrets-manager[0].arn : ""]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.jenkins-x-namespace}:external-secrets-secrets-manager"]
+}
+// ----------------------------------------------------------------------------
+// External Secrets - Parameter Store
+// ----------------------------------------------------------------------------
+data "aws_iam_policy_document" "parameter-store-policy" {
+  count = var.create_ssm_role ? 1 : 0
+  statement {
+    effect = "Allow"
+    actions = [
+      "ssm:DeleteParameter",
+      "ssm:DeleteParameters"
+      "ssm:DescribeParameters",
+      "ssm:GetParameter",
+      "ssm:GetParameterHistory",
+      "ssm:GetParameters",
+      "ssm:GetParametersByPath",
+      "ssm:PutParameter",
+    ]
+    resources = [
+      "arn:${data.aws_partition.current.partition}:ssm:${var.region}:${local.project}:parameter:secret/data/lighthouse/*"
+      "arn:${data.aws_partition.current.partition}:ssm:${var.region}:${local.project}:parameter:secret/data/jx/*"
+      "arn:${data.aws_partition.current.partition}:ssm:${var.region}:${local.project}:parameter:secret/data/nexus/*"
+    ]
+  }
+}
+
+resource "aws_iam_policy" "parameter-store" {
+  count       = var.create_ssm_role ? 1 : 0
+  name_prefix = "jx-external-secrets-parameter-store"
+  description = "external-secrets policy for cluster ${var.cluster_name} for Parameter Store ServiceAccount"
+  policy      = data.aws_iam_policy_document.parameter-store-policy[count.index].json
+}
+
+module "iam_assumable_role_secrets-parameter-store" {
+  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version                       = "~> v3.8.0"
+  create_role                   = var.create_ssm_role
+  role_name                     = "${local.cluster_trunc}-external-secrets-parameter-store"
+  provider_url                  = local.oidc_provider_url
+  role_policy_arns              = [var.create_ssm_role ? aws_iam_policy.parameter-store[0].arn : ""]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.jenkins-x-namespace}:external-secrets-parameter-store"]
+}
