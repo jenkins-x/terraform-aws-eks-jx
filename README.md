@@ -159,6 +159,7 @@ The following sections provide a full list of configuration in- and output varia
 | cluster\_name | Variable to provide your desired name for the cluster. The script will create a random name if this is empty | `string` | `""` | no |
 | cluster\_version | Kubernetes version to use for the EKS cluster. | `string` | n/a | yes |
 | create\_and\_configure\_subdomain | Flag to create an NS record set for the subdomain in the apex domain's Hosted Zone | `bool` | `false` | no |
+| create\_asm\_role | Flag to control AWS Secrets Manager iam roles creation | `bool` | `false` | no |
 | create\_autoscaler\_role | Flag to control cluster autoscaler iam role creation | `bool` | `true` | no |
 | create\_bucketrepo\_role | Flag to control bucketrepo role | `bool` | `true` | no |
 | create\_cm\_role | Flag to control cert manager iam role creation | `bool` | `true` | no |
@@ -167,6 +168,7 @@ The following sections provide a full list of configuration in- and output varia
 | create\_eks | Controls if EKS cluster and associated resources should be created or not. If you have an existing eks cluster for jx, set it to false | `bool` | `true` | no |
 | create\_exdns\_role | Flag to control external dns iam role creation | `bool` | `true` | no |
 | create\_pipeline\_vis\_role | Flag to control pipeline visualizer role | `bool` | `true` | no |
+| create\_ssm\_role | Flag to control AWS Parameter Store iam roles creation | `bool` | `false` | no |
 | create\_tekton\_role | Flag to control tekton iam role creation | `bool` | `true` | no |
 | create\_velero\_role | Flag to control velero iam role creation | `bool` | `true` | no |
 | create\_vpc | Controls if VPC and related resources should be created. If you have an existing vpc for jx, set it to false | `bool` | `true` | no |
@@ -237,9 +239,11 @@ The following sections provide a full list of configuration in- and output varia
 |------|-------------|
 | backup\_bucket\_url | The bucket where backups from velero will be stored |
 | cert\_manager\_iam\_role | The IAM Role that the Cert Manager pod will assume to authenticate |
+| cluster\_asm\_iam\_role | The IAM Role that the External Secrets pod will assume to authenticate (Secrets Manager) |
 | cluster\_autoscaler\_iam\_role | The IAM Role that the Jenkins X UI pod will assume to authenticate |
 | cluster\_name | The name of the created cluster |
 | cluster\_oidc\_issuer\_url | The Cluster OIDC Issuer URL |
+| cluster\_ssm\_iam\_role | The IAM Role that the External Secrets pod will assume to authenticate (Parameter Store) |
 | cm\_cainjector\_iam\_role | The IAM Role that the CM CA Injector pod will assume to authenticate |
 | connect | "The cluster connection string to use once Terraform apply finishes,<br>this command is already executed as part of the apply, you may have to provide the region and<br>profile as environment variables " |
 | controllerbuild\_iam\_role | The IAM Role that the ControllerBuild pod will assume to authenticate |

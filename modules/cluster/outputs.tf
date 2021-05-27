@@ -56,12 +56,12 @@ output "external_dns_iam_role" {
   description = "The IAM Role that the External DNS pod will assume to authenticate"
 }
 
-output "external_secrets_iam_role-secrets-manager" {
+output "cluster_asm_iam_role" {
   value       = module.iam_assumable_role_secrets-secrets-manager.this_iam_role_name
   description = "The IAM Role that the External Secrets pod will assume to authenticate (Secrets Manager)"
 }
 
-output "external_secrets_iam_role-parameter-store" {
+output "cluster_ssm_iam_role" {
   value       = module.iam_assumable_role_secrets-parameter-store.this_iam_role_name
   description = "The IAM Role that the External Secrets pod will assume to authenticate (Parameter Store)"
 }
