@@ -104,6 +104,7 @@ module "vault" {
   force_destroy  = var.force_destroy
   external_vault = local.external_vault
   use_vault      = var.use_vault
+  region         = var.region
 }
 
 // ----------------------------------------------------------------------------
