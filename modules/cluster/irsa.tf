@@ -427,7 +427,7 @@ data "aws_iam_policy_document" "parameter-store-policy" {
     effect = "Allow"
     actions = [
       "ssm:DeleteParameter",
-      "ssm:DeleteParameters"
+      "ssm:DeleteParameters",
       "ssm:DescribeParameters",
       "ssm:GetParameter",
       "ssm:GetParameterHistory",
