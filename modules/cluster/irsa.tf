@@ -436,8 +436,8 @@ data "aws_iam_policy_document" "parameter-store-policy" {
       "ssm:PutParameter",
     ]
     resources = [
-      "arn:${data.aws_partition.current.partition}:ssm:${var.region}:${local.project}:parameter:secret/data/lighthouse/*"
-      "arn:${data.aws_partition.current.partition}:ssm:${var.region}:${local.project}:parameter:secret/data/jx/*"
+      "arn:${data.aws_partition.current.partition}:ssm:${var.region}:${local.project}:parameter:secret/data/lighthouse/*",
+      "arn:${data.aws_partition.current.partition}:ssm:${var.region}:${local.project}:parameter:secret/data/jx/*",
       "arn:${data.aws_partition.current.partition}:ssm:${var.region}:${local.project}:parameter:secret/data/nexus/*"
     ]
   }
