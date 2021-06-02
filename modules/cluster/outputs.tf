@@ -23,6 +23,11 @@ output "cluster_token" {
   value = data.aws_eks_cluster_auth.cluster.token
 }
 
+output "eks_module" {
+  value       = module.cluster.eks
+  description = "The output of the terraform-aws-modules/eks/aws module for use in terraform"
+}
+
 // ----------------------------------------------------------------------------
 // Long Term Storage S3 Buckets (Logs, Reports, Repository)
 // ----------------------------------------------------------------------------
