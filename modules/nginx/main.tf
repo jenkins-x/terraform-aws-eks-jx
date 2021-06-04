@@ -7,6 +7,6 @@ resource "helm_release" "nginx-ingress" {
   version          = var.nginx_chart_version
   create_namespace = var.create_nginx_namespace
   values = [
-    fileexists("${path.cwd}/${var.nginx_values_file}") ? "${file("${path.cwd}/${var.nginx_values_file}")}" : "${file("${path.module}/${var.nginx_values_file}")}"
+    fileexists("${path.cwd}/${var.nginx_values_file}") ? file("${path.cwd}/${var.nginx_values_file}") : file("${path.module}/${var.nginx_values_file}")
   ]
 }
