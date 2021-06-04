@@ -12,6 +12,7 @@ data "aws_route53_zone" "apex_domain_zone" {
 resource "aws_route53_zone" "subdomain_zone" {
   count = var.create_and_configure_subdomain && var.manage_subdomain ? 1 : 0
   name  = join(".", [var.subdomain, var.apex_domain])
+  force_destroy = var.force_destroy_subdomain
 }
 
 resource "aws_route53_record" "subdomain_ns_delegation" {
