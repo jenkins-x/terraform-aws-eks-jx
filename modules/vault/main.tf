@@ -110,6 +110,7 @@ resource "aws_kms_key" "kms_vault_unseal" {
             "Principal": {
                 "AWS": [
                     "${length(data.aws_iam_user.vault_user) > 0 ? data.aws_iam_user.vault_user[0].arn : ""}",
+                    "${data.aws_caller_identity.current.arn}",
                     "arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:root"
                 ]
             },
