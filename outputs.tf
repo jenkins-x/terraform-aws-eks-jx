@@ -30,7 +30,7 @@ output "lts_repository_bucket" {
 }
 
 // ----------------------------------------------------------------------------
-// Cluster Name
+// Cluster
 // ----------------------------------------------------------------------------
 output "cluster_name" {
   value       = local.cluster_name
@@ -42,6 +42,10 @@ output "cluster_oidc_issuer_url" {
   description = "The Cluster OIDC Issuer URL"
 }
 
+output "eks_module" {
+  value       = module.cluster.eks_module
+  description = "The output of the terraform-aws-modules/eks/aws module for use in terraform"
+}
 
 // ----------------------------------------------------------------------------
 // Generated IAM Roles
