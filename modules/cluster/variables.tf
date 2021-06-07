@@ -73,17 +73,7 @@ variable "spot_price" {
 
 variable "node_groups" {
   description = "List of node groups to be created"
-  type = map(object({
-    ami_type                = string
-    disk_size               = number
-    desired_capacity        = number
-    max_capacity            = number
-    min_capacity            = number
-    instance_types          = list(string)
-    launch_template_id      = string
-    launch_template_version = string
-    k8s_labels              = map(string)
-  }))
+  type = any
   default = {}
 }
 
