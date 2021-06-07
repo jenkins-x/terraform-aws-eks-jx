@@ -225,6 +225,7 @@ The following sections provide a full list of configuration in- and output varia
 | single\_nat\_gateway | Should be true if you want to provision a single shared NAT Gateway across all of your private networks | `bool` | `false` | no |
 | spot\_price | The spot price ceiling for spot instances | `string` | `"0.1"` | no |
 | subdomain | The subdomain to be added to the apex domain. If subdomain is set, it will be appended to the apex domain in  `jx-requirements-eks.yml` file | `string` | `""` | no |
+| subnets | The subnet ids to create EKS cluster in if create\_vpc is false | `list(string)` | `[]` | no |
 | tls\_email | The email to register the LetsEncrypt certificate with. Added to the `jx-requirements.yml` file | `string` | `""` | no |
 | use\_asm | Flag to specify if AWS Secrets manager is being used | `bool` | `false` | no |
 | use\_kms\_s3 | Flag to determine whether kms should be used for encrypting s3 buckets | `bool` | `false` | no |
@@ -238,6 +239,7 @@ The following sections provide a full list of configuration in- and output varia
 | volume\_size | The volume size in GB | `number` | `50` | no |
 | volume\_type | The volume type to use. Can be standard, gp2 or io1 | `string` | `"gp2"` | no |
 | vpc\_cidr\_block | The vpc CIDR block | `string` | `"10.0.0.0/16"` | no |
+| vpc\_id | The VPC to create EKS cluster in if create\_vpc is false | `string` | `""` | no | 
 | vpc\_name | The name of the VPC to be created for the cluster | `string` | `"tf-vpc-eks"` | no |
 
 #### Outputs
@@ -742,6 +744,11 @@ You need to execute the following command before `terraform apply` in order to r
 Creation of namespaces and service accounts using terraform is no longer required for JX3. 
 To keep compatibility with JX2, a flag `is_jx2` was introduced, in [v1.6.0](https://github.com/jenkins-x/terraform-aws-eks-jx/releases/tag/v1.6.0).
 
+### Existing VPC
+
+If you want to create the cluster in an existing VPC you can specify `create_vpc` to false and
+specify where to create the clsuter with `vpc_id` and `subnets`.
+ 
 ### Existing EKS cluster
 It is very common to have another module used to create EKS clusters for all your AWS accounts, in that case, you can 
 set `create_eks` and `create_vpc` to false and `cluster_name` to the id/name of the EKS cluster where jx components 
