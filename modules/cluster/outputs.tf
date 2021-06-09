@@ -24,7 +24,7 @@ output "cluster_token" {
 }
 
 output "eks_module" {
-  value       = module.cluster.eks
+  value       = module.eks
   description = "The output of the terraform-aws-modules/eks/aws module for use in terraform"
 }
 
