@@ -269,6 +269,7 @@ The following sections provide a full list of configuration in- and output varia
 | vault\_unseal\_bucket | The Vault storage bucket |
 | vault\_user\_id | The Vault IAM user id |
 | vault\_user\_secret | The Vault IAM user secret |
+| vpc\_id | The ID of the VPC |
 
 ### Cluster Autoscaling
 

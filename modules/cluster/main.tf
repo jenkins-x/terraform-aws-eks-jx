@@ -69,7 +69,7 @@ module "eks" {
   enable_irsa     = true
 
   worker_groups_launch_template = var.enable_worker_group && var.enable_worker_groups_launch_template ? [
-    for subnet in (var.create_vpc ? module.vpc.public_subnets : var.subnets) :
+    for subnet in(var.create_vpc ? module.vpc.public_subnets : var.subnets) :
     {
       subnets                 = [subnet]
       asg_desired_capacity    = var.lt_desired_nodes_per_subnet

@@ -1,3 +1,8 @@
+// VPC
+output "vpc_id" {
+  value = module.eks-jx.vpc_id
+}
+
 // Vault
 output "vault_user_id" {
   value       = module.eks-jx.vault_user_id

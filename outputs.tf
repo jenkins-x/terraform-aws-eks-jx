@@ -29,6 +29,13 @@ output "lts_repository_bucket" {
   description = "The bucket that will serve as artifacts repository"
 }
 
+// VPC
+
+output "vpc_id" {
+  value       = module.cluster.vpc_id
+  description = "The ID of the VPC"
+}
+
 // ----------------------------------------------------------------------------
 // Cluster
 // ----------------------------------------------------------------------------

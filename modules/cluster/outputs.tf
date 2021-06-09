@@ -1,3 +1,7 @@
+output "vpc_id" {
+  value       = var.create_vpc ? module.vpc.vpc_id : var.vpc_id
+  description = "The ID of the VPC"
+}
 
 output "jx_namespace" {
   value = kubernetes_namespace.jx
@@ -24,7 +28,7 @@ output "cluster_token" {
 }
 
 output "eks_module" {
-  value       = module.cluster.eks
+  value       = module.eks
   description = "The output of the terraform-aws-modules/eks/aws module for use in terraform"
 }
 
