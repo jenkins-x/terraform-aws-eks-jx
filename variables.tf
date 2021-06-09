@@ -233,6 +233,12 @@ variable "create_and_configure_subdomain" {
   default     = false
 }
 
+variable "force_destroy_subdomain" {
+  description = "Flag to determine whether subdomain zone get forcefully destroyed. If set to false, empty the sub domain first in the aws Route 53 console, else terraform destroy will fail with HostedZoneNotEmpty error"
+  type        = bool
+  default     = false
+}
+
 variable "enable_tls" {
   description = "Flag to enable TLS in the final `jx-requirements.yml` file"
   type        = bool
