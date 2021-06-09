@@ -73,8 +73,8 @@ variable "spot_price" {
 
 variable "node_groups" {
   description = "List of node groups to be created"
-  type = any
-  default = {}
+  type        = any
+  default     = {}
 }
 
 variable "node_group_ami" {
@@ -294,15 +294,15 @@ variable "create_vpc" {
 }
 
 variable "vpc_id" {
-    description = "The VPC to create EKS cluster in if create_vpc is false"
-    type        = string
-    default     = ""
+  description = "The VPC to create EKS cluster in if create_vpc is false"
+  type        = string
+  default     = ""
 }
 
 variable "subnets" {
-    description = "The subnet ids to create EKS cluster in if create_vpc is false"    
-    type        = list(string)
-    default     = []
+  description = "The subnet ids to create EKS cluster in if create_vpc is false"
+  type        = list(string)
+  default     = []
 }
 
 variable "encrypt_volume_self" {

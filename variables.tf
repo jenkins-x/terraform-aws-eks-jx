@@ -113,8 +113,8 @@ variable "node_group_disk_size" {
 
 variable "node_groups_managed" {
   description = "List of managed node groups to be created and their respective settings"
-  type = any
-  default = {eks-jx-node-group = {}}
+  type        = any
+  default     = { eks-jx-node-group = {} }
 }
 
 variable "key_name" {
@@ -431,15 +431,15 @@ variable "create_vpc" {
 }
 
 variable "vpc_id" {
-    description = "The VPC to create EKS cluster in if create_vpc is false"
-    type        = string
-    default     = ""
+  description = "The VPC to create EKS cluster in if create_vpc is false"
+  type        = string
+  default     = ""
 }
 
 variable "subnets" {
-    description = "The subnet ids to create EKS cluster in if create_vpc is false"    
-    type        = list(string)
-    default     = []
+  description = "The subnet ids to create EKS cluster in if create_vpc is false"
+  type        = list(string)
+  default     = []
 }
 
 variable "use_vault" {

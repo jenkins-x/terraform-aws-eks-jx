@@ -1,3 +1,7 @@
+output "vpc_id" {
+  value       = var.create_vpc ? module.vpc.vpc_id : var.vpc_id
+  description = "The ID of the VPC"
+}
 
 output "jx_namespace" {
   value = kubernetes_namespace.jx

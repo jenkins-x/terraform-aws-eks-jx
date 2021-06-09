@@ -47,7 +47,7 @@ locals {
       k8s_labels = merge(
         local.node_group_defaults["k8s_labels"],
         v["k8s_labels"],
-        )
+      )
     } : {},
-    )}
+  ) }
 }
