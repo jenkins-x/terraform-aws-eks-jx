@@ -55,6 +55,31 @@ module "vpc" {
 }
 
 // ----------------------------------------------------------------------------
+// Manually Tag VPC Subnets if needed
+// See https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html#vpc-subnet-tagging
+// ----------------------------------------------------------------------------
+resource "aws_ec2_tag" "public_subnet_tag" {
+  for_each    = var.create_vpc ? [] : var.cluster_in_private_subnet ? [] : toset(var.subnets)
+  resource_id = each.value
+  key         = "kubernetes.io/role/elb"
+  value       = "1"
+}
+
+resource "aws_ec2_tag" "private_subnet_tag" {
+  for_each    = var.create_vpc ? [] : var.cluster_in_private_subnet ? toset(var.subnets) : []
+  resource_id = each.value
+  key         = "kubernetes.io/role/internal-elb"
+  value       = "1"
+}
+
+resource "aws_ec2_tag" "subnet_cluster_tag" {
+  for_each    = var.create_vpc ? [] : toset(var.subnets)
+  resource_id = each.value
+  key         = "kubernetes.io/cluster/${var.cluster_name}"
+  value       = "shared"
+}
+
+// ----------------------------------------------------------------------------
 // Create the EKS cluster with extra EC2ContainerRegistryPowerUser policy
 // See https://github.com/terraform-aws-modules/terraform-aws-eks
 // ----------------------------------------------------------------------------
