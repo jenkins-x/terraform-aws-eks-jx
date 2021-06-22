@@ -421,7 +421,7 @@ module "iam_assumable_role_secrets-secrets-manager" {
 // ----------------------------------------------------------------------------
 // External Secrets - Parameter Store
 // ----------------------------------------------------------------------------
-data "aws_iam_policy_document" "parameter-store-policy" {
+data "aws_iam_policy_document" "system-manager-policy" {
   count = var.create_ssm_role ? 1 : 0
   statement {
     effect = "Allow"
@@ -443,19 +443,19 @@ data "aws_iam_policy_document" "parameter-store-policy" {
   }
 }
 
-resource "aws_iam_policy" "parameter-store" {
+resource "aws_iam_policy" "system-manager" {
   count       = var.create_ssm_role ? 1 : 0
-  name_prefix = "jx-external-secrets-parameter-store"
+  name_prefix = "jx-external-secrets-system-manager"
   description = "external-secrets policy for cluster ${var.cluster_name} for Parameter Store ServiceAccount"
-  policy      = data.aws_iam_policy_document.parameter-store-policy[count.index].json
+  policy      = data.aws_iam_policy_document.system-manager-policy[count.index].json
 }
 
-module "iam_assumable_role_secrets-parameter-store" {
+module "iam_assumable_role_secrets-system-manager" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v3.8.0"
   create_role                   = var.create_ssm_role
-  role_name                     = "${local.cluster_trunc}-external-secrets-parameter-store"
+  role_name                     = "${local.cluster_trunc}-external-secrets-system-manager"
   provider_url                  = local.oidc_provider_url
-  role_policy_arns              = [var.create_ssm_role ? aws_iam_policy.parameter-store[0].arn : ""]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.jenkins-x-namespace}:external-secrets-parameter-store"]
+  role_policy_arns              = [var.create_ssm_role ? aws_iam_policy.system-manager[0].arn : ""]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.jenkins-x-namespace}:external-secrets-system-manager"]
 }
