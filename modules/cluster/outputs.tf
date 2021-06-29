@@ -71,7 +71,7 @@ output "cluster_asm_iam_role" {
 }
 
 output "cluster_ssm_iam_role" {
-  value       = module.iam_assumable_role_secrets-parameter-store.this_iam_role_name
+  value       = module.iam_assumable_role_secrets-system-manager.this_iam_role_name
   description = "The IAM Role that the External Secrets pod will assume to authenticate (Parameter Store)"
 }
 
