@@ -3,7 +3,7 @@ resource "helm_release" "jx-git-operator" {
   name             = "jx-git-operator"
   chart            = "jx-git-operator"
   namespace        = "jx-git-operator"
-  repository       = "https://storage.googleapis.com/jenkinsxio/charts"
+  repository       = "https://jenkins-x-charts.github.io/repo"
   create_namespace = true
 
   set {
