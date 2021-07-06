@@ -16,7 +16,7 @@ The module makes use of the [Terraform EKS cluster Module](https://github.com/te
         - [Outputs](#outputs)
     - [Cluster Autoscaling](#cluster-autoscaling)
     - [Long Term Storage](#long-term-storage)
-    - [Vault](#vault)
+    - [Secrets Management](#secrets-management)
     - [Nginx](#nginx)
     - [ExternalDNS](#externaldns)
     - [cert-manager](#cert-manager)
