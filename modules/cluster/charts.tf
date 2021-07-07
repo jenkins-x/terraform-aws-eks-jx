@@ -4,7 +4,7 @@ resource "helm_release" "jx-git-operator" {
   chart            = "jx-git-operator"
   namespace        = "jx-git-operator"
   repository       = "https://jenkins-x-charts.github.io/repo"
-  version          = "0.0.190"
+  version          = "0.0.194"
   create_namespace = true
 
   set {
