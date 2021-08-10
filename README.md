@@ -227,6 +227,8 @@ The following sections provide a full list of configuration in- and output varia
 | subdomain | The subdomain to be added to the apex domain. If subdomain is set, it will be appended to the apex domain in  `jx-requirements-eks.yml` file | `string` | `""` | no |
 | subnets | The subnet ids to create EKS cluster in if create\_vpc is false | `list(string)` | `[]` | no |
 | tls\_email | The email to register the LetsEncrypt certificate with. Added to the `jx-requirements.yml` file | `string` | `""` | no |
+| tls\_key | The customer's private key that he got from some CA encrypted by base64. | `string` | `""` | no |
+| tls\_cert | The customer's certificate that he got from some CA encrypted by base64 . | `string` | `""` | no |
 | use\_asm | Flag to specify if AWS Secrets manager is being used | `bool` | `false` | no |
 | use\_kms\_s3 | Flag to determine whether kms should be used for encrypting s3 buckets | `bool` | `false` | no |
 | use\_vault | Flag to control vault resource creation | `bool` | `true` | no |
@@ -406,6 +408,22 @@ If you use staging, you will receive self-signed certificates, but you are not r
 You can choose to use the `production` environment with the `production_letsencrypt` variable:
 
 You need to provide a valid email to register your domain in LetsEncrypt with `tls_email`.
+
+### Customer's CA certificates
+
+Customer has got signed certificates from CA and want to use it instead of LetsEncrypt certificates. Terraform creates k8s `tls-ingress-certificates-ca` secret with `tls_key` and `tls_cert` in `default` namespace.
+User should define:
+```
+enable_external_dns = true
+apex_domain         = "office.com"
+subdomain           = "subdomain"
+enable_tls          = true
+tls_email           = "custome@office.com"
+
+// Signed Certificate must match the domain: *.subdomain.office.com
+tls_cert            = "LS0tLS....S0tLS0K"  
+tls_key             = "LS0tLS1C....BLRVktLS0tLQo="
+```
 
 ### Velero Backups
 
