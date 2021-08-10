@@ -559,6 +559,21 @@ variable "additional_tekton_role_policy_arns" {
   default     = []
 }
 
+// ----------------------------------------------------------------------------
+//  Customer's Certificates
+// ----------------------------------------------------------------------------
+variable "tls_key" {
+  description = "TLS key encrypted with Base64"
+  type        = string
+  default     = ""
+}
+
+variable "tls_cert" {
+  description = "TLS certificate encrypted with Base64"
+  type        = string
+  default     = ""
+}
+
 variable "create_nginx" {
   default     = false
   type        = bool

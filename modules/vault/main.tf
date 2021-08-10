@@ -11,7 +11,7 @@ locals {
 resource "aws_iam_user" "jenkins-x-vault" {
   count = !var.external_vault && var.vault_user == "" && var.use_vault ? 1 : 0
 
-  name = "jenkins-x-vault"
+  name = "jenkins-x-vault-${var.cluster_name}"
 }
 
 resource "aws_iam_access_key" "jenkins-x-vault" {

@@ -5,6 +5,8 @@ locals {
   external_vault    = var.vault_url != "" ? true : false
   registry          = var.registry != "" ? var.registry : "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.region}.amazonaws.com"
   project           = data.aws_caller_identity.current.account_id
+  tls_secret_name   = var.tls_key == "" || var.tls_cert == "" ? "" : "tls-ingress-certificates-ca"
+
   // ----------------------------------------------------------------------------
   // Let's generate jx-requirements.yml
   // ----------------------------------------------------------------------------
@@ -36,6 +38,7 @@ locals {
     velero_schedule   = var.velero_schedule
     velero_ttl        = var.velero_ttl
     // DNS
+    tls_secret_name            = local.tls_secret_name
     enable_external_dns        = var.enable_external_dns
     domain                     = module.dns.domain
     enable_tls                 = var.enable_tls
