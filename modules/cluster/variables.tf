@@ -390,13 +390,13 @@ variable "additional_tekton_role_policy_arns" {
 //  Customer's Certificates
 // ----------------------------------------------------------------------------
 variable "tls_key" {
-  description = "TLS key encrypted with Base64"
+  description = "Path to TLS key or base64-encrypted content"
   type        = string
   default     = ""
 }
 
 variable "tls_cert" {
-  description = "TLS certificate encrypted with Base64"
+  description = "Path to TLS certificate or base64-encrypted content"
   type        = string
   default     = ""
 }

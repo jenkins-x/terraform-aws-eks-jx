@@ -6,8 +6,8 @@ resource "kubernetes_secret" "tls" {
   }
 
   data = {
-    "tls.crt" = base64decode(var.tls_cert)
-    "tls.key" = base64decode(var.tls_key)
+    "tls.crt" = try(file(var.tls_cert), base64decode(var.tls_cert))
+    "tls.key" = try(file(var.tls_key), base64decode(var.tls_key))
   }
 
   type = "kubernetes.io/tls"
