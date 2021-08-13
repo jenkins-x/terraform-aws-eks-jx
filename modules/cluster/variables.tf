@@ -385,3 +385,18 @@ variable "additional_tekton_role_policy_arns" {
   type        = list(string)
   default     = []
 }
+
+// ----------------------------------------------------------------------------
+//  Customer's Certificates
+// ----------------------------------------------------------------------------
+variable "tls_key" {
+  description = "Path to TLS key or base64-encrypted content"
+  type        = string
+  default     = ""
+}
+
+variable "tls_cert" {
+  description = "Path to TLS certificate or base64-encrypted content"
+  type        = string
+  default     = ""
+}
