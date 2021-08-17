@@ -398,7 +398,7 @@ data "aws_iam_policy_document" "secrets-manager-policy" {
     ]
     resources = [
 
-      "arn:${data.aws_partition.current.partition}:secretsmanager:${var.region}:${local.project}:secret:secret/data/*",
+      "*",
 
     ]
   }
