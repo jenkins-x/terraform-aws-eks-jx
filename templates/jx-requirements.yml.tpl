@@ -37,7 +37,7 @@ vault:
 %{ endif }
 %{ endif }
 %{ if use_asm }
-secretStorage: asm
+secretStorage: secretsManager
 %{ endif }
 %{ if enable_backup }
 velero:
