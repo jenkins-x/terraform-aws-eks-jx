@@ -397,9 +397,9 @@ data "aws_iam_policy_document" "secrets-manager-policy" {
       "secretsmanager:UpdateSecret",
     ]
     resources = [
-
-      "*",
-
+      "arn:${data.aws_partition.current.partition}:secretsmanager:${var.region}:${local.project}:secret:secret/data/lighthouse/*",
+      "arn:${data.aws_partition.current.partition}:secretsmanager:${var.region}:${local.project}:secret:secret/data/jx/*",
+      "arn:${data.aws_partition.current.partition}:secretsmanager:${var.region}:${local.project}:secret:secret/data/nexus/*"
     ]
   }
 }
