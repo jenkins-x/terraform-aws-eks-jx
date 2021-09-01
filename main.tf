@@ -95,6 +95,7 @@ module "cluster" {
   additional_tekton_role_policy_arns    = var.additional_tekton_role_policy_arns
   tls_cert                              = var.tls_cert
   tls_key                               = var.tls_key
+  local-exec-interpreter                = var.local-exec-interpreter
 }
 
 // ----------------------------------------------------------------------------

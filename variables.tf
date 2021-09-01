@@ -559,6 +559,12 @@ variable "additional_tekton_role_policy_arns" {
   default     = []
 }
 
+variable "local-exec-interpreter" {
+  description = "If provided, this is a list of interpreter arguments used to execute the command"
+  type        = list(string)
+  default     = ["/bin/bash", "-c"]
+}
+
 // ----------------------------------------------------------------------------
 //  Customer's Certificates
 // ----------------------------------------------------------------------------

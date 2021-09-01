@@ -190,6 +190,7 @@ The following sections provide a full list of configuration in- and output varia
 | enable\_worker\_groups\_launch\_template | Flag to enable Worker Group Launch Templates | `bool` | `false` | no |
 | encrypt\_volume\_self | Encrypt the ebs and root volume for the self managed worker nodes. This is only valid for the worker group launch template | `bool` | `false` | no |
 | force\_destroy | Flag to determine whether storage buckets get forcefully destroyed. If set to false, empty the bucket first in the aws s3 console, else terraform destroy will fail with BucketNotEmpty error | `bool` | `false` | no |
+| force\_destroy\_subdomain | Flag to determine whether subdomain zone get forcefully destroyed. If set to false, empty the sub domain first in the aws Route 53 console, else terraform destroy will fail with HostedZoneNotEmpty error | `bool` | `false` | no |
 | ignoreLoadBalancer | Flag to specify if jx boot will ignore loadbalancer DNS to resolve to an IP | `bool` | `false` | no |
 | install\_kuberhealthy | Flag to specify if kuberhealthy operator should be installed | `bool` | `true` | no |
 | iops | The IOPS value | `number` | `0` | no |
@@ -198,6 +199,7 @@ The following sections provide a full list of configuration in- and output varia
 | jx\_bot\_username | Bot username used to interact with the Jenkins X cluster git repository | `string` | `""` | no |
 | jx\_git\_url | URL for the Jenkins X cluster git repository | `string` | `""` | no |
 | key\_name | The ssh key pair name | `string` | `""` | no |
+| local-exec-interpreter | If provided, this is a list of interpreter arguments used to execute the command | `list(string)` | <pre>[<br>  "/bin/bash",<br>  "-c"<br>]</pre> | no |
 | lt\_desired\_nodes\_per\_subnet | The number of worker nodes in each Subnet (AZ) if using Launch Templates | `number` | `1` | no |
 | lt\_max\_nodes\_per\_subnet | The maximum number of worker nodes in each Subnet (AZ) if using Launch Templates | `number` | `2` | no |
 | lt\_min\_nodes\_per\_subnet | The minimum number of worker nodes in each Subnet (AZ) if using Launch Templates | `number` | `1` | no |
@@ -211,10 +213,10 @@ The following sections provide a full list of configuration in- and output varia
 | nginx\_chart\_version | nginx chart version | `string` | n/a | yes |
 | nginx\_namespace | Name of the nginx namespace | `string` | `"nginx"` | no |
 | nginx\_release\_name | Name of the nginx release name | `string` | `"nginx-ingress"` | no |
-| nginx\_values\_file | Name of the values file which holds the helm chart values | `string` | `"values.yaml"` | no |
+| nginx\_values\_file | Name of the values file which holds the helm chart values | `string` | `"nginx_values.yaml"` | no |
 | node\_group\_ami | ami type for the node group worker intances | `string` | `"AL2_x86_64"` | no |
 | node\_group\_disk\_size | node group worker disk size | `string` | `"50"` | no |
-| node\_groups\_managed | List of managed node groups to be created and their respective settings | <pre>map(object({<br>    ami_type                = string<br>    disk_size               = number<br>    desired_capacity        = number<br>    max_capacity            = number<br>    min_capacity            = number<br>    instance_types          = list(string)<br>    launch_template_id      = string<br>    launch_template_version = string<br>    k8s_labels              = map(string)<br>  }))</pre> | `{}` | no |
+| node\_groups\_managed | List of managed node groups to be created and their respective settings | `any` | <pre>{<br>  "eks-jx-node-group": {}<br>}</pre> | no |
 | node\_machine\_type | The instance type to use for the cluster's worker nodes | `string` | `"m5.large"` | no |
 | private\_subnets | The private subnet CIDR block to use in the created VPC | `list(string)` | <pre>[<br>  "10.0.4.0/24",<br>  "10.0.5.0/24",<br>  "10.0.6.0/24"<br>]</pre> | no |
 | production\_letsencrypt | Flag to use the production environment of letsencrypt in the `jx-requirements.yml` file | `bool` | `false` | no |
@@ -226,9 +228,9 @@ The following sections provide a full list of configuration in- and output varia
 | spot\_price | The spot price ceiling for spot instances | `string` | `"0.1"` | no |
 | subdomain | The subdomain to be added to the apex domain. If subdomain is set, it will be appended to the apex domain in  `jx-requirements-eks.yml` file | `string` | `""` | no |
 | subnets | The subnet ids to create EKS cluster in if create\_vpc is false | `list(string)` | `[]` | no |
+| tls\_cert | TLS certificate encrypted with Base64 | `string` | `""` | no |
 | tls\_email | The email to register the LetsEncrypt certificate with. Added to the `jx-requirements.yml` file | `string` | `""` | no |
-| tls\_key | The customer's private key that he got from some CA. It could be as base64 encrypted content or path to file. | `string` | `""` | no |
-| tls\_cert | The customer's certificate that he got from some CA. It could be as base64 encrypted content or path to file. | `string` | `""` | no |
+| tls\_key | TLS key encrypted with Base64 | `string` | `""` | no |
 | use\_asm | Flag to specify if AWS Secrets manager is being used | `bool` | `false` | no |
 | use\_kms\_s3 | Flag to determine whether kms should be used for encrypting s3 buckets | `bool` | `false` | no |
 | use\_vault | Flag to control vault resource creation | `bool` | `true` | no |
@@ -241,7 +243,7 @@ The following sections provide a full list of configuration in- and output varia
 | volume\_size | The volume size in GB | `number` | `50` | no |
 | volume\_type | The volume type to use. Can be standard, gp2 or io1 | `string` | `"gp2"` | no |
 | vpc\_cidr\_block | The vpc CIDR block | `string` | `"10.0.0.0/16"` | no |
-| vpc\_id | The VPC to create EKS cluster in if create\_vpc is false | `string` | `""` | no | 
+| vpc\_id | The VPC to create EKS cluster in if create\_vpc is false | `string` | `""` | no |
 | vpc\_name | The name of the VPC to be created for the cluster | `string` | `"tf-vpc-eks"` | no |
 
 #### Outputs
@@ -258,6 +260,7 @@ The following sections provide a full list of configuration in- and output varia
 | cm\_cainjector\_iam\_role | The IAM Role that the CM CA Injector pod will assume to authenticate |
 | connect | "The cluster connection string to use once Terraform apply finishes,<br>this command is already executed as part of the apply, you may have to provide the region and<br>profile as environment variables " |
 | controllerbuild\_iam\_role | The IAM Role that the ControllerBuild pod will assume to authenticate |
+| eks\_module | The output of the terraform-aws-modules/eks/aws module for use in terraform |
 | external\_dns\_iam\_role | The IAM Role that the External DNS pod will assume to authenticate |
 | jx\_requirements | The jx-requirements rendered output |
 | lts\_logs\_bucket | The bucket where logs from builds will be stored |
