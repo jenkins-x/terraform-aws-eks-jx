@@ -14,6 +14,6 @@ resource "helm_release" "vault-instance" {
   chart      = "vault-instance"
   namespace  = "jx-vault"
   repository = "https://jenkins-x-charts.github.io/repo"
-  version    = "1.0.20"
+  version    = "1.0.21"
   depends_on = [helm_release.vault-operator]
 }
