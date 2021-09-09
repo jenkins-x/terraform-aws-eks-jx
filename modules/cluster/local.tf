@@ -12,6 +12,7 @@ locals {
   jenkins-x-namespace    = "jx"
   cluster_trunc          = substr(var.cluster_name, 0, 35)
   cert-manager-namespace = "cert-manager"
+  secret-infra-namespace = "secret-infra"
   project                = data.aws_caller_identity.current.account_id
 
   node_group_defaults = {
