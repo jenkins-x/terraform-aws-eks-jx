@@ -15,8 +15,8 @@ jobs:
       name: Set the release version
       uses: docker://ghcr.io/jenkins-x/jx-release-version:2.4.13
       with:
-        args: -c "echo ::set-output name=version::$(jx-release-version)"
-        entrypoint: bash
+        args: -c "echo ::set-output name=version::$(jx-release-version --tag)"
+        entrypoint: sh
     - env:
         VERSION: ${{ steps.prep.outputs.version }}
       run: |
