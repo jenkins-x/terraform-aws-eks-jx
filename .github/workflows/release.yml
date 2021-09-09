@@ -12,11 +12,8 @@ jobs:
       with:
         credentials: ${{ format('https://x-access-token:{0}@github.com/', secrets.GHCR_TOKEN) }}
     - id: prep
-      name: Set the release version
-      uses: docker://ghcr.io/jenkins-x/jx-release-version:2.4.13
-      with:
-        args: -c "echo ::set-output name=version::$(jx-release-version)"
-        entrypoint: bash
+      name: next release version
+      uses: jenkins-x-plugins/jx-release-version@v2.4.13
     - env:
         VERSION: ${{ steps.prep.outputs.version }}
       run: |
