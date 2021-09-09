@@ -416,7 +416,7 @@ module "iam_assumable_role_secrets-secrets-manager" {
   role_name                     = "${local.cluster_trunc}-external-secrets-secrets-manager"
   provider_url                  = local.oidc_provider_url
   role_policy_arns              = [var.create_asm_role ? aws_iam_policy.secrets-manager[0].arn : ""]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.jenkins-x-namespace}:external-secrets-secrets-manager"]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.secret-infra-namespace}:kubernetes-external-secrets"]
 }
 // ----------------------------------------------------------------------------
 // External Secrets - Parameter Store
@@ -457,5 +457,5 @@ module "iam_assumable_role_secrets-system-manager" {
   role_name                     = "${local.cluster_trunc}-external-secrets-system-manager"
   provider_url                  = local.oidc_provider_url
   role_policy_arns              = [var.create_ssm_role ? aws_iam_policy.system-manager[0].arn : ""]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.jenkins-x-namespace}:external-secrets-system-manager"]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.secret-infra-namespace}:kubernetes-external-secrets"]
 }
