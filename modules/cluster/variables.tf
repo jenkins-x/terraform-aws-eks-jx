@@ -263,6 +263,12 @@ variable "lt_max_nodes_per_subnet" {
   default     = 2
 }
 
+variable "jx_git_operator_values" {
+  description = "Extra values for jx-git-operator chart as a list of yaml formated strings"
+  type        = list(string)    
+  default     = []
+}
+
 variable "jx_git_url" {
   description = "URL for the Jenins X cluster git repository"
   type        = string
