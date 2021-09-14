@@ -28,9 +28,6 @@ resource "helm_release" "jx-git-operator" {
     value = var.jx_bot_token
   }
 
-  lifecycle {
-    ignore_changes = all
-  }
   depends_on = [
     null_resource.kubeconfig
   ]
