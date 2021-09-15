@@ -16,23 +16,23 @@ locals {
   project                = data.aws_caller_identity.current.account_id
 
   workers_template_defaults_merge = [for k, v in var.workers : merge(
-    local.workers_template_defaults_defaults,
+    local.workers_template_defaults,
     {
       kubelet_extra_args = join(" ", compact([
-        join(",", compact([local.workers_template_defaults_defaults.kubelet_extra_args, contains(keys(v), "k8s_labels") ? v["k8s_labels"] : ""])),
+        join(",", compact([local.workers_template_defaults.kubelet_extra_args, contains(keys(v), "k8s_labels") ? v["k8s_labels"] : ""])),
         contains(keys(v), "k8s_taints") ? "--register-with-taints=${v["k8s_taints"]}" : ""])
       )
     },
     {
-      tags = concat(local.workers_template_defaults_defaults.tags, contains(keys(v), "tags") ? v["tags"] : [])
+      tags = concat(local.workers_template_defaults.tags, contains(keys(v), "tags") ? v["tags"] : [])
     }, v
   )]
 
-  workers_template_defaults = [for node in local.workers_template_defaults_merge : {
+  worker_groups_launch_template = [for node in local.workers_template_defaults_merge : {
     for k, v in node : k => v if(k != "k8s_labels") && (k != "k8s_taints")
   }]
 
-  workers_template_defaults_defaults = {
+  workers_template_defaults = {
     override_instance_types = var.allowed_spot_instance_types
     root_encrypted          = var.encrypt_volume_self
     instance_type           = var.node_machine_type

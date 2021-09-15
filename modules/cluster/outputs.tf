@@ -95,7 +95,7 @@ output "pipeline_viz_iam_role" {
   description = "The IAM Role that the pipeline visualizer pod will assume to authenticate"
 }
 
-output "workers" {
-  value       = local.workers_template_defaults
-  description = "Output of all workers in EKS cluster"
+output "worker_groups_launch_template" {
+  value       = local.worker_groups_launch_template
+  description = "Output of worker groups launch templates"
 }

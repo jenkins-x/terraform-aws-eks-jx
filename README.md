@@ -200,8 +200,6 @@ The following sections provide a full list of configuration in- and output varia
 | jx\_git\_url | URL for the Jenkins X cluster git repository | `string` | `""` | no |
 | key\_name | The ssh key pair name | `string` | `""` | no |
 | local-exec-interpreter | If provided, this is a list of interpreter arguments used to execute the command | `list(string)` | <pre>[<br>  "/bin/bash",<br>  "-c"<br>]</pre> | no |
-| on\_demand\_base\_capacity | Launch on demand instances and scale up using spot instances. | `number` | `3` | no |
-| workers | Define which workers in worker_groups_launch_template user need. | `object` | `main = {}` | no |
 | manage\_apex\_domain | Flag to control if apex domain should be managed/updated by this module. Set this to false,if your apex domain is managed in a different AWS account or different provider | `bool` | `true` | no |
 | manage\_subdomain | Flag to control subdomain creation/management | `bool` | `true` | no |
 | map\_accounts | Additional AWS account numbers to add to the aws-auth configmap. | `list(string)` | `[]` | no |
@@ -217,6 +215,7 @@ The following sections provide a full list of configuration in- and output varia
 | node\_group\_disk\_size | node group worker disk size | `string` | `"50"` | no |
 | node\_groups\_managed | List of managed node groups to be created and their respective settings | `any` | <pre>{<br>  "eks-jx-node-group": {}<br>}</pre> | no |
 | node\_machine\_type | The instance type to use for the cluster's worker nodes | `string` | `"m5.large"` | no |
+| on\_demand\_base\_capacity | Launch on demand instances and scale up using spot instances. | `number` | `3` | no |
 | private\_subnets | The private subnet CIDR block to use in the created VPC | `list(string)` | <pre>[<br>  "10.0.4.0/24",<br>  "10.0.5.0/24",<br>  "10.0.6.0/24"<br>]</pre> | no |
 | production\_letsencrypt | Flag to use the production environment of letsencrypt in the `jx-requirements.yml` file | `bool` | `false` | no |
 | public\_subnets | The public subnet CIDR block to use in the created VPC | `list(string)` | <pre>[<br>  "10.0.1.0/24",<br>  "10.0.2.0/24",<br>  "10.0.3.0/24"<br>]</pre> | no |
@@ -244,6 +243,8 @@ The following sections provide a full list of configuration in- and output varia
 | vpc\_cidr\_block | The vpc CIDR block | `string` | `"10.0.0.0/16"` | no |
 | vpc\_id | The VPC to create EKS cluster in if create\_vpc is false | `string` | `""` | no |
 | vpc\_name | The name of the VPC to be created for the cluster | `string` | `"tf-vpc-eks"` | no |
+| workers | Define which workers in worker_groups_launch_template user need. | `object` | `main = {}` | no |
+
 
 #### Outputs
 
@@ -274,6 +275,7 @@ The following sections provide a full list of configuration in- and output varia
 | vault\_user\_id | The Vault IAM user id |
 | vault\_user\_secret | The Vault IAM user secret |
 | vpc\_id | The ID of the VPC |
+| worker\_groups\_launch\_template | The worker groups launch template |
 
 ### Cluster Autoscaling
 

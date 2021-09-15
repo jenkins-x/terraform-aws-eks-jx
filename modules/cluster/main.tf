@@ -68,7 +68,7 @@ module "eks" {
   vpc_id          = var.create_vpc ? module.vpc.vpc_id : var.vpc_id
   enable_irsa     = true
 
-  worker_groups_launch_template = var.enable_worker_group && var.enable_worker_groups_launch_template ? local.workers_template_defaults : []
+  worker_groups_launch_template = var.enable_worker_group && var.enable_worker_groups_launch_template ? local.worker_groups_launch_template : []
 
   worker_groups = var.enable_worker_group && !var.enable_worker_groups_launch_template ? [
     {

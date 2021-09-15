@@ -54,9 +54,9 @@ output "eks_module" {
   description = "The output of the terraform-aws-modules/eks/aws module for use in terraform"
 }
 
-output "workers" {
-  value       = module.cluster.workers
-  description = "Output of all workers in EKS cluster"
+output "worker_groups_launch_template" {
+  value       = module.cluster.worker_groups_launch_template
+  description = "Output of worker groups launch templates"
 }
 
 // ----------------------------------------------------------------------------

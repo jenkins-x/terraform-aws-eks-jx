@@ -1,4 +1,4 @@
 output "workers" {
-  value       = module.eks-jx.workers
-  description = "Output of mixed cluster nodes"
+  value       = module.eks-jx.worker_groups_launch_template
+  description = "Output of worker groups launch templates"
 }
