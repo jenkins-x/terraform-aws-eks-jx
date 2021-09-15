@@ -29,6 +29,19 @@ variable "max_node_count" {
   default = 5
 }
 
+variable "on_demand_base_capacity" {
+  description = "Launch on demand instances and scale up using spot instances."
+  type        = number
+  default     = 3
+}
+
+variable "workers" {
+  description = "Define which workers in worker_groups_launch_template user need"
+  default = {
+    main = {}
+  }
+}
+
 variable "node_machine_type" {
   type    = string
   default = "m5.large"
@@ -243,24 +256,6 @@ variable "enable_worker_groups_launch_template" {
   description = "Flag to enable Worker Group Launch Templates"
   type        = bool
   default     = false
-}
-
-variable "lt_desired_nodes_per_subnet" {
-  description = "The number of worker nodes in each Subnet (AZ) if using Launch Templates"
-  type        = number
-  default     = 1
-}
-
-variable "lt_min_nodes_per_subnet" {
-  description = "The minimum number of worker nodes in each Subnet (AZ) if using Launch Templates"
-  type        = number
-  default     = 1
-}
-
-variable "lt_max_nodes_per_subnet" {
-  description = "The maximum number of worker nodes in each Subnet (AZ) if using Launch Templates"
-  type        = number
-  default     = 2
 }
 
 variable "jx_git_url" {

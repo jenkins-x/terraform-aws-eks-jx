@@ -15,6 +15,56 @@ locals {
   secret-infra-namespace = "secret-infra"
   project                = data.aws_caller_identity.current.account_id
 
+  workers_template_defaults_merge = [for k, v in var.workers : merge(
+    local.workers_template_defaults_defaults,
+    {
+      kubelet_extra_args = join(" ", compact([
+        join(",", compact([local.workers_template_defaults_defaults.kubelet_extra_args, contains(keys(v), "k8s_labels") ? v["k8s_labels"] : ""])),
+        contains(keys(v), "k8s_taints") ? "--register-with-taints=${v["k8s_taints"]}" : ""])
+      )
+    },
+    {
+      tags = concat(local.workers_template_defaults_defaults.tags, contains(keys(v), "tags") ? v["tags"] : [])
+    }, v
+  )]
+
+  workers_template_defaults = [for node in local.workers_template_defaults_merge : {
+    for k, v in node : k => v if(k != "k8s_labels") && (k != "k8s_taints")
+  }]
+
+  workers_template_defaults_defaults = {
+    override_instance_types = var.allowed_spot_instance_types
+    root_encrypted          = var.encrypt_volume_self
+    instance_type           = var.node_machine_type
+    autoscaling_enabled     = "true"
+    public_ip               = true
+    spot_price              = (var.enable_spot_instances ? var.spot_price : null)
+    subnets                 = (var.create_vpc ? module.vpc.public_subnets : var.subnets)
+
+    root_volume_type = var.volume_type
+    root_volume_size = var.volume_size
+    root_iops        = var.iops
+
+    on_demand_base_capacity = var.on_demand_base_capacity
+    asg_min_size            = var.min_node_count
+    asg_max_size            = var.max_node_count
+    asg_desired_capacity    = var.desired_node_count
+    kubelet_extra_args      = "--node-labels=node.kubernetes.io/lifecycle=`curl -s http://169.254.169.254/latest/meta-data/instance-life-cycle`"
+
+    tags = [
+      {
+        key                 = "k8s.io/cluster-autoscaler/enabled"
+        propagate_at_launch = "false"
+        value               = "true"
+      },
+      {
+        key                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
+        propagate_at_launch = "false"
+        value               = "true"
+      }
+    ]
+  }
+
   node_group_defaults = {
     ami_type         = var.node_group_ami
     disk_size        = var.node_group_disk_size

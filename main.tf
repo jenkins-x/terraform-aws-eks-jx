@@ -75,9 +75,6 @@ module "cluster" {
   cluster_endpoint_private_access_cidrs = var.cluster_endpoint_private_access_cidrs
   enable_worker_groups_launch_template  = var.enable_worker_groups_launch_template
   allowed_spot_instance_types           = var.allowed_spot_instance_types
-  lt_desired_nodes_per_subnet           = var.lt_desired_nodes_per_subnet
-  lt_min_nodes_per_subnet               = var.lt_min_nodes_per_subnet
-  lt_max_nodes_per_subnet               = var.lt_max_nodes_per_subnet
   jx_git_url                            = var.jx_git_url
   jx_bot_username                       = var.jx_bot_username
   jx_bot_token                          = var.jx_bot_token
@@ -96,6 +93,8 @@ module "cluster" {
   tls_cert                              = var.tls_cert
   tls_key                               = var.tls_key
   local-exec-interpreter                = var.local-exec-interpreter
+  on_demand_base_capacity               = var.on_demand_base_capacity
+  workers                               = var.workers
 }
 
 // ----------------------------------------------------------------------------

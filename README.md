@@ -200,9 +200,8 @@ The following sections provide a full list of configuration in- and output varia
 | jx\_git\_url | URL for the Jenkins X cluster git repository | `string` | `""` | no |
 | key\_name | The ssh key pair name | `string` | `""` | no |
 | local-exec-interpreter | If provided, this is a list of interpreter arguments used to execute the command | `list(string)` | <pre>[<br>  "/bin/bash",<br>  "-c"<br>]</pre> | no |
-| lt\_desired\_nodes\_per\_subnet | The number of worker nodes in each Subnet (AZ) if using Launch Templates | `number` | `1` | no |
-| lt\_max\_nodes\_per\_subnet | The maximum number of worker nodes in each Subnet (AZ) if using Launch Templates | `number` | `2` | no |
-| lt\_min\_nodes\_per\_subnet | The minimum number of worker nodes in each Subnet (AZ) if using Launch Templates | `number` | `1` | no |
+| on\_demand\_base\_capacity | Launch on demand instances and scale up using spot instances. | `number` | `3` | no |
+| workers | Define which workers in worker_groups_launch_template user need. | `object` | `main = {}` | no |
 | manage\_apex\_domain | Flag to control if apex domain should be managed/updated by this module. Set this to false,if your apex domain is managed in a different AWS account or different provider | `bool` | `true` | no |
 | manage\_subdomain | Flag to control subdomain creation/management | `bool` | `true` | no |
 | map\_accounts | Additional AWS account numbers to add to the aws-auth configmap. | `list(string)` | `[]` | no |
@@ -531,8 +530,7 @@ Worker Groups, the default worker node groups for this module, are based on an o
 The issue with autoscaling with the default worker group is that it is prone to autoscaling using Nodes from only a single AZ.
 AWS has a "AZRebalance" job that can run to help with this, but it is aggressive in removing nodes.
 
-All of these issues can be resolved by using Worker Group Launch Templates instead, configured with a template for each Availability Zone. 
-Using an ASG for each AZ bypasses the autoscaling issues in AWS.
+All of these issues can be resolved by using Worker Group Launch Templates instead, configured with a template for mixed types of on-demand and spot workers.
 Furthermore, we are also able to specify several types of machines that are suitable for spot instances rather than just one.
 Using only one often results in Spot instances not being able to be provisioned, and this greatly reduces the occurence of this happening, as well as allowing for lower spot prices.
 
@@ -540,17 +538,66 @@ Using only one often results in Spot instances not being able to be provisioned,
 
 To use the Worker Group Launch Template, set the variable `enable_worker_groups_launch_template` to `true`, and define an array of instance types allowed.
 
-When using autoscaling with Launch Templates per AZ, the min and max number of nodes is per zone.
-These values can be adjusted by using the variables `lt_desired_nodes_per_subnet`, `lt_min_nodes_per_subnet`, and `lt_max_nodes_per_subnet`
+These values can be adjusted by using the variable `workers`
+User can set k8s labels and taints (merges and passes via `kubelet_extra_args`) for different purposes.
+
+```
+workers_template_defaults = {
+    override_instance_types = var.allowed_spot_instance_types
+    root_encrypted          = var.encrypt_volume_self
+    instance_type           = var.node_machine_type
+    autoscaling_enabled     = "true"
+    public_ip               = true
+    spot_price              = (var.enable_spot_instances ? var.spot_price : null)
+    subnets                 = (var.create_vpc ? module.vpc.public_subnets : var.subnets)
+
+    root_volume_type = var.volume_type
+    root_volume_size = var.volume_size
+    root_iops        = var.iops
+
+    on_demand_base_capacity = var.on_demand_base_capacity
+    asg_min_size            = var.min_node_count
+    asg_max_size            = var.max_node_count
+    asg_desired_capacity    = var.desired_node_count
+    kubelet_extra_args      = "--node-labels=node.kubernetes.io/lifecycle=`curl -s http://169.254.169.254/latest/meta-data/instance-life-cycle`"
+
+    tags = [
+      {
+        key                 = "k8s.io/cluster-autoscaler/enabled"
+        propagate_at_launch = "false"
+        value               = "true"
+      },
+      {
+        key                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
+        propagate_at_launch = "false"
+        value               = "true"
+      }
+    ]
+  }
+```
 
 ```terraform
 module "eks-jx" {
   source  = "jenkins-x/eks-jx/aws"
   enable_worker_groups_launch_template = true
-  allowed_spot_instance_types          = ["m5.large", "m5a.large", "m5d.large", "m5ad.large", "t3.large", "t3a.large"]
-  lt_desired_nodes_per_subnet          = 2
-  lt_min_nodes_per_subnet              = 2
-  lt_max_nodes_per_subnet              = 3
+  allowed_spot_instance_types          = ["m5.large", "m5a.large", "m5d.large", "m5ad.large", "t3.large", "t3a.large"] // for all by default
+  workers = {
+    main = {
+      on_demand_base_capacity = 2
+      asg_min_size            = 2
+      asg_max_size            = 10
+      asg_desired_capacity    = 5
+      override_instance_types = ["m5.xlarge", "m5a.xlarge"] // overwrite defaults `allowed_spot_instance_types`
+    }
+    pipeline = {
+      on_demand_base_capacity = 0
+      asg_min_size            = 2
+      asg_max_size            = 5
+      asg_desired_capacity    = 2
+      k8s_labels              = "node.kubernetes.io/component=pipelines"
+      k8s_taints              = "component=pipelines:NoSchedule,kkey=disable:NoSchedule"
+    }
+  }
 }
 ```
 

@@ -94,3 +94,8 @@ output "pipeline_viz_iam_role" {
   value       = module.iam_assumable_role_pipeline_visualizer.this_iam_role_name
   description = "The IAM Role that the pipeline visualizer pod will assume to authenticate"
 }
+
+output "workers" {
+  value       = local.workers_template_defaults
+  description = "Output of all workers in EKS cluster"
+}

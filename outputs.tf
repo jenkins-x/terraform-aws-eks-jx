@@ -54,6 +54,11 @@ output "eks_module" {
   description = "The output of the terraform-aws-modules/eks/aws module for use in terraform"
 }
 
+output "workers" {
+  value       = module.cluster.workers
+  description = "Output of all workers in EKS cluster"
+}
+
 // ----------------------------------------------------------------------------
 // Generated IAM Roles
 // ----------------------------------------------------------------------------

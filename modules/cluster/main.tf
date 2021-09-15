@@ -68,33 +68,7 @@ module "eks" {
   vpc_id          = var.create_vpc ? module.vpc.vpc_id : var.vpc_id
   enable_irsa     = true
 
-  worker_groups_launch_template = var.enable_worker_group && var.enable_worker_groups_launch_template ? [
-    for subnet in(var.create_vpc ? module.vpc.public_subnets : var.subnets) :
-    {
-      subnets                 = [subnet]
-      asg_desired_capacity    = var.lt_desired_nodes_per_subnet
-      asg_min_size            = var.lt_min_nodes_per_subnet
-      asg_max_size            = var.lt_max_nodes_per_subnet
-      spot_price              = (var.enable_spot_instances ? var.spot_price : null)
-      instance_type           = var.node_machine_type
-      root_encrypted          = var.encrypt_volume_self
-      override_instance_types = var.allowed_spot_instance_types
-      autoscaling_enabled     = "true"
-      public_ip               = true
-      tags = [
-        {
-          key                 = "k8s.io/cluster-autoscaler/enabled"
-          propagate_at_launch = "false"
-          value               = "true"
-        },
-        {
-          key                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
-          propagate_at_launch = "false"
-          value               = "true"
-        }
-      ]
-    }
-  ] : []
+  worker_groups_launch_template = var.enable_worker_group && var.enable_worker_groups_launch_template ? local.workers_template_defaults : []
 
   worker_groups = var.enable_worker_group && !var.enable_worker_groups_launch_template ? [
     {
