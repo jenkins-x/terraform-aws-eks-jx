@@ -299,23 +299,22 @@ Create the file `cluster-autoscaler-values.yaml` with the following content:
 awsRegion: us-east-1
 
 rbac:
-  create: true
-  serviceAccount: 
+  serviceAccount:
     name: cluster-autoscaler
-  serviceAccountAnnotations:
-    eks.amazonaws.com/role-arn: "arn:aws:iam::12345678910:role/tf-your-cluster-name-cluster-autoscaler"
+    annotations:
+      eks.amazonaws.com/role-arn: "arn:aws:iam::12345678910:role/tf-your-cluster-name-cluster-autoscaler"
 
 autoDiscovery:
   clusterName: your-cluster-name
-  enabled: true
+
 
 image:
   repository: us.gcr.io/k8s-artifacts-prod/autoscaling/cluster-autoscaler
-  tag: v1.16.6
+  tag: v1.19.1
 ```
 
-Notice the image tag is `v1.16.6` - this tag goes with clusters running Kubernetes 1.16. 
-If you are running 1.15, 1.17, etc, you will need to find the image tag that matches your cluster version. 
+Notice the image tag is `v1.19.1` - this tag goes with clusters running Kubernetes 1.19.
+If you are running 1.20, 1.21, etc, you will need to find the image tag that matches your cluster version.
 To see available tags, visit [this GCR registry](https://console.cloud.google.com/gcr/images/k8s-artifacts-prod/US/autoscaling/cluster-autoscaler?gcrImageListsize=30)
 
 Next, you'll need to fetch the chart, apply your values using `helm template` and then apply the resulting Kubernetes object to your cluster.
