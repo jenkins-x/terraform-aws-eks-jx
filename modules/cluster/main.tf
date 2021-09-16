@@ -148,7 +148,7 @@ resource "null_resource" "kubeconfig" {
     module.eks
   ]
   provisioner "local-exec" {
-    command     = "aws eks update-kubeconfig --name ${var.cluster_name} --region=${var.region}"
+    command     = "aws eks update-kubeconfig --name ${var.cluster_name} --region=${var.region} ${var.profile ? --profile=var.profile : ""}"
     interpreter = var.local-exec-interpreter
   }
 }
