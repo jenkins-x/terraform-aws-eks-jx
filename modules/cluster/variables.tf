@@ -13,6 +13,12 @@ variable "cluster_version" {
   type        = string
 }
 
+variable "profile" {
+  description = "The AWS Profile used to provision the EKS Cluster"
+  type        = string
+  default     = null
+}
+
 # Worker Nodes
 variable "desired_node_count" {
   type    = number

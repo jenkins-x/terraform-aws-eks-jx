@@ -29,6 +29,7 @@ We use GitHub issues to track public bugs. Report a bug by opening a new issue h
 ## Run make test to test your infrastructure after running Terraform
 
 ```shell
+$ make lint      # runs the linter
 $ make test      # runs terratest tests against your currently connected AWS account.
 ```
 

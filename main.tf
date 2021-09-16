@@ -96,6 +96,7 @@ module "cluster" {
   tls_cert                              = var.tls_cert
   tls_key                               = var.tls_key
   local-exec-interpreter                = var.local-exec-interpreter
+  profile                               = var.profile
 }
 
 // ----------------------------------------------------------------------------
