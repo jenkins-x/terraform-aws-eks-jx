@@ -16,6 +16,7 @@ variable "cluster_name" {
 variable "profile" {
   description = "The AWS Profile used to provision the EKS Cluster"
   type        = string
+  default     = null
 }
 
 variable "cluster_version" {
