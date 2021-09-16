@@ -14,7 +14,7 @@ variable "cluster_name" {
 }
 
 variable "profile" {
-  description = "The AWS Profile used to provition the EKS Cluster"
+  description = "The AWS Profile used to provision the EKS Cluster"
   type        = string
   default     = "default"
 }
