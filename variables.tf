@@ -400,6 +400,12 @@ variable "registry" {
   default     = ""
 }
 
+variable "jx_git_operator_values" {
+  description = "Extra values for jx-git-operator chart as a list of yaml formated strings"
+  type        = list(string)    
+  default     = []
+}
+
 variable "jx_git_url" {
   description = "URL for the Jenkins X cluster git repository"
   type        = string
