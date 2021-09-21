@@ -13,6 +13,12 @@ variable "cluster_name" {
   default     = ""
 }
 
+variable "profile" {
+  description = "The AWS Profile used to provision the EKS Cluster"
+  type        = string
+  default     = null
+}
+
 variable "cluster_version" {
   description = "Kubernetes version to use for the EKS cluster."
   type        = string
