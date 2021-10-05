@@ -54,6 +54,33 @@ module "vpc" {
   }
 }
 
+resource "null_resource" "destroy_lb_sg" {
+  triggers = {
+    cluster_name = var.cluster_name
+  }
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "${path.module}/scripts/destroy_lb_sg.sh ${self.triggers.cluster_name}"
+    on_failure = continue
+  }
+  depends_on = [
+    module.vpc
+  ]
+}
+
+resource "null_resource" "destroy_vols" {
+  triggers = {
+    cluster_name = var.cluster_name
+  }
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "${path.module}/scripts/destroy_vols.sh ${self.triggers.cluster_name}"
+    on_failure = continue
+  }
+}
+
 // ----------------------------------------------------------------------------
 // Create the EKS cluster with extra EC2ContainerRegistryPowerUser policy
 // See https://github.com/terraform-aws-modules/terraform-aws-eks
@@ -137,6 +164,10 @@ module "eks" {
   cluster_endpoint_private_access_cidrs = var.cluster_endpoint_private_access_cidrs
   cluster_endpoint_public_access_cidrs  = var.cluster_endpoint_public_access_cidrs
   cluster_encryption_config             = var.cluster_encryption_config
+
+  depends_on = [
+    null_resource.destroy_vols
+  ]
 }
 
 // ----------------------------------------------------------------------------
