@@ -40,6 +40,12 @@ variable "node_machine_type" {
   default = "m5.large"
 }
 
+variable "fargate_nodes_for_jx_pipelines" {
+  description = "Allowed run tekton pipelines on EKS Fargate"
+  type        = bool
+  default     = false
+}
+
 # VPC
 variable "vpc_name" {
   type    = string

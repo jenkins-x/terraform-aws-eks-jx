@@ -293,6 +293,12 @@ variable "use_kms_s3" {
   default     = false
 }
 
+variable "fargate_nodes_for_jx_pipelines" {
+  description = "Allowed run tekton pipelines on EKS Fargate"
+  type        = bool
+  default     = false
+}
+
 // ----------------------------------------------------------------------------
 // Cluster AWS Auth Variables
 // ----------------------------------------------------------------------------

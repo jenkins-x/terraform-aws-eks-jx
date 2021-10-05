@@ -65,6 +65,7 @@ module "eks" {
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
   subnets         = var.create_vpc ? (var.cluster_in_private_subnet ? module.vpc.private_subnets : module.vpc.public_subnets) : var.subnets
+  fargate_subnets = var.create_vpc ? (module.vpc.private_subnets) : var.private_subnets
   vpc_id          = var.create_vpc ? module.vpc.vpc_id : var.vpc_id
   enable_irsa     = true
 
@@ -122,6 +123,23 @@ module "eks" {
       ]
     }
   ] : []
+
+  fargate_profiles = var.fargate_nodes_for_jx_pipelines ? {
+    default = {
+      name = "${var.cluster_name}-fargate"
+      selectors = [
+        {
+          namespace = "jx"
+          labels = {
+            "app.kubernetes.io/managed-by"="tekton-pipelines"
+          }
+        }
+      ]
+      tags = {
+        Owner = "jx"
+      }
+    }
+  } : {}
 
   node_groups = !var.enable_worker_group ? local.node_groups_extended : {}
 

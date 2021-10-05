@@ -98,6 +98,7 @@ module "cluster" {
   tls_key                               = var.tls_key
   local-exec-interpreter                = var.local-exec-interpreter
   profile                               = var.profile
+  fargate_nodes_for_jx_pipelines        = var.fargate_nodes_for_jx_pipelines
 }
 
 // ----------------------------------------------------------------------------
