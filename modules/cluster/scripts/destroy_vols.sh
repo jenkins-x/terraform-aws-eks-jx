@@ -5,7 +5,7 @@ remove_quotes() {
   echo "$VAR" | tr -d '"'
 }
 
-VOLUMES=$(aws ec2 describe-volumes --filters "Name=tag:kubernetes.io/cluster/$CLUSTER_NAME,Values=owned" --filters Name=status,Values=available | jq ".Volumes[] | .VolumeId")
+VOLUMES=$(aws ec2 describe-volumes --filters "Name=tag:kubernetes.io/cluster/$CLUSTER_NAME,Values=owned" "Name=status,Values=available" | jq ".Volumes[] | .VolumeId")
 for VOLUME_OUTPUT in $VOLUMES; do
   VOLUME=$(remove_quotes "$VOLUME_OUTPUT")
   echo "Delete Volume: $VOLUME"
