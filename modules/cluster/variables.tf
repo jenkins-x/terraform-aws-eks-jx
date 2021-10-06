@@ -271,7 +271,7 @@ variable "lt_max_nodes_per_subnet" {
 
 variable "jx_git_operator_values" {
   description = "Extra values for jx-git-operator chart as a list of yaml formated strings"
-  type        = list(string)    
+  type        = list(string)
   default     = []
 }
 
