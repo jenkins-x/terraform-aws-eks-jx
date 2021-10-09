@@ -1,7 +1,5 @@
 # Jenkins X EKS Module
 
-![Terraform Version](https://img.shields.io/badge/tf-%3E%3D0.12.17-blue.svg)
-
 This repository contains a Terraform module for creating an EKS cluster and all the necessary infrastructure to install Jenkins X via `jx boot`.
 
 The module makes use of the [Terraform EKS cluster Module](https://github.com/terraform-aws-modules/terraform-aws-eks).
@@ -10,34 +8,33 @@ The module makes use of the [Terraform EKS cluster Module](https://github.com/te
 
 - [What is a Terraform module](#what-is-a-terraform-module)
 - [How do you use this module](#how-do-you-use-this-module)
-    - [Prerequisites](#prerequisites)
-    - [Cluster provisioning](#cluster-provisioning)
-        - [Inputs](#inputs)
-        - [Outputs](#outputs)
-    - [Cluster Autoscaling](#cluster-autoscaling)
-    - [Long Term Storage](#long-term-storage)
-    - [Secrets Management](#secrets-management)
-    - [Nginx](#nginx)
-    - [ExternalDNS](#externaldns)
-    - [cert-manager](#cert-manager)
-    - [Velero Backups](#velero-backups)
-    - [Running `jx boot`](#running-jx-boot)
-    - [Production cluster considerations](#production-cluster-considerations)
-    - [Configuring a Terraform backend](#configuring-a-terraform-backend)
-    - [Using Spot Instances](#using-spot-instances)
-    - [Worker Group Launch Templates](#worker-group-launch-templates)
-    - [EKS node groups](#eks-node-groups)
-    - [AWS Auth](#aws-auth)
-    - [Using SSH Key Pair](#using-ssh-key-pair)
-    - [Using different EBS Volume type and size](#using-different-ebs-volume-type-and-size)
-    - [Resizing a disk on existing nodes](#resizing-a-disk-on-existing-nodes)
-    - [Support for JX3](#support-for-jx3)
-    - [Existing EKS cluster](#existing-eks-cluster)
-    - [Examples](#examples)
+  - [Prerequisites](#prerequisites)
+  - [Cluster provisioning](#cluster-provisioning)
+  - [Cluster Autoscaling](#cluster-autoscaling)
+  - [Long Term Storage](#long-term-storage)
+  - [Secrets Management](#secrets-management)
+  - [Nginx](#nginx)
+  - [ExternalDNS](#externaldns)
+  - [cert-manager](#cert-manager)
+  - [Velero Backups](#velero-backups)
+  - [Running `jx boot`](#running-jx-boot)
+  - [Production cluster considerations](#production-cluster-considerations)
+  - [Configuring a Terraform backend](#configuring-a-terraform-backend)
+  - [Using Spot Instances](#using-spot-instances)
+  - [Worker Group Launch Templates](#worker-group-launch-templates)
+  - [EKS node groups](#eks-node-groups)
+  - [AWS Auth](#aws-auth)
+  - [Using SSH Key Pair](#using-ssh-key-pair)
+  - [Using different EBS Volume type and size](#using-different-ebs-volume-type-and-size)
+  - [Resizing a disk on existing nodes](#resizing-a-disk-on-existing-nodes)
+  - [Support for JX3](#support-for-jx3)
+  - [Existing EKS cluster](#existing-eks-cluster)
+  - [Examples](#examples)
+  - [Module configuration](#module-configuration)
 - [FAQ: Frequently Asked Questions](#faq-frequently-asked-questions)
-    - [IAM Roles for Service Accounts](#iam-roles-for-service-accounts)
+  - [IAM Roles for Service Accounts](#iam-roles-for-service-accounts)
 - [Development](#development)
-    - [Releasing](#releasing)
+  - [Releasing](#releasing)
 - [How can I contribute](#how-can-i-contribute)
 
 <!-- /TOC -->
@@ -54,13 +51,11 @@ For more information about modules refer to the Terraform [documentation](https:
 This Terraform module allows you to create an [EKS](https://aws.amazon.com/eks/) cluster ready for the installation of Jenkins X.
 You need the following binaries locally installed and configured on your _PATH_:
 
-- `terraform` (=> 0.12.17, < 0.14.0)
+- `terraform` (=> 0.12.17, < 2.0.0)
 - `kubectl` (>=1.10)
 - `aws-cli`
 - `aws-iam-authenticator`
 - `wget`
-
-:warning: **Note**: Support for terraform 0.13 was added in [v1.5.0](https://github.com/jenkins-x/terraform-aws-eks-jx/releases/tag/v1.5.0)
 
 ### Cluster provisioning
 
@@ -87,12 +82,12 @@ output "vault_user_secret" {
 
 ```
 
-All s3 buckets created by the module use Server-Side Encryption with Amazon S3-Managed Encryption Keys 
+All s3 buckets created by the module use Server-Side Encryption with Amazon S3-Managed Encryption Keys
 (SSE-S3) by default.
 You can set the value of `use_kms_s3` to true to use server-side encryption with AWS KMS (SSE-KMS).
-If you don't specify the value of `s3_kms_arn`, then the default aws managed cmk is used (aws/s3) 
+If you don't specify the value of `s3_kms_arn`, then the default aws managed cmk is used (aws/s3)
 
-:warning: **Note**: Using AWS KMS with customer managed keys has cost 
+:warning: **Note**: Using AWS KMS with customer managed keys has cost
 [considerations](https://aws.amazon.com/blogs/storage/changing-your-amazon-s3-encryption-from-s3-managed-encryption-sse-s3-to-aws-key-management-service-sse-kms/).
 
 Due to the Vault issue [7450](https://github.com/hashicorp/vault/issues/7450), this Terraform module needs for now to create a new IAM user for installing Vault.
@@ -114,7 +109,7 @@ You should have your [AWS CLI configured correctly](https://docs.aws.amazon.com/
 
 #### AWS_REGION
 
-In addition, you should make sure to specify the region via the AWS_REGION environment variable. e.g. 
+In addition, you should make sure to specify the region via the AWS_REGION environment variable. e.g.
 `export AWS_REGION=us-east-1` and the region variable (make sure the region variable matches the environment variable)
 
 The IAM user does not need any permissions attached to it.
@@ -142,143 +137,9 @@ If you specified _vault_user_ you need to provide the access key id and secret f
 It is not intended for a production cluster.
 Refer to [Production cluster considerations](#production-cluster-considerations) for things to consider when creating a production cluster.
 
-The following sections provide a full list of configuration in- and output variables.
-
-#### Inputs
-
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| additional\_tekton\_role\_policy\_arns | Additional Policy ARNs to attach to Tekton IRSA Role | `list(string)` | `[]` | no |
-| allowed\_spot\_instance\_types | Allowed machine types for spot instances (must be same size) | `any` | `[]` | no |
-| apex\_domain | The main domain to either use directly or to configure a subdomain from | `string` | `""` | no |
-| cluster\_encryption\_config | Configuration block with encryption configuration for the cluster. | <pre>list(object({<br>    provider_key_arn = string<br>    resources        = list(string)<br>  }))</pre> | `[]` | no |
-| cluster\_endpoint\_private\_access | Indicates whether or not the Amazon EKS private API server endpoint is enabled. | `bool` | `false` | no |
-| cluster\_endpoint\_private\_access\_cidrs | List of CIDR blocks which can access the Amazon EKS private API server endpoint, when public access is disabled. | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
-| cluster\_endpoint\_public\_access | Indicates whether or not the Amazon EKS public API server endpoint is enabled. | `bool` | `true` | no |
-| cluster\_endpoint\_public\_access\_cidrs | List of CIDR blocks which can access the Amazon EKS public API server endpoint. | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
-| cluster\_in\_private\_subnet | Flag to enable installation of cluster on private subnets | `bool` | `false` | no |
-| cluster\_name | Variable to provide your desired name for the cluster. The script will create a random name if this is empty | `string` | `""` | no |
-| cluster\_version | Kubernetes version to use for the EKS cluster. | `string` | n/a | yes |
-| create\_and\_configure\_subdomain | Flag to create an NS record set for the subdomain in the apex domain's Hosted Zone | `bool` | `false` | no |
-| create\_asm\_role | Flag to control AWS Secrets Manager iam roles creation | `bool` | `false` | no |
-| create\_autoscaler\_role | Flag to control cluster autoscaler iam role creation | `bool` | `true` | no |
-| create\_bucketrepo\_role | Flag to control bucketrepo role | `bool` | `true` | no |
-| create\_cm\_role | Flag to control cert manager iam role creation | `bool` | `true` | no |
-| create\_cmcainjector\_role | Flag to control cert manager ca-injector iam role creation | `bool` | `true` | no |
-| create\_ctrlb\_role | Flag to control controller build iam role creation | `bool` | `true` | no |
-| create\_eks | Controls if EKS cluster and associated resources should be created or not. If you have an existing eks cluster for jx, set it to false | `bool` | `true` | no |
-| create\_exdns\_role | Flag to control external dns iam role creation | `bool` | `true` | no |
-| create\_nginx | Decides whether we want to create nginx resources using terraform or not | `bool` | `false` | no |
-| create\_nginx\_namespace | Boolean to control nginx namespace creation | `bool` | `true` | no |
-| create\_pipeline\_vis\_role | Flag to control pipeline visualizer role | `bool` | `true` | no |
-| create\_ssm\_role | Flag to control AWS Parameter Store iam roles creation | `bool` | `false` | no |
-| create\_tekton\_role | Flag to control tekton iam role creation | `bool` | `true` | no |
-| create\_velero\_role | Flag to control velero iam role creation | `bool` | `true` | no |
-| create\_vpc | Controls if VPC and related resources should be created. If you have an existing vpc for jx, set it to false | `bool` | `true` | no |
-| desired\_node\_count | The number of worker nodes to use for the cluster | `number` | `3` | no |
-| enable\_backup | Whether or not Velero backups should be enabled | `bool` | `false` | no |
-| enable\_external\_dns | Flag to enable or disable External DNS in the final `jx-requirements.yml` file | `bool` | `false` | no |
-| enable\_key\_name | Flag to enable ssh key pair name | `bool` | `false` | no |
-| enable\_key\_rotation | Flag to enable kms key rotation | `bool` | `true` | no |
-| enable\_logs\_storage | Flag to enable or disable long term storage for logs | `bool` | `true` | no |
-| enable\_nat\_gateway | Should be true if you want to provision NAT Gateways for each of your private networks | `bool` | `false` | no |
-| enable\_reports\_storage | Flag to enable or disable long term storage for reports | `bool` | `true` | no |
-| enable\_repository\_storage | Flag to enable or disable the repository bucket storage | `bool` | `true` | no |
-| enable\_spot\_instances | Flag to enable spot instances | `bool` | `false` | no |
-| enable\_tls | Flag to enable TLS in the final `jx-requirements.yml` file | `bool` | `false` | no |
-| enable\_worker\_group | Flag to enable worker group. Setting this to false will provision a node group instead | `bool` | `true` | no |
-| enable\_worker\_groups\_launch\_template | Flag to enable Worker Group Launch Templates | `bool` | `false` | no |
-| encrypt\_volume\_self | Encrypt the ebs and root volume for the self managed worker nodes. This is only valid for the worker group launch template | `bool` | `false` | no |
-| force\_destroy | Flag to determine whether storage buckets get forcefully destroyed. If set to false, empty the bucket first in the aws s3 console, else terraform destroy will fail with BucketNotEmpty error | `bool` | `false` | no |
-| force\_destroy\_subdomain | Flag to determine whether subdomain zone get forcefully destroyed. If set to false, empty the sub domain first in the aws Route 53 console, else terraform destroy will fail with HostedZoneNotEmpty error | `bool` | `false` | no |
-| ignoreLoadBalancer | Flag to specify if jx boot will ignore loadbalancer DNS to resolve to an IP | `bool` | `false` | no |
-| install\_kuberhealthy | Flag to specify if kuberhealthy operator should be installed | `bool` | `true` | no |
-| iops | The IOPS value | `number` | `0` | no |
-| is\_jx2 | Flag to specify if jx2 related resources need to be created | `bool` | `true` | no |
-| jx\_bot\_token | Bot token used to interact with the Jenkins X cluster git repository | `string` | `""` | no |
-| jx\_bot\_username | Bot username used to interact with the Jenkins X cluster git repository | `string` | `""` | no |
-| jx\_git\_url | URL for the Jenkins X cluster git repository | `string` | `""` | no |
-| key\_name | The ssh key pair name | `string` | `""` | no |
-| local-exec-interpreter | If provided, this is a list of interpreter arguments used to execute the command | `list(string)` | <pre>[<br>  "/bin/bash",<br>  "-c"<br>]</pre> | no |
-| lt\_desired\_nodes\_per\_subnet | The number of worker nodes in each Subnet (AZ) if using Launch Templates | `number` | `1` | no |
-| lt\_max\_nodes\_per\_subnet | The maximum number of worker nodes in each Subnet (AZ) if using Launch Templates | `number` | `2` | no |
-| lt\_min\_nodes\_per\_subnet | The minimum number of worker nodes in each Subnet (AZ) if using Launch Templates | `number` | `1` | no |
-| manage\_apex\_domain | Flag to control if apex domain should be managed/updated by this module. Set this to false,if your apex domain is managed in a different AWS account or different provider | `bool` | `true` | no |
-| manage\_subdomain | Flag to control subdomain creation/management | `bool` | `true` | no |
-| map\_accounts | Additional AWS account numbers to add to the aws-auth configmap. | `list(string)` | `[]` | no |
-| map\_roles | Additional IAM roles to add to the aws-auth configmap. | <pre>list(object({<br>    rolearn  = string<br>    username = string<br>    groups   = list(string)<br>  }))</pre> | `[]` | no |
-| map\_users | Additional IAM users to add to the aws-auth configmap. | <pre>list(object({<br>    userarn  = string<br>    username = string<br>    groups   = list(string)<br>  }))</pre> | `[]` | no |
-| max\_node\_count | The maximum number of worker nodes to use for the cluster | `number` | `5` | no |
-| min\_node\_count | The minimum number of worker nodes to use for the cluster | `number` | `3` | no |
-| nginx\_chart\_version | nginx chart version | `string` | n/a | yes |
-| nginx\_namespace | Name of the nginx namespace | `string` | `"nginx"` | no |
-| nginx\_release\_name | Name of the nginx release name | `string` | `"nginx-ingress"` | no |
-| nginx\_values\_file | Name of the values file which holds the helm chart values | `string` | `"nginx_values.yaml"` | no |
-| node\_group\_ami | ami type for the node group worker intances | `string` | `"AL2_x86_64"` | no |
-| node\_group\_disk\_size | node group worker disk size | `string` | `"50"` | no |
-| node\_groups\_managed | List of managed node groups to be created and their respective settings | `any` | <pre>{<br>  "eks-jx-node-group": {}<br>}</pre> | no |
-| node\_machine\_type | The instance type to use for the cluster's worker nodes | `string` | `"m5.large"` | no |
-| private\_subnets | The private subnet CIDR block to use in the created VPC | `list(string)` | <pre>[<br>  "10.0.4.0/24",<br>  "10.0.5.0/24",<br>  "10.0.6.0/24"<br>]</pre> | no |
-| production\_letsencrypt | Flag to use the production environment of letsencrypt in the `jx-requirements.yml` file | `bool` | `false` | no |
-| public\_subnets | The public subnet CIDR block to use in the created VPC | `list(string)` | <pre>[<br>  "10.0.1.0/24",<br>  "10.0.2.0/24",<br>  "10.0.3.0/24"<br>]</pre> | no |
-| region | The region to create the resources into | `string` | `"us-east-1"` | no |
-| registry | Registry used to store images | `string` | `""` | no |
-| s3\_kms\_arn | ARN of the kms key used for encrypting s3 buckets | `string` | `""` | no |
-| single\_nat\_gateway | Should be true if you want to provision a single shared NAT Gateway across all of your private networks | `bool` | `false` | no |
-| spot\_price | The spot price ceiling for spot instances | `string` | `"0.1"` | no |
-| subdomain | The subdomain to be added to the apex domain. If subdomain is set, it will be appended to the apex domain in  `jx-requirements-eks.yml` file | `string` | `""` | no |
-| subnets | The subnet ids to create EKS cluster in if create\_vpc is false | `list(string)` | `[]` | no |
-| tls\_cert | TLS certificate encrypted with Base64 | `string` | `""` | no |
-| tls\_email | The email to register the LetsEncrypt certificate with. Added to the `jx-requirements.yml` file | `string` | `""` | no |
-| tls\_key | TLS key encrypted with Base64 | `string` | `""` | no |
-| use\_asm | Flag to specify if AWS Secrets manager is being used | `bool` | `false` | no |
-| use\_kms\_s3 | Flag to determine whether kms should be used for encrypting s3 buckets | `bool` | `false` | no |
-| use\_vault | Flag to control vault resource creation | `bool` | `true` | no |
-| vault\_url | URL to an external Vault instance in case Jenkins X does not create its own system Vault | `string` | `""` | no |
-| vault\_user | The AWS IAM Username whose credentials will be used to authenticate the Vault pods against AWS | `string` | `""` | no |
-| velero\_namespace | Kubernetes namespace for Velero | `string` | `"velero"` | no |
-| velero\_schedule | The Velero backup schedule in cron notation to be set in the Velero Schedule CRD (see [default-backup.yaml](https://github.com/jenkins-x/jenkins-x-boot-config/blob/master/systems/velero-backups/templates/default-backup.yaml)) | `string` | `"0 * * * *"` | no |
-| velero\_ttl | The the lifetime of a velero backup to be set in the Velero Schedule CRD (see [default-backup.yaml](https://github.com/jenkins-x/jenkins-x-boot-config/blob/master/systems/velero-backups/templates/default-backup)) | `string` | `"720h0m0s"` | no |
-| velero\_username | The username to be assigned to the Velero IAM user | `string` | `"velero"` | no |
-| volume\_size | The volume size in GB | `number` | `50` | no |
-| volume\_type | The volume type to use. Can be standard, gp2 or io1 | `string` | `"gp2"` | no |
-| vpc\_cidr\_block | The vpc CIDR block | `string` | `"10.0.0.0/16"` | no |
-| vpc\_id | The VPC to create EKS cluster in if create\_vpc is false | `string` | `""` | no |
-| vpc\_name | The name of the VPC to be created for the cluster | `string` | `"tf-vpc-eks"` | no |
-
-#### Outputs
-
-| Name | Description |
-|------|-------------|
-| backup\_bucket\_url | The bucket where backups from velero will be stored |
-| cert\_manager\_iam\_role | The IAM Role that the Cert Manager pod will assume to authenticate |
-| cluster\_asm\_iam\_role | The IAM Role that the External Secrets pod will assume to authenticate (Secrets Manager) |
-| cluster\_autoscaler\_iam\_role | The IAM Role that the Jenkins X UI pod will assume to authenticate |
-| cluster\_name | The name of the created cluster |
-| cluster\_oidc\_issuer\_url | The Cluster OIDC Issuer URL |
-| cluster\_ssm\_iam\_role | The IAM Role that the External Secrets pod will assume to authenticate (Parameter Store) |
-| cm\_cainjector\_iam\_role | The IAM Role that the CM CA Injector pod will assume to authenticate |
-| connect | "The cluster connection string to use once Terraform apply finishes,<br>this command is already executed as part of the apply, you may have to provide the region and<br>profile as environment variables " |
-| controllerbuild\_iam\_role | The IAM Role that the ControllerBuild pod will assume to authenticate |
-| eks\_module | The output of the terraform-aws-modules/eks/aws module for use in terraform |
-| external\_dns\_iam\_role | The IAM Role that the External DNS pod will assume to authenticate |
-| jx\_requirements | The jx-requirements rendered output |
-| lts\_logs\_bucket | The bucket where logs from builds will be stored |
-| lts\_reports\_bucket | The bucket where test reports will be stored |
-| lts\_repository\_bucket | The bucket that will serve as artifacts repository |
-| pipeline\_viz\_iam\_role | The IAM Role that the pipeline visualizer pod will assume to authenticate |
-| subdomain\_nameservers | ---------------------------------------------------------------------------- DNS ---------------------------------------------------------------------------- |
-| tekton\_bot\_iam\_role | The IAM Role that the build pods will assume to authenticate |
-| vault\_dynamodb\_table | The Vault DynamoDB table |
-| vault\_kms\_unseal | The Vault KMS Key for encryption |
-| vault\_unseal\_bucket | The Vault storage bucket |
-| vault\_user\_id | The Vault IAM user id |
-| vault\_user\_secret | The Vault IAM user secret |
-| vpc\_id | The ID of the VPC |
-
 ### Cluster Autoscaling
 
-This does not automatically install cluster-autoscaler, it installs all of the prerequisite policies and roles required to install autoscaler. 
+This does not automatically install cluster-autoscaler, it installs all of the prerequisite policies and roles required to install autoscaler.
 The actual autoscaler installation varies depending on what version of kubernetes you are using.
 
 To install cluster autoscaler, first you will need the ARN of the cluster-autoscaler role.
@@ -307,7 +168,6 @@ rbac:
 autoDiscovery:
   clusterName: your-cluster-name
 
-
 image:
   repository: us.gcr.io/k8s-artifacts-prod/autoscaling/cluster-autoscaler
   tag: v1.19.1
@@ -329,7 +189,6 @@ And then
 helm template --name cluster-autoscaler --namespace kube-system ./cluster-autoscaler -f ./cluster-autoscaler-values.yaml | kubectl apply -n kube-system -f -
 ```
 
-
 ### Long Term Storage
 
 You can choose to create S3 buckets for [long term storage](https://jenkins-x.io/docs/install-setup/installing/boot/storage/) of Jenkins X build artefacts with `enable_logs_storage`, `enable_reports_storage` and `enable_repository_storage`.
@@ -337,16 +196,16 @@ You can choose to create S3 buckets for [long term storage](https://jenkins-x.io
 During `terraform apply` the enabledS3 buckets are created, and the _jx_requirements_ output will contain the following section:
 
 ```yaml
-    storage:
-      logs:
-        enabled: ${enable_logs_storage}
-        url: s3://${logs_storage_bucket}
-      reports:
-        enabled: ${enable_reports_storage}
-        url: s3://${reports_storage_bucket}
-      repository:
-        enabled: ${enable_repository_storage}
-        url: s3://${repository_storage_bucket}
+storage:
+  logs:
+    enabled: ${enable_logs_storage}
+    url: s3://${logs_storage_bucket}
+  reports:
+    enabled: ${enable_reports_storage}
+    url: s3://${reports_storage_bucket}
+  repository:
+    enabled: ${enable_repository_storage}
+    url: s3://${repository_storage_bucket}
 ```
 
 If you just want to experiment with Jenkins X, you can set the variable _force_destroy_ to true.
@@ -361,15 +220,21 @@ Part of this module's responsibilities is the creation of all resources required
 These resources are An S3 Bucket, a DynamoDB Table and a KMS Key.
 
 You can also configure an existing Vault instance for use with Jenkins X.
-In this case provide the Vault URL via the _vault_url_  input variable and follow the Jenkins X documentation around the installation of an [external Vault](https://jenkins-x.io/docs/install-setup/installing/boot/secrets/#external) instance.
+In this case provide the Vault URL via the _vault_url_ input variable and follow the Jenkins X documentation around the installation of an [external Vault](https://jenkins-x.io/v3/admin/setup/secrets/vault/#external-vault) instance.
 
-To use other secret backends such as AWS Secrets Manager, set `use_vault` variable to false, and `use_asm` variable to true.
-
-:warning: **Note**: AWS Secrets Manager is not supported yet, but will be functional soon. The `use_asm` just sets the `secretStorage` to `asm` instead of vault for now.
+To use AWS Secrets Manager instead of vault, set `use_vault` variable to false, and `use_asm` variable to true.
 
 ### NGINX
-The module can install the nginx chart. Example can be found [here](./example/jx3).
+
+The module can install the nginx chart by setting `create_nginx` flag to `true`.
+Example can be found [here](./example/jx3).
 You can specify a nginx_values.yaml file or the module will use the default one stored [here](./modules/nginx/nginx_values.yaml).
+If you are using terraform to create nginx resources, do not use the chart specified in the versionstream.
+Remove the entry in the [`helmfile.yaml`](https://github.com/DexaiRobotics/jx3-eks-vault/blob/master/helmfile.yaml) referencing the nginx chart
+
+```
+path: helmfiles/nginx/helmfile.yaml
+```
 
 ### ExternalDNS
 
@@ -382,10 +247,10 @@ If you want to use a domain with an already existing Route 53 Hosted Zone, you c
 This domain will be configured in the _jx_requirements_ output in the following section:
 
 ```yaml
-    ingress:
-      domain: ${domain}
-      ignoreLoadBalancer: true
-      externalDNS: ${enable_external_dns}
+ingress:
+  domain: ${domain}
+  ignoreLoadBalancer: true
+  externalDNS: ${enable_external_dns}
 ```
 
 If you want to use a subdomain and have this module create and configure a new Hosted Zone with DNS delegation, you can provide the following variables:
@@ -415,6 +280,7 @@ You need to provide a valid email to register your domain in LetsEncrypt with `t
 
 Customer has got signed certificates from CA and want to use it instead of LetsEncrypt certificates. Terraform creates k8s `tls-ingress-certificates-ca` secret with `tls_key` and `tls_cert` in `default` namespace.
 User should define:
+
 ```
 enable_external_dns = true
 apex_domain         = "office.com"
@@ -423,7 +289,7 @@ enable_tls          = true
 tls_email           = "custome@office.com"
 
 // Signed Certificate must match the domain: *.subdomain.office.com
-tls_cert            = "/opt/CA/cert.crt"  
+tls_cert            = "/opt/CA/cert.crt"
 tls_key             = "LS0tLS1C....BLRVktLS0tLQo="
 ```
 
@@ -459,7 +325,7 @@ This _jx_requirements_ output can be used as input to [Jenkins X Boot](https://j
 
 ![Jenkins X Installation/Update Flow](./images/terraform-aws-eks-jx.png)
 
-:warning: **Note**: The generated _jx\_requirements_ output is only intended for the first run of `jx boot`.
+:warning: **Note**: The generated _jx_requirements_ output is only intended for the first run of `jx boot`.
 During this first run of `jx boot` a git repository containing the source code for Jenkins X Boot is created.
 This (_new_) repository contains a _jx-requirements.yml_ (_which is now ahead of the jx-requirements output from terraform_) used by successive runs of `jx boot`.
 
@@ -474,7 +340,7 @@ jx boot --requirements jx-requirements.yml
 You are prompted for any further required configuration.
 The number of prompts depends on how much you have [pre-configured](#inputs) via your Terraform variables.
 
-:grey_exclamation: Remember you need to export _VAULT_AWS_ACCESS_KEY_ID_ and _VAULT_AWS_SECRET_ACCESS_KEY_.
+:grey*exclamation: Remember you need to export \_VAULT_AWS_ACCESS_KEY_ID* and _VAULT_AWS_SECRET_ACCESS_KEY_.
 See [Cluster provisioning](#cluster-provisioning).
 
 ### Production cluster considerations
@@ -484,17 +350,17 @@ The following is a list of considerations for a production use case.
 
 - Specify the version attribute of the module, for example:
 
-    ```terraform
-    module "eks-jx" {
-      source  = "jenkins-x/eks-jx/aws"
-      version = "1.0.0"
-      # insert your configuration
-    }
+  ```terraform
+  module "eks-jx" {
+    source  = "jenkins-x/eks-jx/aws"
+    version = "1.0.0"
+    # insert your configuration
+  }
 
-    output "jx_requirements" {
-      value = module.eks-jx.jx_requirements
-    }  
-    ```
+  output "jx_requirements" {
+    value = module.eks-jx.jx_requirements
+  }
+  ```
 
   Specifying the version ensures that you are using a fixed version and that version upgrades cannot occur unintended.
 
@@ -504,13 +370,13 @@ The following is a list of considerations for a production use case.
 
 - Disable public API for the EKS cluster.
   If that is not not possible, restrict access to it by specifying the cidr blocks which can access it.
- 
+
 ### Configuring a Terraform backend
 
 A "[backend](https://www.terraform.io/docs/backends/index.html)" in Terraform determines how state is loaded and how an operation such as _apply_ is executed.
 By default, Terraform uses the _local_ backend, which keeps the state of the created resources on the local file system.
 This is problematic since sensitive information will be stored on disk and it is not possible to share state across a team.
-When working with AWS a good choice for your Terraform backend is the [_s3_ backend](https://www.terraform.io/docs/backends/types/s3.html)  which stores the Terraform state in an AWS S3 bucket.
+When working with AWS a good choice for your Terraform backend is the [_s3_ backend](https://www.terraform.io/docs/backends/types/s3.html) which stores the Terraform state in an AWS S3 bucket.
 The [examples](./examples) directory of this repository contains configuration examples for using the _s3_ backed.
 
 To use the _s3_ backend, you will need to create the bucket upfront.
@@ -530,7 +396,7 @@ Worker Groups, the default worker node groups for this module, are based on an o
 The issue with autoscaling with the default worker group is that it is prone to autoscaling using Nodes from only a single AZ.
 AWS has a "AZRebalance" job that can run to help with this, but it is aggressive in removing nodes.
 
-All of these issues can be resolved by using Worker Group Launch Templates instead, configured with a template for each Availability Zone. 
+All of these issues can be resolved by using Worker Group Launch Templates instead, configured with a template for each Availability Zone.
 Using an ASG for each AZ bypasses the autoscaling issues in AWS.
 Furthermore, we are also able to specify several types of machines that are suitable for spot instances rather than just one.
 Using only one often results in Spot instances not being able to be provisioned, and this greatly reduces the occurence of this happening, as well as allowing for lower spot prices.
@@ -559,17 +425,17 @@ In order to prevent any interruption to service, you'll first want to enable Wor
 
 Once you've verified that you are able to see the new Nodes created by the Launch Templates by running `kubectl get nodes`, then you can remove the older Worker Group.
 
-To remove the older worker group, it's recommended to first scale down to zero nodes, one at a time, by adjusting the min/max node capacity. 
+To remove the older worker group, it's recommended to first scale down to zero nodes, one at a time, by adjusting the min/max node capacity.
 Once you've scaled down to zero nodes for the original worker group, and your workloads have been scheduled on nodes created by the launch templates you can set `enable_worker_group` to `false`.
 
 module "eks-jx" {
-  source  = "jenkins-x/eks-jx/aws"
-  enable_worker_group                  = false
-  enable_worker_groups_launch_template = true
-  allowed_spot_instance_types          = ["m5.large", "m5a.large", "m5d.large", "m5ad.large", "t3.large", "t3a.large"]
-  lt_desired_nodes_per_subnet          = 2
-  lt_min_nodes_per_subnet              = 2
-  lt_max_nodes_per_subnet              = 3
+source = "jenkins-x/eks-jx/aws"
+enable_worker_group = false
+enable_worker_groups_launch_template = true
+allowed_spot_instance_types = ["m5.large", "m5a.large", "m5d.large", "m5ad.large", "t3.large", "t3a.large"]
+lt_desired_nodes_per_subnet = 2
+lt_min_nodes_per_subnet = 2
+lt_max_nodes_per_subnet = 3
 }
 
 ### EKS node groups
@@ -603,9 +469,10 @@ output "vault_user_secret" {
 }
 ```
 
-**Note**: EKS node groups now support using [spot instances](https://aws.amazon.com/blogs/containers/amazon-eks-now-supports-provisioning-and-managing-ec2-spot-instances-in-managed-node-groups/) and [launch templates](https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html) (will be set accordingly with the use of the  `enable_spot_instances` variable)
+**Note**: EKS node groups now support using [spot instances](https://aws.amazon.com/blogs/containers/amazon-eks-now-supports-provisioning-and-managing-ec2-spot-instances-in-managed-node-groups/) and [launch templates](https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html) (will be set accordingly with the use of the `enable_spot_instances` variable)
 
 #### Custom EKS node groups
+
 A single node group will be created by default when using EKS node groups. Supply values for the `node_groups_managed` variable to override this behaviour:
 
 ```terraform
@@ -622,7 +489,7 @@ module "eks-jx" {
       instance_types          = [ "m5.large" ]
       launce_template_id      = null
       launch_template_version = null
-      
+
       k8s_labels = {
         purpose = "application"
       }
@@ -656,7 +523,7 @@ module "eks-jx" {
       instance_types          = [ "m5.large" ]
       launce_template_id      = aws_launch_template.foo.id
       launch_template_version = aws_launch_template.foo.latest_version
-      
+
       k8s_labels = {
         purpose = "application"
       }
@@ -749,30 +616,35 @@ module "eks-jx" {
 ```
 
 ### Using SSH Key Pair
+
 Import a key pair or use an existing one and take note of the name.
 Set `key_name` and set `enable_key_name` to `true`.
 
 ### Using different EBS Volume type and size
+
 Set `volume_type` to either `standard`, `gp2` or `io1` and `volume_size` to the desired size in GB. If chosing `io1` set desired `iops`.
 
 #### Resizing a disk on existing nodes
+
 The existing nodes needs to be terminated and replaced with new ones if disk is needed to be resized.
 You need to execute the following command before `terraform apply` in order to replace the Auto Scaling Launch Configuration.
 
 `terraform taint module.eks-jx.module.cluster.module.eks.aws_launch_configuration.workers[0]`
 
 ### Support for JX3
-Creation of namespaces and service accounts using terraform is no longer required for JX3. 
+
+Creation of namespaces and service accounts using terraform is no longer required for JX3.
 To keep compatibility with JX2, a flag `is_jx2` was introduced, in [v1.6.0](https://github.com/jenkins-x/terraform-aws-eks-jx/releases/tag/v1.6.0).
 
 ### Existing VPC
 
 If you want to create the cluster in an existing VPC you can specify `create_vpc` to false and
 specify where to create the clsuter with `vpc_id` and `subnets`.
- 
+
 ### Existing EKS cluster
-It is very common to have another module used to create EKS clusters for all your AWS accounts, in that case, you can 
-set `create_eks` and `create_vpc` to false and `cluster_name` to the id/name of the EKS cluster where jx components 
+
+It is very common to have another module used to create EKS clusters for all your AWS accounts, in that case, you can
+set `create_eks` and `create_vpc` to false and `cluster_name` to the id/name of the EKS cluster where jx components
 need to be installed in.
 This will prevent creating a new vpc and eks cluster for jx.
 There are also flags to control the creation of IAM roles.
@@ -783,6 +655,171 @@ See [this](./examples/existing-cluster) for a complete example.
 You can find examples for different configurations in the [examples folder](./examples).
 
 Each example generates a valid _jx-requirements.yml_ file that can be used to boot a Jenkins X cluster.
+
+### Module configuration
+
+<!-- BEGIN_TF_DOCS # Autogenerated do not edit! -->
+#### Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 2.53.0, < 4.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.0 |
+#### Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_backup"></a> [backup](#module\_backup) | ./modules/backup | n/a |
+| <a name="module_cluster"></a> [cluster](#module\_cluster) | ./modules/cluster | n/a |
+| <a name="module_dns"></a> [dns](#module\_dns) | ./modules/dns | n/a |
+| <a name="module_health"></a> [health](#module\_health) | ./modules/health | n/a |
+| <a name="module_nginx"></a> [nginx](#module\_nginx) | ./modules/nginx | n/a |
+| <a name="module_vault"></a> [vault](#module\_vault) | ./modules/vault | n/a |
+#### Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.12.17, < 2.0.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 2.53.0, < 4.0 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.0 |
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~> 2.0 |
+| <a name="requirement_local"></a> [local](#requirement\_local) | ~> 2.0 |
+| <a name="requirement_null"></a> [null](#requirement\_null) | ~> 3.0 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.0 |
+| <a name="requirement_template"></a> [template](#requirement\_template) | ~> 2.0 |
+#### Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_additional_tekton_role_policy_arns"></a> [additional\_tekton\_role\_policy\_arns](#input\_additional\_tekton\_role\_policy\_arns) | Additional Policy ARNs to attach to Tekton IRSA Role | `list(string)` | `[]` | no |
+| <a name="input_allowed_spot_instance_types"></a> [allowed\_spot\_instance\_types](#input\_allowed\_spot\_instance\_types) | Allowed machine types for spot instances (must be same size) | `any` | `[]` | no |
+| <a name="input_apex_domain"></a> [apex\_domain](#input\_apex\_domain) | The main domain to either use directly or to configure a subdomain from | `string` | `""` | no |
+| <a name="input_cluster_encryption_config"></a> [cluster\_encryption\_config](#input\_cluster\_encryption\_config) | Configuration block with encryption configuration for the cluster. | <pre>list(object({<br>    provider_key_arn = string<br>    resources        = list(string)<br>  }))</pre> | `[]` | no |
+| <a name="input_cluster_endpoint_private_access"></a> [cluster\_endpoint\_private\_access](#input\_cluster\_endpoint\_private\_access) | Indicates whether or not the Amazon EKS private API server endpoint is enabled. | `bool` | `false` | no |
+| <a name="input_cluster_endpoint_private_access_cidrs"></a> [cluster\_endpoint\_private\_access\_cidrs](#input\_cluster\_endpoint\_private\_access\_cidrs) | List of CIDR blocks which can access the Amazon EKS private API server endpoint, when public access is disabled. | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
+| <a name="input_cluster_endpoint_public_access"></a> [cluster\_endpoint\_public\_access](#input\_cluster\_endpoint\_public\_access) | Indicates whether or not the Amazon EKS public API server endpoint is enabled. | `bool` | `true` | no |
+| <a name="input_cluster_endpoint_public_access_cidrs"></a> [cluster\_endpoint\_public\_access\_cidrs](#input\_cluster\_endpoint\_public\_access\_cidrs) | List of CIDR blocks which can access the Amazon EKS public API server endpoint. | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
+| <a name="input_cluster_in_private_subnet"></a> [cluster\_in\_private\_subnet](#input\_cluster\_in\_private\_subnet) | Flag to enable installation of cluster on private subnets | `bool` | `false` | no |
+| <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Variable to provide your desired name for the cluster. The script will create a random name if this is empty | `string` | `""` | no |
+| <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Kubernetes version to use for the EKS cluster. | `string` | n/a | yes |
+| <a name="input_create_and_configure_subdomain"></a> [create\_and\_configure\_subdomain](#input\_create\_and\_configure\_subdomain) | Flag to create an NS record set for the subdomain in the apex domain's Hosted Zone | `bool` | `false` | no |
+| <a name="input_create_asm_role"></a> [create\_asm\_role](#input\_create\_asm\_role) | Flag to control AWS Secrets Manager iam roles creation | `bool` | `false` | no |
+| <a name="input_create_autoscaler_role"></a> [create\_autoscaler\_role](#input\_create\_autoscaler\_role) | Flag to control cluster autoscaler iam role creation | `bool` | `true` | no |
+| <a name="input_create_bucketrepo_role"></a> [create\_bucketrepo\_role](#input\_create\_bucketrepo\_role) | Flag to control bucketrepo role | `bool` | `true` | no |
+| <a name="input_create_cm_role"></a> [create\_cm\_role](#input\_create\_cm\_role) | Flag to control cert manager iam role creation | `bool` | `true` | no |
+| <a name="input_create_cmcainjector_role"></a> [create\_cmcainjector\_role](#input\_create\_cmcainjector\_role) | Flag to control cert manager ca-injector iam role creation | `bool` | `true` | no |
+| <a name="input_create_ctrlb_role"></a> [create\_ctrlb\_role](#input\_create\_ctrlb\_role) | Flag to control controller build iam role creation | `bool` | `true` | no |
+| <a name="input_create_eks"></a> [create\_eks](#input\_create\_eks) | Controls if EKS cluster and associated resources should be created or not. If you have an existing eks cluster for jx, set it to false | `bool` | `true` | no |
+| <a name="input_create_exdns_role"></a> [create\_exdns\_role](#input\_create\_exdns\_role) | Flag to control external dns iam role creation | `bool` | `true` | no |
+| <a name="input_create_nginx"></a> [create\_nginx](#input\_create\_nginx) | Decides whether we want to create nginx resources using terraform or not | `bool` | `false` | no |
+| <a name="input_create_nginx_namespace"></a> [create\_nginx\_namespace](#input\_create\_nginx\_namespace) | Boolean to control nginx namespace creation | `bool` | `true` | no |
+| <a name="input_create_pipeline_vis_role"></a> [create\_pipeline\_vis\_role](#input\_create\_pipeline\_vis\_role) | Flag to control pipeline visualizer role | `bool` | `true` | no |
+| <a name="input_create_ssm_role"></a> [create\_ssm\_role](#input\_create\_ssm\_role) | Flag to control AWS Parameter Store iam roles creation | `bool` | `false` | no |
+| <a name="input_create_tekton_role"></a> [create\_tekton\_role](#input\_create\_tekton\_role) | Flag to control tekton iam role creation | `bool` | `true` | no |
+| <a name="input_create_velero_role"></a> [create\_velero\_role](#input\_create\_velero\_role) | Flag to control velero iam role creation | `bool` | `true` | no |
+| <a name="input_create_vpc"></a> [create\_vpc](#input\_create\_vpc) | Controls if VPC and related resources should be created. If you have an existing vpc for jx, set it to false | `bool` | `true` | no |
+| <a name="input_desired_node_count"></a> [desired\_node\_count](#input\_desired\_node\_count) | The number of worker nodes to use for the cluster | `number` | `3` | no |
+| <a name="input_enable_backup"></a> [enable\_backup](#input\_enable\_backup) | Whether or not Velero backups should be enabled | `bool` | `false` | no |
+| <a name="input_enable_external_dns"></a> [enable\_external\_dns](#input\_enable\_external\_dns) | Flag to enable or disable External DNS in the final `jx-requirements.yml` file | `bool` | `false` | no |
+| <a name="input_enable_key_name"></a> [enable\_key\_name](#input\_enable\_key\_name) | Flag to enable ssh key pair name | `bool` | `false` | no |
+| <a name="input_enable_key_rotation"></a> [enable\_key\_rotation](#input\_enable\_key\_rotation) | Flag to enable kms key rotation | `bool` | `true` | no |
+| <a name="input_enable_logs_storage"></a> [enable\_logs\_storage](#input\_enable\_logs\_storage) | Flag to enable or disable long term storage for logs | `bool` | `true` | no |
+| <a name="input_enable_nat_gateway"></a> [enable\_nat\_gateway](#input\_enable\_nat\_gateway) | Should be true if you want to provision NAT Gateways for each of your private networks | `bool` | `false` | no |
+| <a name="input_enable_reports_storage"></a> [enable\_reports\_storage](#input\_enable\_reports\_storage) | Flag to enable or disable long term storage for reports | `bool` | `true` | no |
+| <a name="input_enable_repository_storage"></a> [enable\_repository\_storage](#input\_enable\_repository\_storage) | Flag to enable or disable the repository bucket storage | `bool` | `true` | no |
+| <a name="input_enable_spot_instances"></a> [enable\_spot\_instances](#input\_enable\_spot\_instances) | Flag to enable spot instances | `bool` | `false` | no |
+| <a name="input_enable_tls"></a> [enable\_tls](#input\_enable\_tls) | Flag to enable TLS in the final `jx-requirements.yml` file | `bool` | `false` | no |
+| <a name="input_enable_worker_group"></a> [enable\_worker\_group](#input\_enable\_worker\_group) | Flag to enable worker group. Setting this to false will provision a node group instead | `bool` | `true` | no |
+| <a name="input_enable_worker_groups_launch_template"></a> [enable\_worker\_groups\_launch\_template](#input\_enable\_worker\_groups\_launch\_template) | Flag to enable Worker Group Launch Templates | `bool` | `false` | no |
+| <a name="input_encrypt_volume_self"></a> [encrypt\_volume\_self](#input\_encrypt\_volume\_self) | Encrypt the ebs and root volume for the self managed worker nodes. This is only valid for the worker group launch template | `bool` | `false` | no |
+| <a name="input_force_destroy"></a> [force\_destroy](#input\_force\_destroy) | Flag to determine whether storage buckets get forcefully destroyed. If set to false, empty the bucket first in the aws s3 console, else terraform destroy will fail with BucketNotEmpty error | `bool` | `false` | no |
+| <a name="input_force_destroy_subdomain"></a> [force\_destroy\_subdomain](#input\_force\_destroy\_subdomain) | Flag to determine whether subdomain zone get forcefully destroyed. If set to false, empty the sub domain first in the aws Route 53 console, else terraform destroy will fail with HostedZoneNotEmpty error | `bool` | `false` | no |
+| <a name="input_ignoreLoadBalancer"></a> [ignoreLoadBalancer](#input\_ignoreLoadBalancer) | Flag to specify if jx boot will ignore loadbalancer DNS to resolve to an IP | `bool` | `false` | no |
+| <a name="input_install_kuberhealthy"></a> [install\_kuberhealthy](#input\_install\_kuberhealthy) | Flag to specify if kuberhealthy operator should be installed | `bool` | `true` | no |
+| <a name="input_iops"></a> [iops](#input\_iops) | The IOPS value | `number` | `0` | no |
+| <a name="input_is_jx2"></a> [is\_jx2](#input\_is\_jx2) | Flag to specify if jx2 related resources need to be created | `bool` | `true` | no |
+| <a name="input_jx_bot_token"></a> [jx\_bot\_token](#input\_jx\_bot\_token) | Bot token used to interact with the Jenkins X cluster git repository | `string` | `""` | no |
+| <a name="input_jx_bot_username"></a> [jx\_bot\_username](#input\_jx\_bot\_username) | Bot username used to interact with the Jenkins X cluster git repository | `string` | `""` | no |
+| <a name="input_jx_git_operator_values"></a> [jx\_git\_operator\_values](#input\_jx\_git\_operator\_values) | Extra values for jx-git-operator chart as a list of yaml formated strings | `list(string)` | `[]` | no |
+| <a name="input_jx_git_url"></a> [jx\_git\_url](#input\_jx\_git\_url) | URL for the Jenkins X cluster git repository | `string` | `""` | no |
+| <a name="input_key_name"></a> [key\_name](#input\_key\_name) | The ssh key pair name | `string` | `""` | no |
+| <a name="input_local-exec-interpreter"></a> [local-exec-interpreter](#input\_local-exec-interpreter) | If provided, this is a list of interpreter arguments used to execute the command | `list(string)` | <pre>[<br>  "/bin/bash",<br>  "-c"<br>]</pre> | no |
+| <a name="input_lt_desired_nodes_per_subnet"></a> [lt\_desired\_nodes\_per\_subnet](#input\_lt\_desired\_nodes\_per\_subnet) | The number of worker nodes in each Subnet (AZ) if using Launch Templates | `number` | `1` | no |
+| <a name="input_lt_max_nodes_per_subnet"></a> [lt\_max\_nodes\_per\_subnet](#input\_lt\_max\_nodes\_per\_subnet) | The maximum number of worker nodes in each Subnet (AZ) if using Launch Templates | `number` | `2` | no |
+| <a name="input_lt_min_nodes_per_subnet"></a> [lt\_min\_nodes\_per\_subnet](#input\_lt\_min\_nodes\_per\_subnet) | The minimum number of worker nodes in each Subnet (AZ) if using Launch Templates | `number` | `1` | no |
+| <a name="input_manage_apex_domain"></a> [manage\_apex\_domain](#input\_manage\_apex\_domain) | Flag to control if apex domain should be managed/updated by this module. Set this to false,if your apex domain is managed in a different AWS account or different provider | `bool` | `true` | no |
+| <a name="input_manage_subdomain"></a> [manage\_subdomain](#input\_manage\_subdomain) | Flag to control subdomain creation/management | `bool` | `true` | no |
+| <a name="input_map_accounts"></a> [map\_accounts](#input\_map\_accounts) | Additional AWS account numbers to add to the aws-auth configmap. | `list(string)` | `[]` | no |
+| <a name="input_map_roles"></a> [map\_roles](#input\_map\_roles) | Additional IAM roles to add to the aws-auth configmap. | <pre>list(object({<br>    rolearn  = string<br>    username = string<br>    groups   = list(string)<br>  }))</pre> | `[]` | no |
+| <a name="input_map_users"></a> [map\_users](#input\_map\_users) | Additional IAM users to add to the aws-auth configmap. | <pre>list(object({<br>    userarn  = string<br>    username = string<br>    groups   = list(string)<br>  }))</pre> | `[]` | no |
+| <a name="input_max_node_count"></a> [max\_node\_count](#input\_max\_node\_count) | The maximum number of worker nodes to use for the cluster | `number` | `5` | no |
+| <a name="input_min_node_count"></a> [min\_node\_count](#input\_min\_node\_count) | The minimum number of worker nodes to use for the cluster | `number` | `3` | no |
+| <a name="input_nginx_chart_version"></a> [nginx\_chart\_version](#input\_nginx\_chart\_version) | nginx chart version | `string` | n/a | yes |
+| <a name="input_nginx_namespace"></a> [nginx\_namespace](#input\_nginx\_namespace) | Name of the nginx namespace | `string` | `"nginx"` | no |
+| <a name="input_nginx_release_name"></a> [nginx\_release\_name](#input\_nginx\_release\_name) | Name of the nginx release name | `string` | `"nginx-ingress"` | no |
+| <a name="input_nginx_values_file"></a> [nginx\_values\_file](#input\_nginx\_values\_file) | Name of the values file which holds the helm chart values | `string` | `"nginx_values.yaml"` | no |
+| <a name="input_node_group_ami"></a> [node\_group\_ami](#input\_node\_group\_ami) | ami type for the node group worker intances | `string` | `"AL2_x86_64"` | no |
+| <a name="input_node_group_disk_size"></a> [node\_group\_disk\_size](#input\_node\_group\_disk\_size) | node group worker disk size | `string` | `"50"` | no |
+| <a name="input_node_groups_managed"></a> [node\_groups\_managed](#input\_node\_groups\_managed) | List of managed node groups to be created and their respective settings | `any` | <pre>{<br>  "eks-jx-node-group": {}<br>}</pre> | no |
+| <a name="input_node_machine_type"></a> [node\_machine\_type](#input\_node\_machine\_type) | The instance type to use for the cluster's worker nodes | `string` | `"m5.large"` | no |
+| <a name="input_private_subnets"></a> [private\_subnets](#input\_private\_subnets) | The private subnet CIDR block to use in the created VPC | `list(string)` | <pre>[<br>  "10.0.4.0/24",<br>  "10.0.5.0/24",<br>  "10.0.6.0/24"<br>]</pre> | no |
+| <a name="input_production_letsencrypt"></a> [production\_letsencrypt](#input\_production\_letsencrypt) | Flag to use the production environment of letsencrypt in the `jx-requirements.yml` file | `bool` | `false` | no |
+| <a name="input_profile"></a> [profile](#input\_profile) | The AWS Profile used to provision the EKS Cluster | `string` | `null` | no |
+| <a name="input_public_subnets"></a> [public\_subnets](#input\_public\_subnets) | The public subnet CIDR block to use in the created VPC | `list(string)` | <pre>[<br>  "10.0.1.0/24",<br>  "10.0.2.0/24",<br>  "10.0.3.0/24"<br>]</pre> | no |
+| <a name="input_region"></a> [region](#input\_region) | The region to create the resources into | `string` | `"us-east-1"` | no |
+| <a name="input_registry"></a> [registry](#input\_registry) | Registry used to store images | `string` | `""` | no |
+| <a name="input_s3_kms_arn"></a> [s3\_kms\_arn](#input\_s3\_kms\_arn) | ARN of the kms key used for encrypting s3 buckets | `string` | `""` | no |
+| <a name="input_single_nat_gateway"></a> [single\_nat\_gateway](#input\_single\_nat\_gateway) | Should be true if you want to provision a single shared NAT Gateway across all of your private networks | `bool` | `false` | no |
+| <a name="input_spot_price"></a> [spot\_price](#input\_spot\_price) | The spot price ceiling for spot instances | `string` | `"0.1"` | no |
+| <a name="input_subdomain"></a> [subdomain](#input\_subdomain) | The subdomain to be added to the apex domain. If subdomain is set, it will be appended to the apex domain in  `jx-requirements-eks.yml` file | `string` | `""` | no |
+| <a name="input_subnets"></a> [subnets](#input\_subnets) | The subnet ids to create EKS cluster in if create\_vpc is false | `list(string)` | `[]` | no |
+| <a name="input_tls_cert"></a> [tls\_cert](#input\_tls\_cert) | TLS certificate encrypted with Base64 | `string` | `""` | no |
+| <a name="input_tls_email"></a> [tls\_email](#input\_tls\_email) | The email to register the LetsEncrypt certificate with. Added to the `jx-requirements.yml` file | `string` | `""` | no |
+| <a name="input_tls_key"></a> [tls\_key](#input\_tls\_key) | TLS key encrypted with Base64 | `string` | `""` | no |
+| <a name="input_use_asm"></a> [use\_asm](#input\_use\_asm) | Flag to specify if AWS Secrets manager is being used | `bool` | `false` | no |
+| <a name="input_use_kms_s3"></a> [use\_kms\_s3](#input\_use\_kms\_s3) | Flag to determine whether kms should be used for encrypting s3 buckets | `bool` | `false` | no |
+| <a name="input_use_vault"></a> [use\_vault](#input\_use\_vault) | Flag to control vault resource creation | `bool` | `true` | no |
+| <a name="input_vault_url"></a> [vault\_url](#input\_vault\_url) | URL to an external Vault instance in case Jenkins X does not create its own system Vault | `string` | `""` | no |
+| <a name="input_vault_user"></a> [vault\_user](#input\_vault\_user) | The AWS IAM Username whose credentials will be used to authenticate the Vault pods against AWS | `string` | `""` | no |
+| <a name="input_velero_namespace"></a> [velero\_namespace](#input\_velero\_namespace) | Kubernetes namespace for Velero | `string` | `"velero"` | no |
+| <a name="input_velero_schedule"></a> [velero\_schedule](#input\_velero\_schedule) | The Velero backup schedule in cron notation to be set in the Velero Schedule CRD (see [default-backup.yaml](https://github.com/jenkins-x/jenkins-x-boot-config/blob/master/systems/velero-backups/templates/default-backup.yaml)) | `string` | `"0 * * * *"` | no |
+| <a name="input_velero_ttl"></a> [velero\_ttl](#input\_velero\_ttl) | The the lifetime of a velero backup to be set in the Velero Schedule CRD (see [default-backup.yaml](https://github.com/jenkins-x/jenkins-x-boot-config/blob/master/systems/velero-backups/templates/default-backup)) | `string` | `"720h0m0s"` | no |
+| <a name="input_velero_username"></a> [velero\_username](#input\_velero\_username) | The username to be assigned to the Velero IAM user | `string` | `"velero"` | no |
+| <a name="input_volume_size"></a> [volume\_size](#input\_volume\_size) | The volume size in GB | `number` | `50` | no |
+| <a name="input_volume_type"></a> [volume\_type](#input\_volume\_type) | The volume type to use. Can be standard, gp2 or io1 | `string` | `"gp2"` | no |
+| <a name="input_vpc_cidr_block"></a> [vpc\_cidr\_block](#input\_vpc\_cidr\_block) | The vpc CIDR block | `string` | `"10.0.0.0/16"` | no |
+| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The VPC to create EKS cluster in if create\_vpc is false | `string` | `""` | no |
+| <a name="input_vpc_name"></a> [vpc\_name](#input\_vpc\_name) | The name of the VPC to be created for the cluster | `string` | `"tf-vpc-eks"` | no |
+#### Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_backup_bucket_url"></a> [backup\_bucket\_url](#output\_backup\_bucket\_url) | The bucket where backups from velero will be stored |
+| <a name="output_cert_manager_iam_role"></a> [cert\_manager\_iam\_role](#output\_cert\_manager\_iam\_role) | The IAM Role that the Cert Manager pod will assume to authenticate |
+| <a name="output_cluster_asm_iam_role"></a> [cluster\_asm\_iam\_role](#output\_cluster\_asm\_iam\_role) | The IAM Role that the External Secrets pod will assume to authenticate (Secrets Manager) |
+| <a name="output_cluster_autoscaler_iam_role"></a> [cluster\_autoscaler\_iam\_role](#output\_cluster\_autoscaler\_iam\_role) | The IAM Role that the Jenkins X UI pod will assume to authenticate |
+| <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | The name of the created cluster |
+| <a name="output_cluster_oidc_issuer_url"></a> [cluster\_oidc\_issuer\_url](#output\_cluster\_oidc\_issuer\_url) | The Cluster OIDC Issuer URL |
+| <a name="output_cluster_ssm_iam_role"></a> [cluster\_ssm\_iam\_role](#output\_cluster\_ssm\_iam\_role) | The IAM Role that the External Secrets pod will assume to authenticate (Parameter Store) |
+| <a name="output_cm_cainjector_iam_role"></a> [cm\_cainjector\_iam\_role](#output\_cm\_cainjector\_iam\_role) | The IAM Role that the CM CA Injector pod will assume to authenticate |
+| <a name="output_connect"></a> [connect](#output\_connect) | "The cluster connection string to use once Terraform apply finishes,<br>this command is already executed as part of the apply, you may have to provide the region and<br>profile as environment variables " |
+| <a name="output_controllerbuild_iam_role"></a> [controllerbuild\_iam\_role](#output\_controllerbuild\_iam\_role) | The IAM Role that the ControllerBuild pod will assume to authenticate |
+| <a name="output_eks_module"></a> [eks\_module](#output\_eks\_module) | The output of the terraform-aws-modules/eks/aws module for use in terraform |
+| <a name="output_external_dns_iam_role"></a> [external\_dns\_iam\_role](#output\_external\_dns\_iam\_role) | The IAM Role that the External DNS pod will assume to authenticate |
+| <a name="output_jx_requirements"></a> [jx\_requirements](#output\_jx\_requirements) | The jx-requirements rendered output |
+| <a name="output_lts_logs_bucket"></a> [lts\_logs\_bucket](#output\_lts\_logs\_bucket) | The bucket where logs from builds will be stored |
+| <a name="output_lts_reports_bucket"></a> [lts\_reports\_bucket](#output\_lts\_reports\_bucket) | The bucket where test reports will be stored |
+| <a name="output_lts_repository_bucket"></a> [lts\_repository\_bucket](#output\_lts\_repository\_bucket) | The bucket that will serve as artifacts repository |
+| <a name="output_pipeline_viz_iam_role"></a> [pipeline\_viz\_iam\_role](#output\_pipeline\_viz\_iam\_role) | The IAM Role that the pipeline visualizer pod will assume to authenticate |
+| <a name="output_subdomain_nameservers"></a> [subdomain\_nameservers](#output\_subdomain\_nameservers) | ---------------------------------------------------------------------------- DNS ---------------------------------------------------------------------------- |
+| <a name="output_tekton_bot_iam_role"></a> [tekton\_bot\_iam\_role](#output\_tekton\_bot\_iam\_role) | The IAM Role that the build pods will assume to authenticate |
+| <a name="output_vault_dynamodb_table"></a> [vault\_dynamodb\_table](#output\_vault\_dynamodb\_table) | The Vault DynamoDB table |
+| <a name="output_vault_kms_unseal"></a> [vault\_kms\_unseal](#output\_vault\_kms\_unseal) | The Vault KMS Key for encryption |
+| <a name="output_vault_unseal_bucket"></a> [vault\_unseal\_bucket](#output\_vault\_unseal\_bucket) | The Vault storage bucket |
+| <a name="output_vault_user_id"></a> [vault\_user\_id](#output\_vault\_user\_id) | The Vault IAM user id |
+| <a name="output_vault_user_secret"></a> [vault\_user\_secret](#output\_vault\_user\_secret) | The Vault IAM user secret |
+| <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | The ID of the VPC |
+<!-- BEGIN_TF_DOCS -->
 
 ## FAQ: Frequently Asked Questions
 
@@ -810,4 +847,3 @@ For the script to work, the environment variable _$GH_TOKEN_ must be exported an
 ## How can I contribute
 
 Contributions are very welcome! Check out the [Contribution Guidelines](./CONTRIBUTING.md) for instructions.
-
