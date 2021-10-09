@@ -10,6 +10,7 @@ else
     endif
 endif
 
+UID := $(shell id -u)
 TERRAFORM_VAR_FILE ?= terraform.tfvars
 TFSEC = bin/tfsec
 
@@ -69,6 +70,6 @@ clean: ## Deletes temporary files
 	rm -f jx-requirements.yml
 	rm -rf bin
 
-.PHONY: markdown-table
-markdown-table: ## Creates markdown tables for in- and output of this module
-	terraform-docs markdown table .
+.PHONY: docs
+docs: ## Creates markdown tables for in- and output of this module
+	docker run --rm -v $(PWD):/app -w /app -u $(UID) quay.io/terraform-docs/terraform-docs:latest .
