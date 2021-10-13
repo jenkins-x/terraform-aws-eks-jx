@@ -222,7 +222,7 @@ These resources are An S3 Bucket, a DynamoDB Table and a KMS Key.
 You can also configure an existing Vault instance for use with Jenkins X.
 In this case provide the Vault URL via the _vault_url_ input variable and follow the Jenkins X documentation around the installation of an [external Vault](https://jenkins-x.io/v3/admin/setup/secrets/vault/#external-vault) instance.
 
-To use AWS Secrets Manager instead of vault, set `use_vault` variable to false, and `use_asm` variable to true.
+To use AWS Secrets Manager instead of vault, set `use_vault` variable to false, and `use_asm` variable to true. You will also need a role that grants access to AWS Secrets Manager, this will be created for you by setting `create_asm_role` variable to true. 
 
 ### NGINX
 
