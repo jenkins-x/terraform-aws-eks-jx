@@ -39,6 +39,18 @@ variable "vault_url" {
   default     = ""
 }
 
+variable "vault_role" {
+  description = "The name of the role in Vault that was created with the external secrets kubernetes service account bound to it"
+  type        = string
+  default     = "jx_role"
+}
+
+variable "vault_mountpoint" {
+  description = "Path where kubernetes auth is enabled, by default it is /kubernetes"
+  type        = string
+  default     = "kubernetes"
+}
+
 // ----------------------------------------------------------------------------
 // Velero/backup
 // ----------------------------------------------------------------------------

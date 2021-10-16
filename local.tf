@@ -22,13 +22,17 @@ locals {
     enable_repository_storage = var.enable_repository_storage
     repository_storage_bucket = length(module.cluster.repository_jenkins_x) > 0 ? module.cluster.repository_jenkins_x[0] : ""
     // Vault
+    use_vault = var.use_vault
+    // Internal Vault (provisioned by JenkinsX)
     vault_kms_key        = module.vault.kms_vault_unseal
     vault_bucket         = module.vault.vault_unseal_bucket
     vault_dynamodb_table = module.vault.vault_dynamodb_table
     vault_user           = var.vault_user
-    vault_url            = var.vault_url
-    external_vault       = local.external_vault
-    use_vault            = var.use_vault
+    // External vault
+    vault_url        = var.vault_url
+    external_vault   = local.external_vault
+    vault_role       = var.vault_role
+    vault_mountpoint = var.vault_mountpoint
     // AWS Secrets Manager
     use_asm = var.use_asm
     // Velero
