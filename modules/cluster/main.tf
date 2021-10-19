@@ -78,6 +78,8 @@ module "eks" {
       asg_max_size            = var.lt_max_nodes_per_subnet
       spot_price              = (var.enable_spot_instances ? var.spot_price : null)
       instance_type           = var.node_machine_type
+      root_volume_type        = var.volume_type
+      root_volume_size        = var.volume_size
       root_encrypted          = var.encrypt_volume_self
       override_instance_types = var.allowed_spot_instance_types
       autoscaling_enabled     = "true"
