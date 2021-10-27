@@ -36,12 +36,12 @@ resource "kubernetes_config_map" "aws-logging" {
   count = var.fargate_nodes_for_jx_pipelines ? 1 : 0
 
   metadata {
-    name = "aws-logging"
+    name      = "aws-logging"
     namespace = "aws-observability"
   }
 
   data = {
-    "output.conf"             = <<EOT
+    "output.conf"  = <<EOT
 [OUTPUT]
     Name cloudwatch_logs
     Match   *
@@ -50,7 +50,7 @@ resource "kubernetes_config_map" "aws-logging" {
     log_stream_prefix from-fluent-bit-
     auto_create_group true
 EOT
-    "parsers.conf"             = <<EOT
+    "parsers.conf" = <<EOT
 [PARSER]
     Name crio
     Format Regex
@@ -58,7 +58,7 @@ EOT
     Time_Key    time
     Time_Format %Y-%m-%dT%H:%M:%S.%L%z
 EOT
-    "filters.conf"             = <<EOT
+    "filters.conf" = <<EOT
 [FILTER]
     Name parser
     Match *

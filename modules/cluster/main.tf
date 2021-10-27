@@ -133,7 +133,7 @@ module "eks" {
         {
           namespace = "jx"
           labels = {
-            "app.kubernetes.io/managed-by"="tekton-pipelines"
+            "app.kubernetes.io/managed-by" = "tekton-pipelines"
           }
         }
       ]
