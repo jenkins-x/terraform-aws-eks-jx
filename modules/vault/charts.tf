@@ -4,7 +4,7 @@ resource "helm_release" "vault-operator" {
   chart            = "vault-operator"
   namespace        = "jx-vault"
   repository       = "https://kubernetes-charts.banzaicloud.com"
-  version          = "1.10.0"
+  version          = "1.14.3"
   create_namespace = true
 }
 
@@ -14,6 +14,6 @@ resource "helm_release" "vault-instance" {
   chart      = "vault-instance"
   namespace  = "jx-vault"
   repository = "https://jenkins-x-charts.github.io/repo"
-  version    = "1.0.22"
+  version    = "1.0.23"
   depends_on = [helm_release.vault-operator]
 }
