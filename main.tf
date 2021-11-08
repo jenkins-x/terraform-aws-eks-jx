@@ -98,6 +98,9 @@ module "cluster" {
   tls_key                               = var.tls_key
   local-exec-interpreter                = var.local-exec-interpreter
   profile                               = var.profile
+  enable_logs_storage                   = var.enable_logs_storage
+  enable_reports_storage                = var.enable_reports_storage
+  enable_repository_storage             = var.enable_repository_storage
 }
 
 // ----------------------------------------------------------------------------
