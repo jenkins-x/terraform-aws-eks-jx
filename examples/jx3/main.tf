@@ -16,4 +16,16 @@ module "eks-jx" {
   volume_type                          = "gp3"
   volume_size                          = "100"
   encrypt_volume_self                  = true
+  boot_secrets = [
+    {
+      name  = "jxBootJobEnvVarSecrets.EXTERNAL_VAULT"
+      value = "true"
+      type  = "string"
+    },
+    {
+      name  = "jxBootJobEnvVarSecrets.VAULT_ADDR"
+      value = "http://ankitm123-ms-7c02:8200"
+      type  = "string"
+    }
+  ]
 }

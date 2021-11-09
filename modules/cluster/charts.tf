@@ -30,6 +30,15 @@ resource "helm_release" "jx-git-operator" {
     value = var.jx_bot_token
   }
 
+  dynamic "set" {
+    for_each = toset(var.boot_secrets)
+    content {
+      name  = set.value["name"]
+      value = set.value["value"]
+      type  = set.value["type"]
+    }
+  }
+
   depends_on = [
     null_resource.kubeconfig
   ]
