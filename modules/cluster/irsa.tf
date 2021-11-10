@@ -320,7 +320,7 @@ data "aws_iam_policy_document" "cluster_autoscaler" {
 
 // Pipeline visualizer
 data "aws_iam_policy_document" "pipelines-visualizer-policy" {
-  count = var.create_pipeline_vis_role ? 1 : 0
+  count = var.create_pipeline_vis_role && length(aws_s3_bucket.logs_jenkins_x) > 0 ? 1 : 0
   statement {
     sid    = "JxPipelineVisualizerPolicy"
     effect = "Allow"
@@ -333,7 +333,7 @@ data "aws_iam_policy_document" "pipelines-visualizer-policy" {
 }
 
 resource "aws_iam_policy" "pipeline-visualizer" {
-  count       = var.create_pipeline_vis_role ? 1 : 0
+  count       = var.create_pipeline_vis_role && length(aws_s3_bucket.logs_jenkins_x) > 0 ? 1 : 0
   name_prefix = "jx-pipelines-visualizer"
   description = "JenkinsX pipline visualizer policy for cluster ${var.cluster_name}"
   policy      = data.aws_iam_policy_document.pipelines-visualizer-policy[count.index].json
@@ -342,16 +342,16 @@ resource "aws_iam_policy" "pipeline-visualizer" {
 module "iam_assumable_role_pipeline_visualizer" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v3.8.0"
-  create_role                   = var.create_pipeline_vis_role
+  create_role                   = var.create_pipeline_vis_role && length(aws_s3_bucket.logs_jenkins_x) > 0
   role_name                     = "${local.cluster_trunc}-jx-pipelines-visualizer"
   provider_url                  = local.oidc_provider_url
-  role_policy_arns              = [var.create_pipeline_vis_role ? aws_iam_policy.pipeline-visualizer[0].arn : ""]
+  role_policy_arns              = [var.create_pipeline_vis_role && length(aws_s3_bucket.logs_jenkins_x) > 0 ? aws_iam_policy.pipeline-visualizer[0].arn : ""]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.jenkins-x-namespace}:jx-pipelines-visualizer"]
 }
 
 // Bucketrepo
 data "aws_iam_policy_document" "bucketrepo-policy" {
-  count = var.create_bucketrepo_role ? 1 : 0
+  count = var.create_bucketrepo_role && length(aws_s3_bucket.logs_jenkins_x) > 0 ? 1 : 0
   statement {
     sid    = "BucketRepoPolicy"
     effect = "Allow"
@@ -363,7 +363,7 @@ data "aws_iam_policy_document" "bucketrepo-policy" {
 }
 
 resource "aws_iam_policy" "bucketrepo" {
-  count       = var.create_bucketrepo_role ? 1 : 0
+  count       = var.create_bucketrepo_role && length(aws_s3_bucket.logs_jenkins_x) > 0 ? 1 : 0
   name_prefix = "jx-bucketrepo"
   description = "bucketrepo policy for cluster ${var.cluster_name}"
   policy      = data.aws_iam_policy_document.bucketrepo-policy[count.index].json
@@ -372,10 +372,10 @@ resource "aws_iam_policy" "bucketrepo" {
 module "iam_assumable_role_bucketrepo" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v3.8.0"
-  create_role                   = var.create_bucketrepo_role
+  create_role                   = var.create_bucketrepo_role && length(aws_s3_bucket.logs_jenkins_x) > 0
   role_name                     = "${local.cluster_trunc}-jx-bucketrepo"
   provider_url                  = local.oidc_provider_url
-  role_policy_arns              = [var.create_bucketrepo_role ? aws_iam_policy.bucketrepo[0].arn : ""]
+  role_policy_arns              = [var.create_bucketrepo_role && length(aws_s3_bucket.logs_jenkins_x) > 0 ? aws_iam_policy.bucketrepo[0].arn : ""]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.jenkins-x-namespace}:bucketrepo-bucketrepo"]
 }
 
