@@ -418,3 +418,14 @@ variable "tls_cert" {
   type        = string
   default     = ""
 }
+
+
+variable "boot_secrets" {
+  description = ""
+  type = list(object({
+    name  = string
+    value = string
+    type  = string
+  }))
+  default = []
+}

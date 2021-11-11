@@ -626,3 +626,13 @@ variable "nginx_values_file" {
   type        = string
   description = "Name of the values file which holds the helm chart values"
 }
+
+variable "boot_secrets" {
+  description = ""
+  type = list(object({
+    name  = string
+    value = string
+    type  = string
+  }))
+  default = []
+}

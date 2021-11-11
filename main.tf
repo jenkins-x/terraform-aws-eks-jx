@@ -101,6 +101,7 @@ module "cluster" {
   enable_logs_storage                   = var.enable_logs_storage
   enable_reports_storage                = var.enable_reports_storage
   enable_repository_storage             = var.enable_repository_storage
+  boot_secrets                          = var.boot_secrets
 }
 
 // ----------------------------------------------------------------------------
