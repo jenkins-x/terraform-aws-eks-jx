@@ -24,7 +24,7 @@ module "eks-jx" {
     },
     {
       name  = "jxBootJobEnvVarSecrets.VAULT_ADDR"
-      value = "http://ankitm123-ms-7c02:8200"
+      value = "http://external-vault:8200"
       type  = "string"
     }
   ]
