@@ -6,36 +6,52 @@ The module makes use of the [Terraform EKS cluster Module](https://github.com/te
 
 <!-- TOC -->
 
-- [What is a Terraform module](#what-is-a-terraform-module)
-- [How do you use this module](#how-do-you-use-this-module)
-  - [Prerequisites](#prerequisites)
-  - [Cluster provisioning](#cluster-provisioning)
-  - [Cluster Autoscaling](#cluster-autoscaling)
-  - [Long Term Storage](#long-term-storage)
-  - [Secrets Management](#secrets-management)
-  - [Nginx](#nginx)
-  - [ExternalDNS](#externaldns)
-  - [cert-manager](#cert-manager)
-  - [Velero Backups](#velero-backups)
-  - [Running `jx boot`](#running-jx-boot)
-  - [Production cluster considerations](#production-cluster-considerations)
-  - [Configuring a Terraform backend](#configuring-a-terraform-backend)
-  - [Using Spot Instances](#using-spot-instances)
-  - [Worker Group Launch Templates](#worker-group-launch-templates)
-  - [EKS node groups](#eks-node-groups)
-  - [AWS Auth](#aws-auth)
-  - [Using SSH Key Pair](#using-ssh-key-pair)
-  - [Using different EBS Volume type and size](#using-different-ebs-volume-type-and-size)
-  - [Resizing a disk on existing nodes](#resizing-a-disk-on-existing-nodes)
-  - [Support for JX3](#support-for-jx3)
-  - [Existing EKS cluster](#existing-eks-cluster)
-  - [Examples](#examples)
-  - [Module configuration](#module-configuration)
-- [FAQ: Frequently Asked Questions](#faq-frequently-asked-questions)
-  - [IAM Roles for Service Accounts](#iam-roles-for-service-accounts)
-- [Development](#development)
-  - [Releasing](#releasing)
-- [How can I contribute](#how-can-i-contribute)
+- [Jenkins X EKS Module](#jenkins-x-eks-module)
+  - [What is a Terraform module](#what-is-a-terraform-module)
+  - [How do you use this module](#how-do-you-use-this-module)
+    - [Prerequisites](#prerequisites)
+    - [Cluster provisioning](#cluster-provisioning)
+      - [AWS_REGION](#aws_region)
+    - [Cluster Autoscaling](#cluster-autoscaling)
+    - [Long Term Storage](#long-term-storage)
+    - [Secrets Management](#secrets-management)
+    - [NGINX](#nginx)
+    - [ExternalDNS](#externaldns)
+    - [cert-manager](#cert-manager)
+    - [Customer's CA certificates](#customers-ca-certificates)
+    - [Velero Backups](#velero-backups)
+      - [Enabling backups on pre-existing clusters](#enabling-backups-on-pre-existing-clusters)
+    - [Running `jx boot`](#running-jx-boot)
+    - [Production cluster considerations](#production-cluster-considerations)
+    - [Configuring a Terraform backend](#configuring-a-terraform-backend)
+    - [Using Spot Instances](#using-spot-instances)
+    - [Worker Group Launch Templates](#worker-group-launch-templates)
+      - [Enabling Worker Group Launch Templates](#enabling-worker-group-launch-templates)
+      - [Transitioning from Worker Groups to Worker Groups Launch Templates](#transitioning-from-worker-groups-to-worker-groups-launch-templates)
+    - [EKS node groups](#eks-node-groups)
+      - [Custom EKS node groups](#custom-eks-node-groups)
+    - [AWS Auth](#aws-auth)
+      - [`map_users`](#map_users)
+      - [`map_roles`](#map_roles)
+      - [`map_accounts`](#map_accounts)
+    - [Using SSH Key Pair](#using-ssh-key-pair)
+    - [Using different EBS Volume type and size](#using-different-ebs-volume-type-and-size)
+      - [Resizing a disk on existing nodes](#resizing-a-disk-on-existing-nodes)
+    - [Support for JX3](#support-for-jx3)
+    - [Existing VPC](#existing-vpc)
+    - [Existing EKS cluster](#existing-eks-cluster)
+    - [Examples](#examples)
+    - [Module configuration](#module-configuration)
+      - [Providers](#providers)
+      - [Modules](#modules)
+      - [Requirements](#requirements)
+      - [Inputs](#inputs)
+      - [Outputs](#outputs)
+  - [FAQ: Frequently Asked Questions](#faq-frequently-asked-questions)
+    - [IAM Roles for Service Accounts](#iam-roles-for-service-accounts)
+  - [Development](#development)
+    - [Releasing](#releasing)
+  - [How can I contribute](#how-can-i-contribute)
 
 <!-- /TOC -->
 
@@ -220,7 +236,11 @@ Part of this module's responsibilities is the creation of all resources required
 These resources are An S3 Bucket, a DynamoDB Table and a KMS Key.
 
 You can also configure an existing Vault instance for use with Jenkins X.
-In this case provide the Vault URL via the _vault_url_ input variable and follow the Jenkins X documentation around the installation of an [external Vault](https://jenkins-x.io/v3/admin/setup/secrets/vault/#external-vault) instance.
+In this case provide the
+* Vault URL via the _vault\_url_ input variable
+* Vault mountpoint via the _vault\_mountpoint_ variable (default is `kubernetes`)
+* Vault role via the _vault\_role_ variable (default is `jx_role`)
+and follow the Jenkins X documentation around the installation of an [external Vault](https://jenkins-x.io/v3/admin/setup/secrets/vault/#external-vault) instance.
 
 To use AWS Secrets Manager instead of vault, set `use_vault` variable to false, and `use_asm` variable to true. You will also need a role that grants access to AWS Secrets Manager, this will be created for you by setting `create_asm_role` variable to true. 
 
@@ -779,6 +799,8 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_use_asm"></a> [use\_asm](#input\_use\_asm) | Flag to specify if AWS Secrets manager is being used | `bool` | `false` | no |
 | <a name="input_use_kms_s3"></a> [use\_kms\_s3](#input\_use\_kms\_s3) | Flag to determine whether kms should be used for encrypting s3 buckets | `bool` | `false` | no |
 | <a name="input_use_vault"></a> [use\_vault](#input\_use\_vault) | Flag to control vault resource creation | `bool` | `true` | no |
+| <a name="input_vault_mountpoint"></a> [vault\_mountpoint](#input\_vault\_mountpoint) | Path where kubernetes auth is enabled, by default it is /kubernetes | `string` | `"kubernetes"` | no |
+| <a name="input_vault_role"></a> [vault\_role](#input\_vault\_role) | The name of the role in Vault that was created with the external secrets kubernetes service account bound to it | `string` | `"jx_role"` | no |
 | <a name="input_vault_url"></a> [vault\_url](#input\_vault\_url) | URL to an external Vault instance in case Jenkins X does not create its own system Vault | `string` | `""` | no |
 | <a name="input_vault_user"></a> [vault\_user](#input\_vault\_user) | The AWS IAM Username whose credentials will be used to authenticate the Vault pods against AWS | `string` | `""` | no |
 | <a name="input_velero_namespace"></a> [velero\_namespace](#input\_velero\_namespace) | Kubernetes namespace for Velero | `string` | `"velero"` | no |

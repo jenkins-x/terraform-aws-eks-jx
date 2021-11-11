@@ -25,6 +25,8 @@ secretStorage: vault
 vault:
 %{ if external_vault }
   url: ${vault_url}
+  role: ${vault_role}
+  mountpoint: ${vault_mountpoint}
 %{ else }
   aws:
     iamUserName: "${vault_user}"
