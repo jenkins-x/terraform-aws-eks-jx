@@ -392,7 +392,6 @@ data "aws_iam_policy_document" "secrets-manager-policy" {
       "secretsmanager:GetResourcePolicy",
       "secretsmanager:GetSecretValue",
       "secretsmanager:ListSecretVersionIds",
-      "secretsmanager:ListSecrets",
       "secretsmanager:PutSecretValue",
       "secretsmanager:UpdateSecret",
     ]
@@ -400,6 +399,15 @@ data "aws_iam_policy_document" "secrets-manager-policy" {
       "arn:${data.aws_partition.current.partition}:secretsmanager:${var.region}:${local.project}:secret:secret/data/lighthouse/*",
       "arn:${data.aws_partition.current.partition}:secretsmanager:${var.region}:${local.project}:secret:secret/data/jx/*",
       "arn:${data.aws_partition.current.partition}:secretsmanager:${var.region}:${local.project}:secret:secret/data/nexus/*"
+    ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "secretsmanager:ListSecrets",
+    ]
+    resources = [
+      "*",
     ]
   }
 }
