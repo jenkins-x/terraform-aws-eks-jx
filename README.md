@@ -21,7 +21,6 @@ The module makes use of the [Terraform EKS cluster Module](https://github.com/te
     - [Customer's CA certificates](#customers-ca-certificates)
     - [Velero Backups](#velero-backups)
       - [Enabling backups on pre-existing clusters](#enabling-backups-on-pre-existing-clusters)
-    - [Running `jx boot`](#running-jx-boot)
     - [Production cluster considerations](#production-cluster-considerations)
     - [Configuring a Terraform backend](#configuring-a-terraform-backend)
     - [Using Spot Instances](#using-spot-instances)
@@ -346,37 +345,6 @@ The recommended way is to import the namespace and then run another Terraform pl
 ```
 terraform import module.eks-jx.module.backup.kubernetes_namespace.velero_namespace velero
 ```
-
-### Running `jx boot`
-
-A terraform output (_jx_requirements_) is available after applying this Terraform module.
-
-```sh
-terraform output jx_requirements
-```
-
-This _jx_requirements_ output can be used as input to [Jenkins X Boot](https://jenkins-x.io/docs/getting-started/setup/boot/) which is responsible for installing all the required Jenkins X components into the cluster created by this module.
-
-![Jenkins X Installation/Update Flow](./images/terraform-aws-eks-jx.png)
-
-:warning: **Note**: The generated _jx_requirements_ output is only intended for the first run of `jx boot`.
-During this first run of `jx boot` a git repository containing the source code for Jenkins X Boot is created.
-This (_new_) repository contains a _jx-requirements.yml_ (_which is now ahead of the jx-requirements output from terraform_) used by successive runs of `jx boot`.
-
-Execute:
-
-```sh
-terraform output jx_requirements > <some_empty_dir>/jx-requirements.yml
-cd <some_empty_dir>
-jx boot --requirements jx-requirements.yml
-```
-
-You are prompted for any further required configuration.
-The number of prompts depends on how much you have [pre-configured](#inputs) via your Terraform variables.
-
-:grey*exclamation: Remember you need to export \_VAULT_AWS_ACCESS_KEY_ID* and _VAULT_AWS_SECRET_ACCESS_KEY_.
-See [Cluster provisioning](#cluster-provisioning).
-
 ### Production cluster considerations
 
 The configuration, as seen in [Cluster provisioning](#cluster-provisioning), is not suited for creating and maintaining a production Jenkins X cluster.
