@@ -35,7 +35,7 @@ jobs:
         draft: false
         prerelease: false
     - env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GHCR_TOKEN }}
         VERSION: ${{ steps.prep.outputs.version}}
         XDG_CONFIG_HOME: /github/home/.config
       name: updatebot
