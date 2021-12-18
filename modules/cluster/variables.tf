@@ -429,3 +429,15 @@ variable "boot_secrets" {
   }))
   default = []
 }
+
+variable "use_asm" {
+  description = "Flag to specify if AWS Secrets manager is being used"
+  type        = bool
+  default     = false
+}
+
+variable "asm_role" {
+  description = "Specify arn of the ASM role (custom not created by the module)"
+  type        = string
+  default     = ""
+}

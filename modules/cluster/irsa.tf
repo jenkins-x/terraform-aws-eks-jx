@@ -396,9 +396,7 @@ data "aws_iam_policy_document" "secrets-manager-policy" {
       "secretsmanager:UpdateSecret",
     ]
     resources = [
-      "arn:${data.aws_partition.current.partition}:secretsmanager:${var.region}:${local.project}:secret:secret/data/lighthouse/*",
-      "arn:${data.aws_partition.current.partition}:secretsmanager:${var.region}:${local.project}:secret:secret/data/jx/*",
-      "arn:${data.aws_partition.current.partition}:secretsmanager:${var.region}:${local.project}:secret:secret/data/nexus/*"
+      "arn:${data.aws_partition.current.partition}:secretsmanager:${var.region}:${local.project}:secret:*"
     ]
   }
   statement {
@@ -424,7 +422,7 @@ module "iam_assumable_role_secrets-secrets-manager" {
   role_name                     = "${local.cluster_trunc}-external-secrets-secrets-manager"
   provider_url                  = local.oidc_provider_url
   role_policy_arns              = [var.create_asm_role ? aws_iam_policy.secrets-manager[0].arn : ""]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.secret-infra-namespace}:kubernetes-external-secrets"]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.secret-infra-namespace}:kubernetes-external-secrets", "system:serviceaccount:${local.git-operator-namespace}:jx-boot-job"]
 }
 // ----------------------------------------------------------------------------
 // External Secrets - Parameter Store

@@ -25,6 +25,12 @@ resource "helm_release" "jx-git-operator" {
     name  = "username"
     value = var.jx_bot_username
   }
+
+  set {
+    name  = "bootServiceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+    value = local.boot_iam_role
+  }
+
   set_sensitive {
     name  = "password"
     value = var.jx_bot_token
