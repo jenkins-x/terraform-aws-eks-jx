@@ -466,6 +466,12 @@ variable "use_asm" {
   default     = false
 }
 
+variable "asm_role" {
+  description = "Specify arn of the ASM role (custom not created by the module)"
+  type        = string
+  default     = ""
+}
+
 variable "install_kuberhealthy" {
   description = "Flag to specify if kuberhealthy operator should be installed"
   type        = bool
