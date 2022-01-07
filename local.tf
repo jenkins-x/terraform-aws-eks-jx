@@ -14,6 +14,8 @@ locals {
   interpolated_content = templatefile("${path.module}/templates/jx-requirements.yml.tpl", {
     cluster_name = local.cluster_name
     region       = var.region
+    // jx2 
+    is_jx2 = var.is_jx2
     // Storage Buckets
     enable_logs_storage       = var.enable_logs_storage
     logs_storage_bucket       = length(module.cluster.logs_jenkins_x) > 0 ? module.cluster.logs_jenkins_x[0] : ""
