@@ -64,8 +64,8 @@ resource "aws_dynamodb_table" "vault-dynamodb-table" {
 
   name           = "vault-unseal-${var.cluster_name}-${local.vault_seed}"
   billing_mode   = (var.enable_provisioned_dynamodb ? "PROVISIONED" : "PAY_PER_REQUEST")
-  read_capacity  = var.billing_rcu
-  write_capacity = var.billing_wcu
+  read_capacity  = (var.enable_provisioned_dynamodb ? var.billing_rcu : null)
+  write_capacity = (var.enable_provisioned_dynamodb ? var.billing_wcu : null)
   hash_key       = "Path"
   range_key      = "Key"
 
