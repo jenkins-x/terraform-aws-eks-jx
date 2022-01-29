@@ -9,7 +9,9 @@ cluster:
   region: "${region}"
   registry: "${registry}"
   project: "${project}"
+%{ if is_jx2 }
 gitops: true
+%{ endif }
 ingress:
   domain: "${domain}"
   ignoreLoadBalancer: ${ignoreLoadBalancer}
@@ -19,7 +21,9 @@ ingress:
     enabled: ${enable_tls}
     production: ${use_production_letsencrypt}
     %{ if tls_secret_name != ""}secretName: ${tls_secret_name}%{ endif }
+%{ if is_jx2 }
 kaniko: true
+%{ endif}
 %{ if use_vault }
 secretStorage: vault
 vault:
@@ -39,11 +43,11 @@ vault:
 %{ if use_asm }
 secretStorage: secretsManager
 %{ endif }
-%{ if enable_backup }
+%{ if enable_backup && is_jx2 }
 velero:
   namespace: ${velero_namespace}
   schedule: "${velero_schedule}"
-  ttl: "${velero_ttl}"  
+  ttl: "${velero_ttl}"
 %{ endif }
 storage:
   backup:
@@ -60,7 +64,9 @@ storage:
   repository:
     enabled: ${enable_repository_storage}
     url: s3://${repository_storage_bucket}
+%{ if is_jx2 }
 versionStream:
   ref: master
   url: https://github.com/jenkins-x/jenkins-x-versions.git
+%{ endif }
 webhook: lighthouse
