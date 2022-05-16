@@ -667,8 +667,8 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.64.2 |
-| <a name="provider_random"></a> [random](#provider\_random) | 3.1.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.75.1 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.1.3 |
 #### Modules
 
 | Name | Source | Version |
@@ -690,7 +690,6 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="requirement_local"></a> [local](#requirement\_local) | ~> 2.0 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | ~> 3.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.0 |
-| <a name="requirement_template"></a> [template](#requirement\_template) | ~> 2.0 |
 #### Inputs
 
 | Name | Description | Type | Default | Required |
@@ -708,6 +707,7 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_cluster_in_private_subnet"></a> [cluster\_in\_private\_subnet](#input\_cluster\_in\_private\_subnet) | Flag to enable installation of cluster on private subnets | `bool` | `false` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Variable to provide your desired name for the cluster. The script will create a random name if this is empty | `string` | `""` | no |
 | <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Kubernetes version to use for the EKS cluster. | `string` | n/a | yes |
+| <a name="input_create_and_configure_private_subdomain"></a> [create\_and\_configure\_private\_subdomain](#input\_create\_and\_configure\_private\_subdomain) | Flag to create an NS record set for the private subdomain in the VPC | `bool` | `false` | no |
 | <a name="input_create_and_configure_subdomain"></a> [create\_and\_configure\_subdomain](#input\_create\_and\_configure\_subdomain) | Flag to create an NS record set for the subdomain in the apex domain's Hosted Zone | `bool` | `false` | no |
 | <a name="input_create_asm_role"></a> [create\_asm\_role](#input\_create\_asm\_role) | Flag to control AWS Secrets Manager iam roles creation | `bool` | `false` | no |
 | <a name="input_create_autoscaler_role"></a> [create\_autoscaler\_role](#input\_create\_autoscaler\_role) | Flag to control cluster autoscaler iam role creation | `bool` | `true` | no |
@@ -768,6 +768,7 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_node_group_disk_size"></a> [node\_group\_disk\_size](#input\_node\_group\_disk\_size) | node group worker disk size | `string` | `"50"` | no |
 | <a name="input_node_groups_managed"></a> [node\_groups\_managed](#input\_node\_groups\_managed) | List of managed node groups to be created and their respective settings | `any` | <pre>{<br>  "eks-jx-node-group": {}<br>}</pre> | no |
 | <a name="input_node_machine_type"></a> [node\_machine\_type](#input\_node\_machine\_type) | The instance type to use for the cluster's worker nodes | `string` | `"m5.large"` | no |
+| <a name="input_private_dns_associated_vpc_ids"></a> [private\_dns\_associated\_vpc\_ids](#input\_private\_dns\_associated\_vpc\_ids) | A map of other vpc ids and there region to associate with the private zone | `map(string)` | `{}` | no |
 | <a name="input_private_subnets"></a> [private\_subnets](#input\_private\_subnets) | The private subnet CIDR block to use in the created VPC | `list(string)` | <pre>[<br>  "10.0.4.0/24",<br>  "10.0.5.0/24",<br>  "10.0.6.0/24"<br>]</pre> | no |
 | <a name="input_production_letsencrypt"></a> [production\_letsencrypt](#input\_production\_letsencrypt) | Flag to use the production environment of letsencrypt in the `jx-requirements.yml` file | `bool` | `false` | no |
 | <a name="input_profile"></a> [profile](#input\_profile) | The AWS Profile used to provision the EKS Cluster | `string` | `null` | no |

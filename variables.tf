@@ -239,6 +239,18 @@ variable "create_and_configure_subdomain" {
   default     = false
 }
 
+variable "create_and_configure_private_subdomain" {
+  description = "Flag to create an NS record set for the private subdomain in the VPC"
+  type        = bool
+  default     = false
+}
+
+variable "private_dns_associated_vpc_ids" {
+  description = "A map of other vpc ids and there region to associate with the private zone"
+  type        = map(string)
+  default     = {}
+}
+
 variable "force_destroy_subdomain" {
   description = "Flag to determine whether subdomain zone get forcefully destroyed. If set to false, empty the sub domain first in the aws Route 53 console, else terraform destroy will fail with HostedZoneNotEmpty error"
   type        = bool

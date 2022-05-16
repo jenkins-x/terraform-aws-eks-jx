@@ -137,17 +137,25 @@ module "backup" {
 // Setup all required Route 53 resources if External DNS / Cert Manager is enabled
 // ----------------------------------------------------------------------------
 module "dns" {
-  source                         = "./modules/dns"
-  apex_domain                    = var.apex_domain
-  subdomain                      = var.subdomain
-  tls_email                      = var.tls_email
-  enable_external_dns            = var.enable_external_dns
-  create_and_configure_subdomain = var.create_and_configure_subdomain
-  force_destroy_subdomain        = var.force_destroy_subdomain
-  enable_tls                     = var.enable_tls
-  production_letsencrypt         = var.production_letsencrypt
-  manage_apex_domain             = var.manage_apex_domain
-  manage_subdomain               = var.manage_subdomain
+  source                  = "./modules/dns"
+  apex_domain             = var.apex_domain
+  subdomain               = var.subdomain
+  tls_email               = var.tls_email
+  enable_external_dns     = var.enable_external_dns
+  force_destroy_subdomain = var.force_destroy_subdomain
+  enable_tls              = var.enable_tls
+  production_letsencrypt  = var.production_letsencrypt
+  manage_apex_domain      = var.manage_apex_domain
+  manage_subdomain        = var.manage_subdomain
+
+
+  create_and_configure_subdomain         = var.create_and_configure_subdomain
+  create_and_configure_private_subdomain = var.create_and_configure_private_subdomain
+  private_dns_associated_vpc_ids         = var.private_dns_associated_vpc_ids
+
+  // used if creating private subdomain
+  vpc_id = var.vpc_id
+  region = var.region
 }
 
 module "health" {
