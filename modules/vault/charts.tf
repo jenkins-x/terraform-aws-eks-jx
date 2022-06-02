@@ -4,7 +4,7 @@ resource "helm_release" "vault-operator" {
   chart            = "vault-operator"
   namespace        = "jx-vault"
   repository       = "https://kubernetes-charts.banzaicloud.com"
-  version          = "1.14.3"
+  version          = "1.15.3"
   create_namespace = true
 }
 
