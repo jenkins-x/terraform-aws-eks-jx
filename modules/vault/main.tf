@@ -37,22 +37,36 @@ resource "aws_s3_bucket" "vault-unseal-bucket" {
   count = local.create_vault_resources ? 1 : 0
 
   bucket_prefix = "vault-unseal-${lower(var.cluster_name)}-"
-  acl           = "private"
   tags = {
     Name = "Vault unseal bucket"
   }
-  versioning {
-    enabled = false
+  force_destroy = var.force_destroy
+}
+
+resource "aws_s3_bucket_acl" "vault-unseal-bucket" {
+  count  = local.create_vault_resources ? 1 : 0
+  bucket = aws_s3_bucket.vault-unseal-bucket[0].bucket
+  acl    = "private"
+}
+
+resource "aws_s3_bucket_versioning" "vault-unseal-bucket" {
+  count  = local.create_vault_resources ? 1 : 0
+  bucket = aws_s3_bucket.vault-unseal-bucket[0].bucket
+  versioning_configuration {
+    status = "Enabled"
   }
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm     = local.encryption_algo
-        kms_master_key_id = var.s3_kms_arn
-      }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "vault-unseal-bucket" {
+  count  = local.create_vault_resources ? 1 : 0
+  bucket = aws_s3_bucket.vault-unseal-bucket[0].bucket
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm     = local.encryption_algo
+      kms_master_key_id = var.s3_kms_arn
     }
   }
-  force_destroy = var.force_destroy
 }
 
 // ----------------------------------------------------------------------------

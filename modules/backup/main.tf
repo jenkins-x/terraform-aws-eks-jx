@@ -12,19 +12,28 @@ locals {
 resource "aws_s3_bucket" "backup_bucket" {
   count         = var.enable_backup ? 1 : 0
   bucket_prefix = "backup-${lower(var.cluster_name)}-"
-  acl           = "private"
   tags = {
     Owner = "Jenkins-x"
   }
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm     = local.encryption_algo
-        kms_master_key_id = var.s3_kms_arn
-      }
+  force_destroy = var.force_destroy
+}
+
+resource "aws_s3_bucket_acl" "backup_bucket" {
+  count  = var.enable_backup ? 1 : 0
+  bucket = aws_s3_bucket.backup_bucket[0].bucket
+  acl    = "private"
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "backup_bucket" {
+  count  = var.enable_backup ? 1 : 0
+  bucket = aws_s3_bucket.backup_bucket[0].bucket
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm     = local.encryption_algo
+      kms_master_key_id = var.s3_kms_arn
     }
   }
-  force_destroy = var.force_destroy
 }
 
 // ----------------------------------------------------------------------------
