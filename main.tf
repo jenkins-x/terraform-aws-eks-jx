@@ -1,219 +1,169 @@
 // ----------------------------------------------------------------------------
-// Query necessary data for the module
+// Configure providers
 // ----------------------------------------------------------------------------
-data "aws_eks_cluster" "cluster" {
-  name = var.create_eks ? module.eks.cluster_id : var.cluster_name
+provider "helm" {
+  kubernetes {
+    host                   = module.cluster.cluster_host
+    cluster_ca_certificate = module.cluster.cluster_ca_certificate
+    token                  = module.cluster.cluster_token
+  }
 }
 
-data "aws_eks_cluster_auth" "cluster" {
-  name = var.create_eks ? module.eks.cluster_id : var.cluster_name
+resource "random_string" "suffix" {
+  length  = 8
+  special = false
 }
 
-data "aws_availability_zones" "available" {}
+resource "random_pet" "current" {
+  prefix    = "tf-jx"
+  separator = "-"
+  keepers = {
+    # Keep the name consistent on executions
+    cluster_name = var.cluster_name
+  }
+}
 
 data "aws_caller_identity" "current" {}
 
 // ----------------------------------------------------------------------------
-// Define K8s cluster configuration
+// Setup all required AWS resources as well as the EKS cluster and any k8s resources
+// See https://www.terraform.io/docs/providers/aws/r/vpc.html
+// See https://www.terraform.io/docs/providers/aws/r/eks_cluster.html
 // ----------------------------------------------------------------------------
-provider "kubernetes" {
-  host                   = data.aws_eks_cluster.cluster.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
-  token                  = data.aws_eks_cluster_auth.cluster.token
-}
-
-// ----------------------------------------------------------------------------
-// Create the AWS VPC
-// See https://github.com/terraform-aws-modules/terraform-aws-vpc
-// ----------------------------------------------------------------------------
-module "vpc" {
-  source               = "terraform-aws-modules/vpc/aws"
-  version              = "~> 2.70"
-  create_vpc           = var.create_vpc
-  name                 = var.vpc_name
-  cidr                 = var.vpc_cidr_block
-  azs                  = data.aws_availability_zones.available.names
-  public_subnets       = var.public_subnets
-  private_subnets      = var.private_subnets
-  enable_dns_hostnames = true
-  enable_nat_gateway   = var.enable_nat_gateway
-  single_nat_gateway   = var.single_nat_gateway
-
-  tags = {
-    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
-  }
-
-  public_subnet_tags = {
-    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
-    "kubernetes.io/role/elb"                    = "1"
-  }
-
-  private_subnet_tags = {
-    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
-    "kubernetes.io/role/internal-elb"           = "1"
-  }
-}
-
-// ----------------------------------------------------------------------------
-// Create the EKS cluster with extra EC2ContainerRegistryPowerUser policy
-// See https://github.com/terraform-aws-modules/terraform-aws-eks
-// ----------------------------------------------------------------------------
-module "eks" {
-  source          = "terraform-aws-modules/eks/aws"
-  version         = ">= 14.0, < 18.0"
-  create_eks      = var.create_eks
-  cluster_name    = var.cluster_name
-  cluster_version = var.cluster_version
-  subnets         = var.create_vpc ? (var.cluster_in_private_subnet ? module.vpc.private_subnets : module.vpc.public_subnets) : var.subnets
-  vpc_id          = var.create_vpc ? module.vpc.vpc_id : var.vpc_id
-  enable_irsa     = true
-
-  worker_groups_launch_template = var.enable_worker_group && var.enable_worker_groups_launch_template ? [
-    for subnet in(var.create_vpc ? module.vpc.public_subnets : var.subnets) :
-    {
-      subnets                 = [subnet]
-      asg_desired_capacity    = var.lt_desired_nodes_per_subnet
-      asg_min_size            = var.lt_min_nodes_per_subnet
-      asg_max_size            = var.lt_max_nodes_per_subnet
-      spot_price              = (var.enable_spot_instances ? var.spot_price : null)
-      instance_type           = var.node_machine_type
-      root_volume_type        = var.volume_type
-      root_volume_size        = var.volume_size
-      root_encrypted          = var.encrypt_volume_self
-      override_instance_types = var.allowed_spot_instance_types
-      autoscaling_enabled     = "true"
-      public_ip               = true
-      tags = [
-        {
-          key                 = "k8s.io/cluster-autoscaler/enabled"
-          propagate_at_launch = "false"
-          value               = "true"
-        },
-        {
-          key                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
-          propagate_at_launch = "false"
-          value               = "true"
-        }
-      ]
-    }
-  ] : []
-
-  worker_groups = var.enable_worker_group && !var.enable_worker_groups_launch_template ? [
-    {
-      name                 = "worker-group-${var.cluster_name}"
-      instance_type        = var.node_machine_type
-      asg_desired_capacity = var.desired_node_count
-      asg_min_size         = var.min_node_count
-      asg_max_size         = var.max_node_count
-      spot_price           = (var.enable_spot_instances ? var.spot_price : null)
-      key_name             = (var.enable_key_name ? var.key_name : null)
-      root_volume_type     = var.volume_type
-      root_volume_size     = var.volume_size
-      root_iops            = var.iops
-      tags = [
-        {
-          key                 = "k8s.io/cluster-autoscaler/enabled"
-          propagate_at_launch = "false"
-          value               = "true"
-        },
-        {
-          key                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
-          propagate_at_launch = "false"
-          value               = "true"
-        }
-      ]
-    }
-  ] : []
-
-  node_groups = !var.enable_worker_group ? local.node_groups_extended : {}
-
-  workers_additional_policies = [
-    "arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser",
-    "arn:aws:iam::933594548532:policy/ECRDeletePolicy",
-     "arn:aws:iam::933594548532:policy/assume-production-role"
-  ]
-
-  map_users                             = var.map_users
-  map_roles                             = var.map_roles
+module "cluster" {
+  source                                = "./modules/cluster"
+  region                                = var.region
+  create_eks                            = var.create_eks
+  create_vpc                            = var.create_vpc
+  vpc_id                                = var.vpc_id
+  subnets                               = var.subnets
+  cluster_name                          = local.cluster_name
+  cluster_version                       = var.cluster_version
+  desired_node_count                    = var.desired_node_count
+  min_node_count                        = var.min_node_count
+  max_node_count                        = var.max_node_count
+  node_machine_type                     = var.node_machine_type
+  node_groups                           = var.node_groups_managed
+  spot_price                            = var.spot_price
+  encrypt_volume_self                   = var.encrypt_volume_self
+  vpc_name                              = var.vpc_name
+  public_subnets                        = var.public_subnets
+  private_subnets                       = var.private_subnets
+  vpc_cidr_block                        = var.vpc_cidr_block
+  enable_nat_gateway                    = var.enable_nat_gateway
+  single_nat_gateway                    = var.single_nat_gateway
+  force_destroy                         = var.force_destroy
+  enable_spot_instances                 = var.enable_spot_instances
+  node_group_disk_size                  = var.node_group_disk_size
+  enable_worker_group                   = var.enable_worker_group
+  cluster_in_private_subnet             = var.cluster_in_private_subnet
   map_accounts                          = var.map_accounts
-  cluster_endpoint_private_access       = var.cluster_endpoint_private_access
+  map_roles                             = var.map_roles
+  map_users                             = var.map_users
+  enable_key_name                       = var.enable_key_name
+  key_name                              = var.key_name
+  volume_type                           = var.volume_type
+  volume_size                           = var.volume_size
+  iops                                  = var.iops
+  use_kms_s3                            = var.use_kms_s3
+  s3_kms_arn                            = var.s3_kms_arn
+  is_jx2                                = var.is_jx2
+  content                               = local.content
   cluster_endpoint_public_access        = var.cluster_endpoint_public_access
-  cluster_endpoint_private_access_cidrs = var.cluster_endpoint_private_access_cidrs
   cluster_endpoint_public_access_cidrs  = var.cluster_endpoint_public_access_cidrs
+  cluster_endpoint_private_access       = var.cluster_endpoint_private_access
+  cluster_endpoint_private_access_cidrs = var.cluster_endpoint_private_access_cidrs
+  enable_worker_groups_launch_template  = var.enable_worker_groups_launch_template
+  allowed_spot_instance_types           = var.allowed_spot_instance_types
+  lt_desired_nodes_per_subnet           = var.lt_desired_nodes_per_subnet
+  lt_min_nodes_per_subnet               = var.lt_min_nodes_per_subnet
+  lt_max_nodes_per_subnet               = var.lt_max_nodes_per_subnet
+  jx_git_operator_values                = var.jx_git_operator_values
+  jx_git_url                            = var.jx_git_url
+  jx_bot_username                       = var.jx_bot_username
+  jx_bot_token                          = var.jx_bot_token
   cluster_encryption_config             = var.cluster_encryption_config
+  create_autoscaler_role                = var.create_autoscaler_role
+  create_bucketrepo_role                = var.create_bucketrepo_role
+  create_cm_role                        = var.create_cm_role
+  create_cmcainjector_role              = var.create_cmcainjector_role
+  create_ctrlb_role                     = var.create_ctrlb_role
+  create_exdns_role                     = var.create_exdns_role
+  create_pipeline_vis_role              = var.create_pipeline_vis_role
+  create_asm_role                       = var.create_asm_role
+  create_ssm_role                       = var.create_ssm_role
+  create_tekton_role                    = var.create_tekton_role
+  additional_tekton_role_policy_arns    = var.additional_tekton_role_policy_arns
+  tls_cert                              = var.tls_cert
+  tls_key                               = var.tls_key
+  local-exec-interpreter                = var.local-exec-interpreter
+  profile                               = var.profile
+  enable_logs_storage                   = var.enable_logs_storage
+  enable_reports_storage                = var.enable_reports_storage
+  enable_repository_storage             = var.enable_repository_storage
+  boot_secrets                          = var.boot_secrets
+  use_asm                               = var.use_asm
+  asm_role                              = var.asm_role
 }
 
 // ----------------------------------------------------------------------------
-// Update the kube configuration after the cluster has been created so we can
-// connect to it and create the K8s resources
+// Setup all required resources for using the  bank-vaults operator
+// See https://github.com/banzaicloud/bank-vaults
 // ----------------------------------------------------------------------------
-resource "null_resource" "kubeconfig" {
-      depends_on = [module.eks]
-    provisioner "local-exec" {
-      interpreter = local.is_windows ? ["PowerShell", "-Command"] : ["/bin/bash", "-c"]
-      command = "aws eks --region us-east-1 update-kubeconfig --name devopsx-eks"
-      }
+module "vault" {
+  source         = "./modules/vault"
+  cluster_name   = local.cluster_name
+  vault_user     = var.vault_user
+  force_destroy  = var.force_destroy
+  external_vault = local.external_vault
+  use_vault      = var.use_vault
+  region         = var.region
 }
 
 // ----------------------------------------------------------------------------
-// Create the necessary K8s namespaces that we will need to add the
-// Service Accounts later
+// Setup all required resources for using Velero for cluster backups
 // ----------------------------------------------------------------------------
-resource "kubernetes_namespace" "jx" {
-  count = var.is_jx2 ? 1 : 0
-  depends_on = [
-    null_resource.kubeconfig
-  ]
-  metadata {
-    name = "jx"
-  }
-  lifecycle {
-    ignore_changes = [
-      metadata[0].labels,
-      metadata[0].annotations,
-    ]
-  }
-}
+module "backup" {
+  source = "./modules/backup"
 
-resource "kubernetes_namespace" "cert_manager" {
-  count = var.is_jx2 ? 1 : 0
-  depends_on = [
-    null_resource.kubeconfig
-  ]
-  metadata {
-    name = "cert-manager"
-  }
-  lifecycle {
-    ignore_changes = [
-      metadata[0].labels,
-      metadata[0].annotations,
-    ]
-  }
+  enable_backup      = var.enable_backup
+  cluster_name       = local.cluster_name
+  force_destroy      = var.force_destroy
+  velero_username    = var.velero_username
+  create_velero_role = var.create_velero_role
 }
 
 // ----------------------------------------------------------------------------
-// Add the Terraform generated jx-requirements.yml to a configmap so it can be
-// sync'd with the Git repository
-//
-// https://www.terraform.io/docs/providers/kubernetes/r/namespace.html
+// Setup all required Route 53 resources if External DNS / Cert Manager is enabled
 // ----------------------------------------------------------------------------
-resource "kubernetes_config_map" "jenkins_x_requirements" {
-  count = var.is_jx2 ? 0 : 1
-  metadata {
-    name      = "terraform-jx-requirements"
-    namespace = "default"
-  }
-  data = {
-    "jx-requirements.yml" = var.content
-  }
+module "dns" {
+  source                         = "./modules/dns"
+  apex_domain                    = var.apex_domain
+  subdomain                      = var.subdomain
+  tls_email                      = var.tls_email
+  enable_external_dns            = var.enable_external_dns
+  create_and_configure_subdomain = var.create_and_configure_subdomain
+  force_destroy_subdomain        = var.force_destroy_subdomain
+  enable_tls                     = var.enable_tls
+  production_letsencrypt         = var.production_letsencrypt
+  manage_apex_domain             = var.manage_apex_domain
+  manage_subdomain               = var.manage_subdomain
+}
 
-  lifecycle {
-    ignore_changes = [
-      metadata,
-      data
-    ]
-  }
-  depends_on = [
-    module.eks
-  ]
+module "health" {
+  source               = "./modules/health"
+  is_jx2               = var.is_jx2
+  install_kuberhealthy = var.install_kuberhealthy
+}
+
+module "nginx" {
+  source                 = "./modules/nginx"
+  is_jx2                 = var.is_jx2
+  create_nginx           = var.create_nginx
+  nginx_release_name     = var.nginx_release_name
+  nginx_namespace        = var.nginx_namespace
+  nginx_chart_version    = var.nginx_chart_version
+  create_nginx_namespace = var.create_nginx_namespace
+  nginx_values_file      = var.nginx_values_file
+
 }
