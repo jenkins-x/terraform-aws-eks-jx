@@ -148,3 +148,5 @@ profile as environment variables "
 EOT
   value       = "aws eks update-kubeconfig --name ${var.cluster_name}"
 }
+
+ 

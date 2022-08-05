@@ -78,13 +78,13 @@ variable "velero_username" {
 variable "desired_node_count" {
   description = "The number of worker nodes to use for the cluster"
   type        = number
-  default     = 3
+  default     = 4
 }
 
 variable "min_node_count" {
   description = "The minimum number of worker nodes to use for the cluster"
   type        = number
-  default     = 3
+  default     = 4
 }
 
 variable "max_node_count" {
@@ -128,7 +128,7 @@ variable "key_name" {
   type        = string
   default     = ""
 }
-
+ 
 variable "volume_type" {
   description = "The volume type to use. Can be standard, gp2 or io1"
   type        = string
@@ -152,7 +152,7 @@ variable "iops" {
 variable "vpc_name" {
   description = "The name of the VPC to be created for the cluster"
   type        = string
-  default     = "tf-vpc-eks"
+  default     = "devopsph-main-default"
 }
 
 variable "public_subnets" {
@@ -230,7 +230,7 @@ variable "enable_repository_storage" {
 variable "enable_external_dns" {
   description = "Flag to enable or disable External DNS in the final `jx-requirements.yml` file"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "create_and_configure_subdomain" {
@@ -266,7 +266,7 @@ variable "force_destroy" {
 variable "enable_spot_instances" {
   description = "Flag to enable spot instances"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "enable_worker_group" {
@@ -325,7 +325,7 @@ variable "map_users" {
 variable "enable_key_name" {
   description = "Flag to enable ssh key pair name"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "s3_kms_arn" {
@@ -439,19 +439,19 @@ variable "create_eks" {
 variable "create_vpc" {
   description = "Controls if VPC and related resources should be created. If you have an existing vpc for jx, set it to false"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "vpc_id" {
   description = "The VPC to create EKS cluster in if create_vpc is false"
   type        = string
-  default     = ""
+  default     = "vpc-0eb00254af8ab4f41"
 }
 
 variable "subnets" {
   description = "The subnet ids to create EKS cluster in if create_vpc is false"
   type        = list(string)
-  default     = []
+  default     = ["subnet-0afafca1159923b22", "subnet-09d060672bd31c6cb", "subnet-0f4af5e823d985e66", "subnet-089499dd2f7f07180", "subnet-0caf96e884c80fb90"]
 }
 
 variable "use_vault" {
@@ -577,11 +577,11 @@ variable "additional_tekton_role_policy_arns" {
   default     = []
 }
 
-variable "local-exec-interpreter" {
-  description = "If provided, this is a list of interpreter arguments used to execute the command"
-  type        = list(string)
-  default     = ["/bin/bash", "-c"]
-}
+# variable "local-exec-interpreter" {
+#   description = "If provided, this is a list of interpreter arguments used to execute the command"
+#   type        = list(string)
+#   default     = local.is_windows ? ["PowerShell", "-Command"] : ["/bin/bash", "-c"]
+# }
 
 // ----------------------------------------------------------------------------
 //  Customer's Certificates
