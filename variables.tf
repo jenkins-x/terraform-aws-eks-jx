@@ -475,7 +475,7 @@ variable "asm_role" {
 variable "install_kuberhealthy" {
   description = "Flag to specify if kuberhealthy operator should be installed"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "encrypt_volume_self" {

@@ -684,7 +684,7 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.12.17, < 2.0.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 2.53.0, < 4.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | > 4.0, < 5.0 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~> 2.0 |
 | <a name="requirement_local"></a> [local](#requirement\_local) | ~> 2.0 |
@@ -741,7 +741,7 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_force_destroy"></a> [force\_destroy](#input\_force\_destroy) | Flag to determine whether storage buckets get forcefully destroyed. If set to false, empty the bucket first in the aws s3 console, else terraform destroy will fail with BucketNotEmpty error | `bool` | `false` | no |
 | <a name="input_force_destroy_subdomain"></a> [force\_destroy\_subdomain](#input\_force\_destroy\_subdomain) | Flag to determine whether subdomain zone get forcefully destroyed. If set to false, empty the sub domain first in the aws Route 53 console, else terraform destroy will fail with HostedZoneNotEmpty error | `bool` | `false` | no |
 | <a name="input_ignoreLoadBalancer"></a> [ignoreLoadBalancer](#input\_ignoreLoadBalancer) | Flag to specify if jx boot will ignore loadbalancer DNS to resolve to an IP | `bool` | `false` | no |
-| <a name="input_install_kuberhealthy"></a> [install\_kuberhealthy](#input\_install\_kuberhealthy) | Flag to specify if kuberhealthy operator should be installed | `bool` | `true` | no |
+| <a name="input_install_kuberhealthy"></a> [install\_kuberhealthy](#input\_install\_kuberhealthy) | Flag to specify if kuberhealthy operator should be installed | `bool` | `false` | no |
 | <a name="input_iops"></a> [iops](#input\_iops) | The IOPS value | `number` | `0` | no |
 | <a name="input_is_jx2"></a> [is\_jx2](#input\_is\_jx2) | Flag to specify if jx2 related resources need to be created | `bool` | `true` | no |
 | <a name="input_jx_bot_token"></a> [jx\_bot\_token](#input\_jx\_bot\_token) | Bot token used to interact with the Jenkins X cluster git repository | `string` | `""` | no |
