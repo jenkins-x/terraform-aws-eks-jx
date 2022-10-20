@@ -667,8 +667,8 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.64.2 |
-| <a name="provider_random"></a> [random](#provider\_random) | 3.1.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | > 4.0, < 5.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.0 |
 #### Modules
 
 | Name | Source | Version |
@@ -698,7 +698,8 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_additional_tekton_role_policy_arns"></a> [additional\_tekton\_role\_policy\_arns](#input\_additional\_tekton\_role\_policy\_arns) | Additional Policy ARNs to attach to Tekton IRSA Role | `list(string)` | `[]` | no |
 | <a name="input_allowed_spot_instance_types"></a> [allowed\_spot\_instance\_types](#input\_allowed\_spot\_instance\_types) | Allowed machine types for spot instances (must be same size) | `any` | `[]` | no |
 | <a name="input_apex_domain"></a> [apex\_domain](#input\_apex\_domain) | The main domain to either use directly or to configure a subdomain from | `string` | `""` | no |
-| <a name="input_asm_role"></a> [asm\_role](#input\_asm\_role) | Specify arn of the ASM role (custom not created by the module) | `string` | `""` | no |
+| <a name="input_asm_role"></a> [asm\_role](#input\_asm\_role) | DEPRECATED: Use the new bot\_iam\_role input with he same semantics instead. | `string` | `""` | no |
+| <a name="input_boot_iam_role"></a> [boot\_iam\_role](#input\_boot\_iam\_role) | Specify arn of the role to apply to the boot job service account | `string` | `""` | no |
 | <a name="input_boot_secrets"></a> [boot\_secrets](#input\_boot\_secrets) | n/a | <pre>list(object({<br>    name  = string<br>    value = string<br>    type  = string<br>  }))</pre> | `[]` | no |
 | <a name="input_cluster_encryption_config"></a> [cluster\_encryption\_config](#input\_cluster\_encryption\_config) | Configuration block with encryption configuration for the cluster. | <pre>list(object({<br>    provider_key_arn = string<br>    resources        = list(string)<br>  }))</pre> | `[]` | no |
 | <a name="input_cluster_endpoint_private_access"></a> [cluster\_endpoint\_private\_access](#input\_cluster\_endpoint\_private\_access) | Indicates whether or not the Amazon EKS private API server endpoint is enabled. | `bool` | `false` | no |
