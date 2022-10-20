@@ -103,7 +103,7 @@ module "cluster" {
   enable_repository_storage             = var.enable_repository_storage
   boot_secrets                          = var.boot_secrets
   use_asm                               = var.use_asm
-  asm_role                              = var.asm_role
+  boot_iam_role                         = "${var.asm_role}${var.boot_iam_role}"
 }
 
 // ----------------------------------------------------------------------------

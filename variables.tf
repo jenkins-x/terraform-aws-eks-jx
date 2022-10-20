@@ -467,7 +467,13 @@ variable "use_asm" {
 }
 
 variable "asm_role" {
-  description = "Specify arn of the ASM role (custom not created by the module)"
+  description = "DEPRECATED: Use the new bot_iam_role input with he same semantics instead."
+  type        = string
+  default     = ""
+}
+
+variable "boot_iam_role" {
+  description = "Specify arn of the role to apply to the boot job service account"
   type        = string
   default     = ""
 }
