@@ -59,87 +59,100 @@ module "vpc" {
 // See https://github.com/terraform-aws-modules/terraform-aws-eks
 // ----------------------------------------------------------------------------
 module "eks" {
-  source          = "terraform-aws-modules/eks/aws"
-  version         = ">= 14.0, < 18.0"
-  create_eks      = var.create_eks
-  cluster_name    = var.cluster_name
-  cluster_version = var.cluster_version
-  subnets         = var.create_vpc ? (var.cluster_in_private_subnet ? module.vpc.private_subnets : module.vpc.public_subnets) : var.subnets
-  vpc_id          = var.create_vpc ? module.vpc.vpc_id : var.vpc_id
-  enable_irsa     = true
+  source  = "terraform-aws-modules/eks/aws"
+  version = ">= 18.0"
+
+
+  prefix_separator                   = ""
+  iam_role_name                      = var.cluster_name
+  cluster_security_group_name        = var.cluster_name
+  cluster_security_group_description = "EKS cluster security group."
+
+  create                   = var.create_eks
+  cluster_name             = var.cluster_name
+  cluster_version          = var.cluster_version
+  control_plane_subnet_ids = var.create_vpc ? (var.cluster_in_private_subnet ? module.vpc.private_subnets : module.vpc.public_subnets) : var.subnets
+  subnet_ids               = var.create_vpc ? (var.cluster_in_private_subnet ? module.vpc.private_subnets : module.vpc.public_subnets) : var.subnets
+  vpc_id                   = var.create_vpc ? module.vpc.vpc_id : var.vpc_id
+  enable_irsa              = true
   tags            = var.eks_cluster_tags
 
-  worker_groups_launch_template = var.enable_worker_group && var.enable_worker_groups_launch_template ? [
-    for subnet in(var.create_vpc ? module.vpc.public_subnets : var.subnets) :
-    {
-      subnets                 = [subnet]
-      asg_desired_capacity    = var.lt_desired_nodes_per_subnet
-      asg_min_size            = var.lt_min_nodes_per_subnet
-      asg_max_size            = var.lt_max_nodes_per_subnet
-      spot_price              = (var.enable_spot_instances ? var.spot_price : null)
-      instance_type           = var.node_machine_type
-      root_volume_type        = var.volume_type
-      root_volume_size        = var.volume_size
-      root_encrypted          = var.encrypt_volume_self
-      override_instance_types = var.allowed_spot_instance_types
-      autoscaling_enabled     = "true"
-      public_ip               = true
-      tags = [
-        {
-          key                 = "k8s.io/cluster-autoscaler/enabled"
-          propagate_at_launch = "false"
-          value               = "true"
-        },
-        {
-          key                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
-          propagate_at_launch = "false"
-          value               = "true"
-        }
-      ]
-    }
-  ] : []
+  # TODO: Handle self managed node groups
 
-  worker_groups = var.enable_worker_group && !var.enable_worker_groups_launch_template ? [
-    {
-      name                 = "worker-group-${var.cluster_name}"
-      instance_type        = var.node_machine_type
-      asg_desired_capacity = var.desired_node_count
-      asg_min_size         = var.min_node_count
-      asg_max_size         = var.max_node_count
-      spot_price           = (var.enable_spot_instances ? var.spot_price : null)
-      key_name             = (var.enable_key_name ? var.key_name : null)
-      root_volume_type     = var.volume_type
-      root_volume_size     = var.volume_size
-      root_iops            = var.iops
-      tags = [
-        {
-          key                 = "k8s.io/cluster-autoscaler/enabled"
-          propagate_at_launch = "false"
-          value               = "true"
-        },
-        {
-          key                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
-          propagate_at_launch = "false"
-          value               = "true"
-        }
-      ]
-    }
-  ] : []
+  # worker_groups_launch_template = var.enable_worker_group && var.enable_worker_groups_launch_template ? [
+  #   for subnet in(var.create_vpc ? module.vpc.public_subnets : var.subnets) :
+  #   {
+  #     subnets                 = [subnet]
+  #     asg_desired_capacity    = var.lt_desired_nodes_per_subnet
+  #     asg_min_size            = var.lt_min_nodes_per_subnet
+  #     asg_max_size            = var.lt_max_nodes_per_subnet
+  #     spot_price              = (var.enable_spot_instances ? var.spot_price : null)
+  #     instance_type           = var.node_machine_type
+  #     root_volume_type        = var.volume_type
+  #     root_volume_size        = var.volume_size
+  #     root_encrypted          = var.encrypt_volume_self
+  #     override_instance_types = var.allowed_spot_instance_types
+  #     autoscaling_enabled     = "true"
+  #     public_ip               = true
+  #     tags = [
+  #       {
+  #         key                 = "k8s.io/cluster-autoscaler/enabled"
+  #         propagate_at_launch = "false"
+  #         value               = "true"
+  #       },
+  #       {
+  #         key                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
+  #         propagate_at_launch = "false"
+  #         value               = "true"
+  #       }
+  #     ]
+  #   }
+  # ] : []
 
-  node_groups = !var.enable_worker_group ? local.node_groups_extended : {}
+  # worker_groups = var.enable_worker_group && !var.enable_worker_groups_launch_template ? [
+  #   {
+  #     name                 = "worker-group-${var.cluster_name}"
+  #     instance_type        = var.node_machine_type
+  #     asg_desired_capacity = var.desired_node_count
+  #     asg_min_size         = var.min_node_count
+  #     asg_max_size         = var.max_node_count
+  #     spot_price           = (var.enable_spot_instances ? var.spot_price : null)
+  #     key_name             = (var.enable_key_name ? var.key_name : null)
+  #     root_volume_type     = var.volume_type
+  #     root_volume_size     = var.volume_size
+  #     root_iops            = var.iops
+  #     tags = [
+  #       {
+  #         key                 = "k8s.io/cluster-autoscaler/enabled"
+  #         propagate_at_launch = "false"
+  #         value               = "true"
+  #       },
+  #       {
+  #         key                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
+  #         propagate_at_launch = "false"
+  #         value               = "true"
+  #       }
+  #     ]
+  #   }
+  # ] : []
 
-  workers_additional_policies = [
-    "arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
-  ]
+  eks_managed_node_groups = !var.enable_worker_group ? local.node_groups_extended : {}
 
-  map_users                             = var.map_users
-  map_roles                             = var.map_roles
-  map_accounts                          = var.map_accounts
-  cluster_endpoint_private_access       = var.cluster_endpoint_private_access
-  cluster_endpoint_public_access        = var.cluster_endpoint_public_access
-  cluster_endpoint_private_access_cidrs = var.cluster_endpoint_private_access_cidrs
-  cluster_endpoint_public_access_cidrs  = var.cluster_endpoint_public_access_cidrs
-  cluster_encryption_config             = var.cluster_encryption_config
+  # Nodes get AmazonEC2ContainerRegistryReadOnly by default. Should be enough.
+  # workers_additional_policies = [
+  #   "arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
+  # ]
+  # TODO: Handle aws_auth some other way
+  # map_users                             = var.map_users
+  # map_roles                             = var.map_roles
+  # map_accounts                          = var.map_accounts
+
+  cluster_endpoint_private_access = var.cluster_endpoint_private_access
+  cluster_endpoint_public_access  = var.cluster_endpoint_public_access
+  # TODO: Is there a replacement?
+  #  cluster_endpoint_private_access_cidrs = var.cluster_endpoint_private_access_cidrs
+  cluster_endpoint_public_access_cidrs = var.cluster_endpoint_public_access_cidrs
+  cluster_encryption_config            = var.cluster_encryption_config
 }
 
 // ----------------------------------------------------------------------------
