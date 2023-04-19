@@ -16,4 +16,8 @@ resource "helm_release" "vault-instance" {
   repository = "https://jenkins-x-charts.github.io/repo"
   version    = "1.0.24"
   depends_on = [helm_release.vault-operator]
+  set {
+    name  = "ingress.enabled"
+    value = "false"
+  }
 }
