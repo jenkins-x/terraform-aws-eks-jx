@@ -441,3 +441,8 @@ variable "boot_iam_role" {
   type        = string
   default     = ""
 }
+
+variable "enable_acl" {
+  description = "Flag to enable ACL instead of bucket ownership for S3 storage"
+  type        = bool
+}

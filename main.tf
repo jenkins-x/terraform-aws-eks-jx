@@ -104,6 +104,7 @@ module "cluster" {
   boot_secrets                          = var.boot_secrets
   use_asm                               = var.use_asm
   boot_iam_role                         = "${var.asm_role}${var.boot_iam_role}"
+  enable_acl                            = var.enable_acl
 }
 
 // ----------------------------------------------------------------------------
@@ -118,6 +119,7 @@ module "vault" {
   external_vault = local.external_vault
   use_vault      = var.use_vault
   region         = var.region
+  enable_acl     = var.enable_acl
 }
 
 // ----------------------------------------------------------------------------
@@ -131,6 +133,7 @@ module "backup" {
   force_destroy      = var.force_destroy
   velero_username    = var.velero_username
   create_velero_role = var.create_velero_role
+  enable_acl         = var.enable_acl
 }
 
 // ----------------------------------------------------------------------------

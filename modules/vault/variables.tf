@@ -79,3 +79,8 @@ variable "use_vault" {
   type        = bool
   default     = true
 }
+
+variable "enable_acl" {
+  description = "Flag to enable ACL instead of bucket ownership for S3 storage"
+  type        = bool
+}

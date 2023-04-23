@@ -648,3 +648,8 @@ variable "boot_secrets" {
   }))
   default = []
 }
+variable "enable_acl" {
+  description = "Flag to enable ACL instead of bucket ownership for S3 storage"
+  type        = bool
+  default     = true
+}
