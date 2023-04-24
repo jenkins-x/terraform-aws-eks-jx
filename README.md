@@ -733,7 +733,7 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_enable_external_dns"></a> [enable\_external\_dns](#input\_enable\_external\_dns) | Flag to enable or disable External DNS in the final `jx-requirements.yml` file | `bool` | `false` | no |
 | <a name="input_enable_key_name"></a> [enable\_key\_name](#input\_enable\_key\_name) | Flag to enable ssh key pair name | `bool` | `false` | no |
 | <a name="input_enable_key_rotation"></a> [enable\_key\_rotation](#input\_enable\_key\_rotation) | Flag to enable kms key rotation | `bool` | `true` | no |
-| <a name="input_enable_acl"></a> [enable\_acl](#input\_enable\_acl) | Flag to enable or disable acl long term storage type | `bool` | `true` | no |
+| <a name="input_enable_acl"></a> [enable\_acl](#input\_enable\_acl) | Flag to enable or disable acl long term storage type | `bool` | `false` | no |
 | <a name="input_enable_logs_storage"></a> [enable\_logs\_storage](#input\_enable\_logs\_storage) | Flag to enable or disable long term storage for logs | `bool` | `true` | no |
 | <a name="input_enable_nat_gateway"></a> [enable\_nat\_gateway](#input\_enable\_nat\_gateway) | Should be true if you want to provision NAT Gateways for each of your private networks | `bool` | `false` | no |
 | <a name="input_enable_reports_storage"></a> [enable\_reports\_storage](#input\_enable\_reports\_storage) | Flag to enable or disable long term storage for reports | `bool` | `true` | no |
