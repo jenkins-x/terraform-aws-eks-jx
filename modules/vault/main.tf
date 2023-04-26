@@ -54,8 +54,8 @@ resource "aws_s3_bucket_ownership_controls" "vault-unseal-bucket" {
   bucket = aws_s3_bucket.vault-unseal-bucket[0].bucket
 
   rule {
-      object_ownership = "BucketOwnerEnforced"
-    }
+    object_ownership = "BucketOwnerEnforced"
+  }
 }
 
 resource "aws_s3_bucket_versioning" "vault-unseal-bucket" {

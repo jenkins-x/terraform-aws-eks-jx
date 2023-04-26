@@ -29,8 +29,8 @@ resource "aws_s3_bucket_ownership_controls" "backup_bucket" {
   bucket = aws_s3_bucket.backup_bucket[0].bucket
 
   rule {
-      object_ownership = "BucketOwnerEnforced"
-    }
+    object_ownership = "BucketOwnerEnforced"
+  }
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "backup_bucket" {
