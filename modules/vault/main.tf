@@ -50,7 +50,7 @@ resource "aws_s3_bucket_acl" "vault-unseal-bucket" {
 }
 
 resource "aws_s3_bucket_ownership_controls" "vault-unseal-bucket" {
-  count  = local.create_vault_resources && !var.enable_acl ? 1 : 0
+  count  = local.create_vault_resources && var.enable_acl ? 1 : 0
   bucket = aws_s3_bucket.vault-unseal-bucket[0].bucket
 
   rule {
