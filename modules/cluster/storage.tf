@@ -26,7 +26,7 @@ resource "aws_s3_bucket_acl" "logs_jenkins_x" {
 }
 
 resource "aws_s3_bucket_ownership_controls" "logs_jenkins_x" {
-  count  = var.enable_logs_storage && !var.enable_acl ? 1 : 0
+  count  = var.enable_logs_storage && var.enable_acl ? 1 : 0
   bucket = aws_s3_bucket.logs_jenkins_x[0].bucket
 
   rule {
