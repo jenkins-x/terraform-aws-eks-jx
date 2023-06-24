@@ -105,7 +105,7 @@ resource "aws_s3_bucket_acl" "repository_jenkins_x" {
 }
 
 resource "aws_s3_bucket_ownership_controls" "repository_jenkins_x" {
-  count  = var.enable_repository_storage && !var.enable_acl ? 1 : 0
+  count  = var.enable_repository_storage && var.enable_acl ? 1 : 0
   bucket = aws_s3_bucket.repository_jenkins_x[0].bucket
 
   rule {
