@@ -228,6 +228,9 @@ This allows you to remove all generated buckets when running terraform destroy.
 
 :warning: **Note**: If you set `force_destroy` to false, and run a `terraform destroy`, it will fail. In that case empty the s3 buckets from the aws s3 console, and re run `terraform destroy`.
 
+:warning: **Note**: A notice from Amazon: [Amazon S3 will automatically enable S3 Block Public Access and disable access control lists for all new buckets starting in April 2023](https://aws.amazon.com/about-aws/whats-new/2022/12/amazon-s3-automatically-enable-block-public-access-disable-access-control-lists-buckets-april-2023/). To accomodate this acl setting was removed for buckets and the `enable_acl` variable was introduced and set to false (default). If the requirement is to provide ACL with bucket ownership conrols for the bucket, then set the `enable_acl` variable to true.   
+
+
 ### Secrets Management
 
 Vault is the default tool used by Jenkins X for managing secrets.
@@ -667,8 +670,8 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | > 4.0, < 5.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.64.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.5.1 |
 #### Modules
 
 | Name | Source | Version |
@@ -726,6 +729,7 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_create_velero_role"></a> [create\_velero\_role](#input\_create\_velero\_role) | Flag to control velero iam role creation | `bool` | `true` | no |
 | <a name="input_create_vpc"></a> [create\_vpc](#input\_create\_vpc) | Controls if VPC and related resources should be created. If you have an existing vpc for jx, set it to false | `bool` | `true` | no |
 | <a name="input_desired_node_count"></a> [desired\_node\_count](#input\_desired\_node\_count) | The number of worker nodes to use for the cluster | `number` | `3` | no |
+| <a name="input_enable_acl"></a> [enable\_acl](#input\_enable\_acl) | Flag to enable ACL along with bucket ownership controls for S3 storage | `bool` | `false` | no |
 | <a name="input_enable_backup"></a> [enable\_backup](#input\_enable\_backup) | Whether or not Velero backups should be enabled | `bool` | `false` | no |
 | <a name="input_enable_external_dns"></a> [enable\_external\_dns](#input\_enable\_external\_dns) | Flag to enable or disable External DNS in the final `jx-requirements.yml` file | `bool` | `false` | no |
 | <a name="input_enable_key_name"></a> [enable\_key\_name](#input\_enable\_key\_name) | Flag to enable ssh key pair name | `bool` | `false` | no |

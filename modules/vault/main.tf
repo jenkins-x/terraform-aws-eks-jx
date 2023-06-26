@@ -44,9 +44,18 @@ resource "aws_s3_bucket" "vault-unseal-bucket" {
 }
 
 resource "aws_s3_bucket_acl" "vault-unseal-bucket" {
-  count  = local.create_vault_resources ? 1 : 0
+  count  = local.create_vault_resources && var.enable_acl ? 1 : 0
   bucket = aws_s3_bucket.vault-unseal-bucket[0].bucket
   acl    = "private"
+}
+
+resource "aws_s3_bucket_ownership_controls" "vault-unseal-bucket" {
+  count  = local.create_vault_resources && var.enable_acl ? 1 : 0
+  bucket = aws_s3_bucket.vault-unseal-bucket[0].bucket
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
 }
 
 resource "aws_s3_bucket_versioning" "vault-unseal-bucket" {

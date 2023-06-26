@@ -20,9 +20,18 @@ resource "aws_s3_bucket" "logs_jenkins_x" {
 }
 
 resource "aws_s3_bucket_acl" "logs_jenkins_x" {
-  count  = var.enable_logs_storage ? 1 : 0
+  count  = var.enable_logs_storage && var.enable_acl ? 1 : 0
   bucket = aws_s3_bucket.logs_jenkins_x[0].bucket
   acl    = "private"
+}
+
+resource "aws_s3_bucket_ownership_controls" "logs_jenkins_x" {
+  count  = var.enable_logs_storage && var.enable_acl ? 1 : 0
+  bucket = aws_s3_bucket.logs_jenkins_x[0].bucket
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "logs_jenkins_x" {
@@ -50,9 +59,18 @@ resource "aws_s3_bucket" "reports_jenkins_x" {
 }
 
 resource "aws_s3_bucket_acl" "reports_jenkins_x" {
-  count  = var.enable_reports_storage ? 1 : 0
+  count  = var.enable_reports_storage && var.enable_acl ? 1 : 0
   bucket = aws_s3_bucket.reports_jenkins_x[0].bucket
   acl    = "private"
+}
+
+resource "aws_s3_bucket_ownership_controls" "reports_jenkins_x" {
+  count  = var.enable_reports_storage && var.enable_acl ? 1 : 0
+  bucket = aws_s3_bucket.reports_jenkins_x[0].bucket
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "reports_jenkins_x" {
@@ -81,9 +99,18 @@ resource "aws_s3_bucket" "repository_jenkins_x" {
 }
 
 resource "aws_s3_bucket_acl" "repository_jenkins_x" {
-  count  = var.enable_repository_storage ? 1 : 0
+  count  = var.enable_repository_storage && var.enable_acl ? 1 : 0
   bucket = aws_s3_bucket.repository_jenkins_x[0].bucket
   acl    = "private"
+}
+
+resource "aws_s3_bucket_ownership_controls" "repository_jenkins_x" {
+  count  = var.enable_repository_storage && var.enable_acl ? 1 : 0
+  bucket = aws_s3_bucket.repository_jenkins_x[0].bucket
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "repository_jenkins_x" {

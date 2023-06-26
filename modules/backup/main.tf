@@ -19,9 +19,18 @@ resource "aws_s3_bucket" "backup_bucket" {
 }
 
 resource "aws_s3_bucket_acl" "backup_bucket" {
-  count  = var.enable_backup ? 1 : 0
+  count  = var.enable_backup && var.enable_acl ? 1 : 0
   bucket = aws_s3_bucket.backup_bucket[0].bucket
   acl    = "private"
+}
+
+resource "aws_s3_bucket_ownership_controls" "backup_bucket" {
+  count  = var.enable_backup && var.enable_acl ? 1 : 0
+  bucket = aws_s3_bucket.backup_bucket[0].bucket
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "backup_bucket" {
