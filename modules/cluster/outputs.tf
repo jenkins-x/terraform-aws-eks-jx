@@ -96,6 +96,6 @@ output "pipeline_viz_iam_role" {
 }
 
 output "ebscsi_addon_iam_role" {
-  value       = module.ebs_csi_irsa_role.iam_role_name
+  value       = module.ebs_csi_irsa_role.role_name
   description = "The IAM Role that the EBS CSI Driver addon  will assume to authenticate"
 }
