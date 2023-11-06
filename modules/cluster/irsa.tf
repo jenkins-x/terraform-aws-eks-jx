@@ -469,3 +469,22 @@ module "iam_assumable_role_secrets-system-manager" {
   role_policy_arns              = [var.create_ssm_role ? aws_iam_policy.system-manager[0].arn : ""]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.secret-infra-namespace}:kubernetes-external-secrets"]
 }
+
+// ----------------------------------------------------------------------------
+// EBS CSI Driver Addon
+// Terraform submodule IAM Role for Service Accounts in EKS
+// ----------------------------------------------------------------------------
+
+module "ebs_csi_irsa_role" {
+  source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version                       = "~> v5.30.1"
+  role_name                     = "${local.cluster_trunc}-ebscsi-addon"
+  create_role                   = var.create_addon_role
+  attach_ebs_csi_policy         = true   // Attaches AmazonEBSCSIDriverPolicy
+  oidc_providers = {
+     main  = {
+        provider_arn               = module.eks.oidc_provider_arn
+        namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
+     }
+  }
+}

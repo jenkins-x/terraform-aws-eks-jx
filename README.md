@@ -29,6 +29,7 @@ The module makes use of the [Terraform EKS cluster Module](https://github.com/te
       - [Transitioning from Worker Groups to Worker Groups Launch Templates](#transitioning-from-worker-groups-to-worker-groups-launch-templates)
     - [EKS node groups](#eks-node-groups)
       - [Custom EKS node groups](#custom-eks-node-groups)
+    - [EBS CSI DRIVER](#ebs-csi-driver)
     - [AWS Auth](#aws-auth)
       - [`map_users`](#map_users)
       - [`map_roles`](#map_roles)
@@ -545,6 +546,21 @@ module "eks-jx" {
 
 :warning: **Note**: EKS node groups are supported in kubernetes v1.14+ and platform version eks.3
 
+### EBS CSI Driver
+In version 1.23 the Kubernetes in-tree to container storage interface (CSI) volume migration feature is enabled. This feature enables the replacement of existing Kubernetes in-tree storage plugins for Amazon EBS with a corresponding Amazon EBS CSI driver. If you use Amazon EBS volumes install the Amazon EBS CSI driver in your cluster before you update/create your cluster to/in version 1.23 [Kubernetes 1.23 Ref](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-1.23).
+
+An add-on is software that provides supporting operational capabilities to Kubernetes applications, but is not specific to the application. This includes software like observability agents or Kubernetes drivers that allow the cluster to interact with underlying AWS resources for networking, compute, and storage. [EKS Addons Guide](https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html)
+
+To enable the EBS CSI Driver (aws-ebs-csi-driver) set variables `enable_ebs_addon`and `create_addon_role` both  to true. The version of the driver addon is defined in the string variable `ebs_addon_version`
+To determine what versions of EBS CSI driver are supported use the command:
+```
+aws eks describe-addon-versions --addon-name "aws-ebs-csi-driver" | jq -r '.addons[].addonVersions[].addonVersion'
+```
+To display the latest 10 versions...
+```
+aws eks describe-addon-versions --addon-name "aws-ebs-csi-driver" | jq -r '.addons[0].addonVersions[].addonVersion'
+```
+
 ### AWS Auth
 
 When running EKS, authentication for the cluster is controlled by a `configmap` called `aws-auth`. By default, that should look something like this:
@@ -712,6 +728,7 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_cluster_in_private_subnet"></a> [cluster\_in\_private\_subnet](#input\_cluster\_in\_private\_subnet) | Flag to enable installation of cluster on private subnets | `bool` | `false` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Variable to provide your desired name for the cluster. The script will create a random name if this is empty | `string` | `""` | no |
 | <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Kubernetes version to use for the EKS cluster. | `string` | n/a | yes |
+| <a name="input_create_addon_role"></a> [create\_addon\_role](#input\_create\_addon\_role) | Flag to control ebscsi addon iam role creation | `bool` | `true` | no |
 | <a name="input_create_and_configure_subdomain"></a> [create\_and\_configure\_subdomain](#input\_create\_and\_configure\_subdomain) | Flag to create an NS record set for the subdomain in the apex domain's Hosted Zone | `bool` | `false` | no |
 | <a name="input_create_asm_role"></a> [create\_asm\_role](#input\_create\_asm\_role) | Flag to control AWS Secrets Manager iam roles creation | `bool` | `false` | no |
 | <a name="input_create_autoscaler_role"></a> [create\_autoscaler\_role](#input\_create\_autoscaler\_role) | Flag to control cluster autoscaler iam role creation | `bool` | `true` | no |
@@ -730,7 +747,9 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_create_vpc"></a> [create\_vpc](#input\_create\_vpc) | Controls if VPC and related resources should be created. If you have an existing vpc for jx, set it to false | `bool` | `true` | no |
 | <a name="input_desired_node_count"></a> [desired\_node\_count](#input\_desired\_node\_count) | The number of worker nodes to use for the cluster | `number` | `3` | no |
 | <a name="input_enable_acl"></a> [enable\_acl](#input\_enable\_acl) | Flag to enable ACL along with bucket ownership controls for S3 storage | `bool` | `false` | no |
+| <a name="input_ebs_addon_version"></a> [ebs\_addon\_version](#input\_ebs\_addon\_version) | EBS Addon aws-ebs-csi-driver Version | `string` |  `"v1.21.0-ebsbuild.1"`| no |
 | <a name="input_enable_backup"></a> [enable\_backup](#input\_enable\_backup) | Whether or not Velero backups should be enabled | `bool` | `false` | no |
+| <a name="input_enable_ebs_addon"></a> [enable\_ebs\_addon](#input\_enable\_ebs\_addon) | Flag to enable or disable EBS CSI driver addon | `bool` | `false` | no |
 | <a name="input_enable_external_dns"></a> [enable\_external\_dns](#input\_enable\_external\_dns) | Flag to enable or disable External DNS in the final `jx-requirements.yml` file | `bool` | `false` | no |
 | <a name="input_enable_key_name"></a> [enable\_key\_name](#input\_enable\_key\_name) | Flag to enable ssh key pair name | `bool` | `false` | no |
 | <a name="input_enable_key_rotation"></a> [enable\_key\_rotation](#input\_enable\_key\_rotation) | Flag to enable kms key rotation | `bool` | `true` | no |

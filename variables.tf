@@ -653,3 +653,21 @@ variable "enable_acl" {
   type        = bool
   default     = false
 }
+
+variable "create_addon_role" {
+  description = "Flag to control addon iam roles creation"
+  type        = bool
+  default     = false
+}
+
+variable "enable_ebs_addon" {
+  description = "Flag to enable or disable EBS CSI driver addon"
+  type        = bool
+  default     = false
+}
+
+variable "ebs_addon_version" {
+  description = "EBS CSI driver addon (aws-ebs-csi-driver) version"
+  type = string
+  default = "v1.21.0-eksbuild.1"
+}

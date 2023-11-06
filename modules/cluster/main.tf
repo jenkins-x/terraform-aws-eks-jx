@@ -217,3 +217,16 @@ resource "kubernetes_config_map" "jenkins_x_requirements" {
     module.eks
   ]
 }
+// ----------------------------------------------------------------------------
+// Include aws-ebs-csi-driver addon if enabled
+// ----------------------------------------------------------------------------
+
+resource "aws_eks_addon" "ebs_addon" {
+  count             = var.enable_ebs_addon ? 1 : 0
+  cluster_name      = var.cluster_name
+  addon_name        = "aws-ebs-csi-driver"
+  addon_version     = var.ebs_addon_version
+  resolve_conflicts = "OVERWRITE"
+  service_account_role_arn = module.ebs_csi_irsa_role.iam_role_arn
+}
+
