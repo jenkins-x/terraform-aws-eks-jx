@@ -100,6 +100,7 @@ output "cluster_asm_iam_role" {
 output "cluster_ssm_iam_role" {
   value       = module.cluster.cluster_ssm_iam_role
   description = "The IAM Role that the External Secrets pod will assume to authenticate (Parameter Store)"
+
 }
 
 // ----------------------------------------------------------------------------

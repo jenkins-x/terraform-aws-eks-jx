@@ -447,3 +447,21 @@ variable "enable_acl" {
   description = "Flag to enable ACL instead of bucket ownership for S3 storage"
   type        = bool
 }
+
+variable "create_addon_role" {
+  description = "Flag to control addon iam roles creation"
+  type        = bool
+  default     = false
+} 
+
+variable "enable_ebs_addon" {
+  description = "Flag to enable or disable EBS CSI driver addon"
+  type        = bool
+  default     = false
+}
+
+variable "ebs_addon_version" {
+  description = "EBS CSI driver addon (aws-ebs-csi-driver) version"
+  type = string
+  default = "v1.21.0-eksbuild.1"
+}

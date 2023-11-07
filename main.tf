@@ -90,6 +90,7 @@ module "cluster" {
   create_ctrlb_role                     = var.create_ctrlb_role
   create_exdns_role                     = var.create_exdns_role
   create_pipeline_vis_role              = var.create_pipeline_vis_role
+  create_addon_role                     = var.create_addon_role
   create_asm_role                       = var.create_asm_role
   create_ssm_role                       = var.create_ssm_role
   create_tekton_role                    = var.create_tekton_role
@@ -105,6 +106,8 @@ module "cluster" {
   use_asm                               = var.use_asm
   boot_iam_role                         = "${var.asm_role}${var.boot_iam_role}"
   enable_acl                            = var.enable_acl
+  enable_ebs_addon                      = var.enable_ebs_addon
+  ebs_addon_version                     = var.ebs_addon_version
 }
 
 // ----------------------------------------------------------------------------
