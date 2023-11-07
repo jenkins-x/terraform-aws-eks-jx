@@ -556,11 +556,8 @@ To determine what versions of EBS CSI driver are supported use the command:
 ```
 aws eks describe-addon-versions --addon-name "aws-ebs-csi-driver" | jq -r '.addons[].addonVersions[].addonVersion'
 ```
-To display the latest 10 versions...
-```
-aws eks describe-addon-versions --addon-name "aws-ebs-csi-driver" | jq -r '.addons[0].addonVersions[].addonVersion'
-```
 
+:warning: **Note**: It is imperative that you export the environment variable `AWS_REGION` with the appropriate region value (i.e. us-west-2). 
 ### AWS Auth
 
 When running EKS, authentication for the cluster is controlled by a `configmap` called `aws-auth`. By default, that should look something like this:
