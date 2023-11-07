@@ -417,7 +417,7 @@ These values can be adjusted by using the variables `lt_desired_nodes_per_subnet
 
 ```terraform
 module "eks-jx" {
-  source  = "jenkins-x/eks-jx/aws"
+  source                               = "jenkins-x/eks-jx/aws"
   enable_worker_groups_launch_template = true
   allowed_spot_instance_types          = ["m5.large", "m5a.large", "m5d.large", "m5ad.large", "t3.large", "t3a.large"]
   lt_desired_nodes_per_subnet          = 2
@@ -435,15 +435,17 @@ Once you've verified that you are able to see the new Nodes created by the Launc
 To remove the older worker group, it's recommended to first scale down to zero nodes, one at a time, by adjusting the min/max node capacity.
 Once you've scaled down to zero nodes for the original worker group, and your workloads have been scheduled on nodes created by the launch templates you can set `enable_worker_group` to `false`.
 
+```terraform
 module "eks-jx" {
-source = "jenkins-x/eks-jx/aws"
-enable_worker_group = false
-enable_worker_groups_launch_template = true
-allowed_spot_instance_types = ["m5.large", "m5a.large", "m5d.large", "m5ad.large", "t3.large", "t3a.large"]
-lt_desired_nodes_per_subnet = 2
-lt_min_nodes_per_subnet = 2
-lt_max_nodes_per_subnet = 3
+  source                               = "jenkins-x/eks-jx/aws"
+  enable_worker_group                  = false
+  enable_worker_groups_launch_template = true
+  allowed_spot_instance_types          = ["m5.large", "m5a.large", "m5d.large", "m5ad.large", "t3.large", "t3a.large"]
+  lt_desired_nodes_per_subnet          = 2
+  lt_min_nodes_per_subnet              = 2
+  lt_max_nodes_per_subnet              = 3
 }
+```
 
 ### EKS node groups
 
