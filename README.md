@@ -553,11 +553,27 @@ In version 1.23 the Kubernetes in-tree to container storage interface (CSI) volu
 
 An add-on is software that provides supporting operational capabilities to Kubernetes applications, but is not specific to the application. This includes software like observability agents or Kubernetes drivers that allow the cluster to interact with underlying AWS resources for networking, compute, and storage. [EKS Addons Guide](https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html)
 
-To enable the EBS CSI Driver (aws-ebs-csi-driver) set variables `enable_ebs_addon`and `create_addon_role` both  to true. The version of the driver addon is defined in the string variable `ebs_addon_version`
-To determine what versions of EBS CSI driver are supported use the command:
+The EBS CSI Driver (aws-ebs-csi-driver) by default is disabled. To enable set variables:
+```
+enable_ebs_addon = true
+create_addon_role = true
+ebs_addon_version = "v1.21.0-eksbuild.1"
+```
+To determine valid versions for variable `ebs_addon_version` use the command:
 ```
 aws eks describe-addon-versions --addon-name "aws-ebs-csi-driver" | jq -r '.addons[].addonVersions[].addonVersion'
 ```
+The EBS CSI Driver addon can be implemented successfully using **worker group launch templates**. The addon can be problematic when using the default **worker node groups** and is not recommended. For new installations set the following variables:
+```
+enable_worker_groups_launch_template = true
+enable_worker_group = false
+```
+For existing installations where `enable_worker_groups = true` only set the variable:
+```
+enable_worker_groups_launch_template = true
+```
+Once the addon is installed,  then perform [Transitioning from Worker Groups to Worker Groups Launch Templates](#transitioning-from-worker-groups-to-worker-groups-launch-templates). When completed the variable `enable_worker_group = false`
+
 
 :warning: **Note**: It is imperative that you export the environment variable `AWS_REGION` with the appropriate region value (i.e. us-west-2). 
 ### AWS Auth
