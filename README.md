@@ -563,19 +563,11 @@ To determine valid versions for variable `ebs_addon_version` use the command:
 ```
 aws eks describe-addon-versions --addon-name "aws-ebs-csi-driver" | jq -r '.addons[].addonVersions[].addonVersion'
 ```
-The EBS CSI Driver addon can be implemented successfully using **worker group launch templates**. The addon can be problematic when using the default **worker node groups** and is not recommended. For new installations set the following variables:
-```
-enable_worker_groups_launch_template = true
-enable_worker_group = false
-```
-For existing installations where `enable_worker_groups = true` only set the variable:
+The EBS CSI Driver addon can be implemented successfully using **worker group launch templates**. Also set the following variable:
 ```
 enable_worker_groups_launch_template = true
 ```
-Once the addon is installed,  then perform [Transitioning from Worker Groups to Worker Groups Launch Templates](#transitioning-from-worker-groups-to-worker-groups-launch-templates). When completed the variable `enable_worker_group = false`
 
-
-:warning: **Note**: It is imperative that you export the environment variable `AWS_REGION` with the appropriate region value (i.e. us-west-2). 
 ### AWS Auth
 
 When running EKS, authentication for the cluster is controlled by a `configmap` called `aws-auth`. By default, that should look something like this:
