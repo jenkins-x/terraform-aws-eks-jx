@@ -563,10 +563,6 @@ To determine valid versions for variable `ebs_addon_version` use the command:
 ```
 aws eks describe-addon-versions --addon-name "aws-ebs-csi-driver" | jq -r '.addons[].addonVersions[].addonVersion'
 ```
-The EBS CSI Driver addon can be implemented successfully using **worker group launch templates**. Also set the following variable:
-```
-enable_worker_groups_launch_template = true
-```
 
 ### AWS Auth
 
