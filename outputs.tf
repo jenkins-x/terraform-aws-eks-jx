@@ -103,6 +103,10 @@ output "cluster_ssm_iam_role" {
 
 }
 
+output "ebscsi_addon_iam_role" {
+  value       = module.cluster.ebscsi_addon_iam_role
+  description = "The IAM Role that the EBS CSI Driver addon  will assume to authenticate"
+}
 // ----------------------------------------------------------------------------
 // Vault Resources
 // ----------------------------------------------------------------------------
