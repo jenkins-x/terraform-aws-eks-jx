@@ -67,6 +67,7 @@ module "cluster" {
   iops                                  = var.iops
   use_kms_s3                            = var.use_kms_s3
   s3_kms_arn                            = var.s3_kms_arn
+  s3_extra_tags                         = var.s3_extra_tags
   is_jx2                                = var.is_jx2
   content                               = local.content
   cluster_endpoint_public_access        = var.cluster_endpoint_public_access
@@ -123,6 +124,7 @@ module "vault" {
   use_vault      = var.use_vault
   region         = var.region
   enable_acl     = var.enable_acl
+  s3_extra_tags  = var.s3_extra_tags
 }
 
 // ----------------------------------------------------------------------------
@@ -137,6 +139,7 @@ module "backup" {
   velero_username    = var.velero_username
   create_velero_role = var.create_velero_role
   enable_acl         = var.enable_acl
+  s3_extra_tags      = var.s3_extra_tags
 }
 
 // ----------------------------------------------------------------------------

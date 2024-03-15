@@ -167,6 +167,19 @@ variable "use_kms_s3" {
   default     = false
 }
 
+variable "s3_default_tags" {
+  description = "Default tags for s3 buckets"
+  type    = map
+  default = { Owner = "Jenkins-x" }
+}
+
+variable "s3_extra_tags" {
+  description = "Add new tags for s3 buckets"
+  type        = map
+  default     = {}
+}
+
+
 variable "map_accounts" {
   description = "Additional AWS account numbers to add to the aws-auth configmap."
   type        = list(string)

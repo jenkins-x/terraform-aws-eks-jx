@@ -37,9 +37,7 @@ resource "aws_s3_bucket" "vault-unseal-bucket" {
   count = local.create_vault_resources ? 1 : 0
 
   bucket_prefix = "vault-unseal-${lower(var.cluster_name)}-"
-  tags = {
-    Name = "Vault unseal bucket"
-  }
+  tags          = merge(var.s3_default_tags, var.s3_extra_tags)
   force_destroy = var.force_destroy
 }
 
