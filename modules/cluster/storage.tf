@@ -13,9 +13,7 @@ locals {
 resource "aws_s3_bucket" "logs_jenkins_x" {
   count         = var.enable_logs_storage ? 1 : 0
   bucket_prefix = "logs-${lower(var.cluster_name)}-"
-  tags = {
-    Owner = "Jenkins-x"
-  }
+  tags          = merge(var.s3_default_tags, var.s3_extra_tags)
   force_destroy = var.force_destroy
 }
 
@@ -52,9 +50,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "logs_jenkins_x" {
 resource "aws_s3_bucket" "reports_jenkins_x" {
   count         = var.enable_reports_storage ? 1 : 0
   bucket_prefix = "reports-${lower(var.cluster_name)}-"
-  tags = {
-    Owner = "Jenkins-x"
-  }
+  tags          = merge(var.s3_default_tags, var.s3_extra_tags)
   force_destroy = var.force_destroy
 }
 
@@ -92,9 +88,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "reports_jenkins_x
 resource "aws_s3_bucket" "repository_jenkins_x" {
   count         = var.enable_repository_storage ? 1 : 0
   bucket_prefix = "repository-${lower(var.cluster_name)}-"
-  tags = {
-    Owner = "Jenkins-x"
-  }
+  tags          = merge(var.s3_default_tags, var.s3_extra_tags)
   force_destroy = var.force_destroy
 }
 

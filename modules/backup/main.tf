@@ -12,9 +12,7 @@ locals {
 resource "aws_s3_bucket" "backup_bucket" {
   count         = var.enable_backup ? 1 : 0
   bucket_prefix = "backup-${lower(var.cluster_name)}-"
-  tags = {
-    Owner = "Jenkins-x"
-  }
+  tags          = merge(var.s3_default_tags, var.s3_extra_tags)
   force_destroy = var.force_destroy
 }
 

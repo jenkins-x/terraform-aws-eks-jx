@@ -39,6 +39,18 @@ variable "s3_kms_arn" {
   default     = ""
 }
 
+variable "s3_default_tags" {
+  description = "Default tags for s3 buckets"
+  type        = map
+  default     = { Owner = "Jenkins-x" }
+}
+
+variable "s3_extra_tags" {
+  description = "Add new tags for s3 buckets"
+  type        = map
+  default     = {}
+}
+
 variable "is_jx2" {
   default = true
   type    = bool
