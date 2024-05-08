@@ -14,6 +14,12 @@ variable "cluster_version" {
   default     = "1.26.6"
 }
 
+variable "eks_cluster_tags" {
+  description = "Add tags for the EKS Cluster"
+  type        = map
+  default     = {}
+}
+
 variable "profile" {
   description = "The AWS Profile used to provision the EKS Cluster"
   type        = string

@@ -340,6 +340,12 @@ variable "s3_extra_tags" {
   default     = {}
 }
 
+variable "eks_cluster_tags" {
+  description = "Add tags for the EKS Cluster"
+  type        = map
+  default     = {}
+}
+
 variable "is_jx2" {
   default     = true
   type        = bool
