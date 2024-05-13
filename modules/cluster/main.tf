@@ -67,6 +67,7 @@ module "eks" {
   subnets         = var.create_vpc ? (var.cluster_in_private_subnet ? module.vpc.private_subnets : module.vpc.public_subnets) : var.subnets
   vpc_id          = var.create_vpc ? module.vpc.vpc_id : var.vpc_id
   enable_irsa     = true
+  tags            = var.eks_cluster_tags
 
   worker_groups_launch_template = var.enable_worker_group && var.enable_worker_groups_launch_template ? [
     for subnet in(var.create_vpc ? module.vpc.public_subnets : var.subnets) :

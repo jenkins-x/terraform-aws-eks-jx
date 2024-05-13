@@ -68,6 +68,7 @@ module "cluster" {
   use_kms_s3                            = var.use_kms_s3
   s3_kms_arn                            = var.s3_kms_arn
   s3_extra_tags                         = var.s3_extra_tags
+  eks_cluster_tags                      = var.eks_cluster_tags
   is_jx2                                = var.is_jx2
   content                               = local.content
   cluster_endpoint_public_access        = var.cluster_endpoint_public_access
