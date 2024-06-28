@@ -6,33 +6,6 @@ output "cluster_id" {
   value = module.eks.cluster_id
 }
 
-//// Vault
-//output "vault_user_id" {
-//  value       = module.eks-jx.vault_user_id
-//  description = "The Vault IAM user id"
-//}
-//
-//output "vault_user_secret" {
-//  value       = module.eks-jx.vault_user_secret
-//  description = "The Vault IAM user secret"
-//}
-//
-//output "vault_unseal_bucket" {
-//  value       = module.eks-jx.vault_unseal_bucket
-//  description = "The Vault storage bucket"
-//}
-//
-//output "vault_dynamodb_table" {
-//  value       = module.eks-jx.vault_dynamodb_table
-//  description = "The Vault DynamoDB table"
-//}
-//
-//output "vault_kms_unseal" {
-//  value       = module.eks-jx.vault_kms_unseal
-//  description = "The Vault KMS Key for encryption"
-//}
-//
-//
 //// Storage (backup, logs, reports, repo)
 //output "backup_bucket_url" {
 //  value       = module.eks-jx.backup_bucket_url

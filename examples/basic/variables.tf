@@ -1,4 +1,9 @@
-variable "vault_user" {
+variable "region" {
   type    = string
-  default = ""
+  default = "us-east-1"
+}
+
+variable "profile" {
+  type    = string
+  default = "default"
 }

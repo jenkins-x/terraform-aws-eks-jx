@@ -1,8 +1,3 @@
-variable "is_jx2" {
-  default = true
-  type    = bool
-}
-
 variable "create_nginx" {
   default     = false
   type        = bool

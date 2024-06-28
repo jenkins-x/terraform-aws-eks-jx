@@ -3,14 +3,6 @@ output "vpc_id" {
   description = "The ID of the VPC"
 }
 
-output "jx_namespace" {
-  value = kubernetes_namespace.jx
-}
-
-output "cm_namespace" {
-  value = kubernetes_namespace.cert_manager
-}
-
 output "cluster_oidc_issuer_url" {
   value = local.oidc_provider_url
 }

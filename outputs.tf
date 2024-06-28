@@ -107,33 +107,6 @@ output "ebscsi_addon_iam_role" {
   value       = module.cluster.ebscsi_addon_iam_role
   description = "The IAM Role that the EBS CSI Driver addon  will assume to authenticate"
 }
-// ----------------------------------------------------------------------------
-// Vault Resources
-// ----------------------------------------------------------------------------
-output "vault_unseal_bucket" {
-  value       = module.vault.vault_unseal_bucket
-  description = "The Vault storage bucket"
-}
-
-output "vault_dynamodb_table" {
-  value       = module.vault.vault_dynamodb_table
-  description = "The Vault DynamoDB table"
-}
-
-output "vault_kms_unseal" {
-  value       = module.vault.kms_vault_unseal
-  description = "The Vault KMS Key for encryption"
-}
-
-output "vault_user_id" {
-  value       = length(module.vault.vault_user_id) > 0 ? module.vault.vault_user_id[0] : ""
-  description = "The Vault IAM user id"
-}
-
-output "vault_user_secret" {
-  value       = length(module.vault.vault_user_secret) > 0 ? module.vault.vault_user_secret[0] : ""
-  description = "The Vault IAM user secret"
-}
 
 // ----------------------------------------------------------------------------
 // DNS

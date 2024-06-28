@@ -110,17 +110,4 @@ func TestTerraformEksJX(t *testing.T) {
 		RoleName: aws.String(addRole),
 	})
 	assert.NoError(t, err)
-
-	// Vault
-	vaultBucket := terraform.Output(t, tfOptions, "vault_unseal_bucket")
-	aws2.AssertS3BucketExists(t, region, vaultBucket)
-
-	vaultDynamoTable := terraform.Output(t, tfOptions, "vault_dynamodb_table")
-	results := aws2.GetDynamoDBTable(t, region, vaultDynamoTable)
-	assert.NotEmpty(t, results)
-
-	vaultKMS := terraform.Output(t, tfOptions, "vault_kms_unseal")
-	kmsClient := kms.NewFromConfig(cfg)
-	_, err = kmsClient.DescribeKey(context.TODO(), &kms.DescribeKeyInput{KeyId: aws.String(vaultKMS)})
-	assert.NoError(t, err)
 }
