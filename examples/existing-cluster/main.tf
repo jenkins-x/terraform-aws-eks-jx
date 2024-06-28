@@ -147,7 +147,6 @@ module "eks-jx" {
   use_vault    = var.use_vault
   use_asm      = var.use_asm
   cluster_name = module.eks.cluster_id // Cluster ID/Name of the EKS cluster where we want to install the jx cloud resources in
-  is_jx2       = false
   create_eks   = false // Skip EKS creation
   create_vpc   = false // skip VPC creation
 }

@@ -85,17 +85,6 @@ module "eks-jx" {
 output "jx_requirements" {
   value = module.eks-jx.jx_requirements
 }
-
-output "vault_user_id" {
-  value       = module.eks-jx.vault_user_id
-  description = "The Vault IAM user id"
-}
-
-output "vault_user_secret" {
-  value       = module.eks-jx.vault_user_secret
-  description = "The Vault IAM user secret"
-}
-
 ```
 
 All s3 buckets created by the module use Server-Side Encryption with Amazon S3-Managed Encryption Keys
@@ -106,10 +95,6 @@ If you don't specify the value of `s3_kms_arn`, then the default aws managed cmk
 :warning: **Note**: Using AWS KMS with customer managed keys has cost
 [considerations](https://aws.amazon.com/blogs/storage/changing-your-amazon-s3-encryption-from-s3-managed-encryption-sse-s3-to-aws-key-management-service-sse-kms/).
 
-Due to the Vault issue [7450](https://github.com/hashicorp/vault/issues/7450), this Terraform module needs for now to create a new IAM user for installing Vault.
-It also creates an IAM access key whose id and secret are defined in the output above.
-You need the id and secret for running [`jx boot`](#running-jx-boot).
-
 The _jx_requirements_ output is a helper for creating the initial input for `jx boot`.
 
 If you do not want Terraform to create a new IAM user or you do not have permissions to create one, you need to provide the name of an existing IAM user.
@@ -117,7 +102,6 @@ If you do not want Terraform to create a new IAM user or you do not have permiss
 ```terraform
 module "eks-jx" {
   source     = "jenkins-x/eks-jx/aws"
-  vault_user = "<your_vault_iam_username>"
 }
 ```
 
@@ -129,7 +113,6 @@ In addition, you should make sure to specify the region via the AWS_REGION envir
 `export AWS_REGION=us-east-1` and the region variable (make sure the region variable matches the environment variable)
 
 The IAM user does not need any permissions attached to it.
-For more information, refer to [Configuring Vault for EKS](https://jenkins-x.io/docs/install-setup/installing/boot/clouds/amazon/#configuring-vault-for-eks) in the Jenkins X documentation.
 
 Once you have your initial configuration, you can apply it by running:
 
@@ -139,15 +122,6 @@ terraform apply
 ```
 
 This creates an EKS cluster with all possible configuration options defaulted.
-
-You then need to export the environment variables _VAULT_AWS_ACCESS_KEY_ID_ and _VAULT_AWS_SECRET_ACCESS_KEY_.
-
-```sh
-export VAULT_AWS_ACCESS_KEY_ID=$(terraform output vault_user_id)
-export VAULT_AWS_SECRET_ACCESS_KEY=$(terraform output vault_user_secret)
-```
-
-If you specified _vault_user_ you need to provide the access key id and secret for the specified user.
 
 :warning: **Note**: This example is for getting up and running quickly.
 It is not intended for a production cluster.
@@ -207,9 +181,9 @@ helm template --name cluster-autoscaler --namespace kube-system ./cluster-autosc
 
 ### Long Term Storage
 
-You can choose to create S3 buckets for [long term storage](https://jenkins-x.io/docs/install-setup/installing/boot/storage/) of Jenkins X build artefacts with `enable_logs_storage`, `enable_reports_storage` and `enable_repository_storage`.
+You can choose to create S3 buckets for [long term storage](https://jenkins-x.io/v3/admin/setup/config/storage/) of Jenkins X build artefacts with `enable_logs_storage`, `enable_reports_storage` and `enable_repository_storage`.
 
-During `terraform apply` the enabledS3 buckets are created, and the _jx_requirements_ output will contain the following section:
+During `terraform apply` the enabled S3 buckets are created, and the _jx_requirements_ output will contain the following section:
 
 ```yaml
 storage:
@@ -234,9 +208,8 @@ This allows you to remove all generated buckets when running terraform destroy.
 
 ### Secrets Management
 
-Vault is the default tool used by Jenkins X for managing secrets.
-Part of this module's responsibilities is the creation of all resources required to run the [Vault Operator](https://github.com/banzaicloud/bank-vaults).
-These resources are An S3 Bucket, a DynamoDB Table and a KMS Key.
+[Vault](https://www.vaultproject.io/) is the default tool used by Jenkins X for managing secrets.
+Part of this module's responsibilities is the installation of [Vault Operator](https://github.com/banzaicloud/bank-vaults) which in turn install vault.
 
 You can also configure an existing Vault instance for use with Jenkins X.
 In this case
@@ -467,16 +440,6 @@ module "eks-jx" {
 output "jx_requirements" {
   value = module.eks-jx.jx_requirements
 }
-
-output "vault_user_id" {
-  value       = module.eks-jx.vault_user_id
-  description = "The Vault IAM user id"
-}
-
-output "vault_user_secret" {
-  value       = module.eks-jx.vault_user_secret
-  description = "The Vault IAM user secret"
-}
 ```
 
 **Note**: EKS node groups now support using [spot instances](https://aws.amazon.com/blogs/containers/amazon-eks-now-supports-provisioning-and-managing-ec2-spot-instances-in-managed-node-groups/) and [launch templates](https://docs.aws.amazon.com/eks/latest/userguide/launch-templates.html) (will be set accordingly with the use of the `enable_spot_instances` variable)
@@ -660,7 +623,6 @@ You need to execute the following command before `terraform apply` in order to r
 ### Support for JX3
 
 Creation of namespaces and service accounts using terraform is no longer required for JX3.
-To keep compatibility with JX2, a flag `is_jx2` was introduced, in [v1.6.0](https://github.com/jenkins-x/terraform-aws-eks-jx/releases/tag/v1.6.0).
 
 ### Existing VPC
 
@@ -770,7 +732,6 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_ignoreLoadBalancer"></a> [ignoreLoadBalancer](#input\_ignoreLoadBalancer) | Flag to specify if jx boot will ignore loadbalancer DNS to resolve to an IP | `bool` | `false` | no |
 | <a name="input_install_kuberhealthy"></a> [install\_kuberhealthy](#input\_install\_kuberhealthy) | Flag to specify if kuberhealthy operator should be installed | `bool` | `false` | no |
 | <a name="input_iops"></a> [iops](#input\_iops) | The IOPS value | `number` | `0` | no |
-| <a name="input_is_jx2"></a> [is\_jx2](#input\_is\_jx2) | Flag to specify if jx2 related resources need to be created | `bool` | `true` | no |
 | <a name="input_jx_bot_token"></a> [jx\_bot\_token](#input\_jx\_bot\_token) | Bot token used to interact with the Jenkins X cluster git repository | `string` | `""` | no |
 | <a name="input_jx_bot_username"></a> [jx\_bot\_username](#input\_jx\_bot\_username) | Bot username used to interact with the Jenkins X cluster git repository | `string` | `""` | no |
 | <a name="input_jx_git_operator_values"></a> [jx\_git\_operator\_values](#input\_jx\_git\_operator\_values) | Extra values for jx-git-operator chart as a list of yaml formated strings | `list(string)` | `[]` | no |
@@ -813,7 +774,6 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_use_kms_s3"></a> [use\_kms\_s3](#input\_use\_kms\_s3) | Flag to determine whether kms should be used for encrypting s3 buckets | `bool` | `false` | no |
 | <a name="input_use_vault"></a> [use\_vault](#input\_use\_vault) | Flag to control vault resource creation | `bool` | `true` | no |
 | <a name="input_vault_url"></a> [vault\_url](#input\_vault\_url) | URL to an external Vault instance in case Jenkins X does not create its own system Vault | `string` | `""` | no |
-| <a name="input_vault_user"></a> [vault\_user](#input\_vault\_user) | The AWS IAM Username whose credentials will be used to authenticate the Vault pods against AWS | `string` | `""` | no |
 | <a name="input_velero_namespace"></a> [velero\_namespace](#input\_velero\_namespace) | Kubernetes namespace for Velero | `string` | `"velero"` | no |
 | <a name="input_velero_schedule"></a> [velero\_schedule](#input\_velero\_schedule) | The Velero backup schedule in cron notation to be set in the Velero Schedule CRD (see [default-backup.yaml](https://github.com/jenkins-x/jenkins-x-boot-config/blob/master/systems/velero-backups/templates/default-backup.yaml)) | `string` | `"0 * * * *"` | no |
 | <a name="input_velero_ttl"></a> [velero\_ttl](#input\_velero\_ttl) | The the lifetime of a velero backup to be set in the Velero Schedule CRD (see [default-backup.yaml](https://github.com/jenkins-x/jenkins-x-boot-config/blob/master/systems/velero-backups/templates/default-backup)) | `string` | `"720h0m0s"` | no |
@@ -846,11 +806,6 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="output_pipeline_viz_iam_role"></a> [pipeline\_viz\_iam\_role](#output\_pipeline\_viz\_iam\_role) | The IAM Role that the pipeline visualizer pod will assume to authenticate |
 | <a name="output_subdomain_nameservers"></a> [subdomain\_nameservers](#output\_subdomain\_nameservers) | ---------------------------------------------------------------------------- DNS ---------------------------------------------------------------------------- |
 | <a name="output_tekton_bot_iam_role"></a> [tekton\_bot\_iam\_role](#output\_tekton\_bot\_iam\_role) | The IAM Role that the build pods will assume to authenticate |
-| <a name="output_vault_dynamodb_table"></a> [vault\_dynamodb\_table](#output\_vault\_dynamodb\_table) | The Vault DynamoDB table |
-| <a name="output_vault_kms_unseal"></a> [vault\_kms\_unseal](#output\_vault\_kms\_unseal) | The Vault KMS Key for encryption |
-| <a name="output_vault_unseal_bucket"></a> [vault\_unseal\_bucket](#output\_vault\_unseal\_bucket) | The Vault storage bucket |
-| <a name="output_vault_user_id"></a> [vault\_user\_id](#output\_vault\_user\_id) | The Vault IAM user id |
-| <a name="output_vault_user_secret"></a> [vault\_user\_secret](#output\_vault\_user\_secret) | The Vault IAM user secret |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | The ID of the VPC |
 <!-- BEGIN_TF_DOCS -->
 
@@ -863,19 +818,6 @@ This allows us to make use of [IAM Roles for Sercive Accounts](https://docs.aws.
 There is no way to provide your own roles or define other Service Accounts by variables, but you can always modify the `modules/cluster/irsa.tf` Terraform file.
 
 ## Development
-
-### Releasing
-
-At the moment, there is no release pipeline defined in [jenkins-x.yml](./jenkins-x.yml).
-A Terraform release does not require building an artifact; only a tag needs to be created and pushed.
-To make this task easier and there is a helper script `release.sh` which simplifies this process and creates the changelog as well:
-
-```sh
-./scripts/release.sh
-```
-
-This can be executed on demand whenever a release is required.
-For the script to work, the environment variable _$GH_TOKEN_ must be exported and reference a valid GitHub API token.
 
 ## How can I contribute
 

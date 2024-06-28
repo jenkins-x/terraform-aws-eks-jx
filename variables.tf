@@ -27,11 +27,6 @@ variable "cluster_version" {
 // ----------------------------------------------------------------------------
 // Vault
 // ----------------------------------------------------------------------------
-variable "vault_user" {
-  description = "The AWS IAM Username whose credentials will be used to authenticate the Vault pods against AWS"
-  type        = string
-  default     = ""
-}
 
 variable "vault_url" {
   description = "URL to an external Vault instance in case Jenkins X does not create its own system Vault"
@@ -344,12 +339,6 @@ variable "eks_cluster_tags" {
   description = "Add tags for the EKS Cluster"
   type        = map
   default     = {}
-}
-
-variable "is_jx2" {
-  default     = true
-  type        = bool
-  description = "Flag to specify if jx2 related resources need to be created"
 }
 
 variable "ignoreLoadBalancer" {

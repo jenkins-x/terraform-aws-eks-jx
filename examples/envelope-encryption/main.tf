@@ -10,8 +10,6 @@ resource "aws_kms_key" "eks" {
 
 module "eks-jx" {
   source               = "../../"
-  vault_user           = var.vault_user
-  is_jx2               = false
   install_kuberhealthy = false
   cluster_encryption_config = [
     {

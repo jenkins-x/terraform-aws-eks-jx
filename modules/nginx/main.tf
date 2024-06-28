@@ -1,5 +1,5 @@
 resource "helm_release" "nginx-ingress" {
-  count            = var.create_nginx && !var.is_jx2 ? 1 : 0
+  count            = var.create_nginx ? 1 : 0
   name             = var.nginx_release_name
   chart            = "ingress-nginx"
   namespace        = var.nginx_namespace

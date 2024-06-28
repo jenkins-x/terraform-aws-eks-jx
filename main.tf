@@ -69,7 +69,6 @@ module "cluster" {
   s3_kms_arn                            = var.s3_kms_arn
   s3_extra_tags                         = var.s3_extra_tags
   eks_cluster_tags                      = var.eks_cluster_tags
-  is_jx2                                = var.is_jx2
   content                               = local.content
   cluster_endpoint_public_access        = var.cluster_endpoint_public_access
   cluster_endpoint_public_access_cidrs  = var.cluster_endpoint_public_access_cidrs
@@ -113,19 +112,13 @@ module "cluster" {
 }
 
 // ----------------------------------------------------------------------------
-// Setup all required resources for using the  bank-vaults operator
-// See https://github.com/banzaicloud/bank-vaults
+// Create vault if neeed
+// See https://github.com/bank-vaults/bank-vaults
 // ----------------------------------------------------------------------------
 module "vault" {
   source         = "./modules/vault"
-  cluster_name   = local.cluster_name
-  vault_user     = var.vault_user
-  force_destroy  = var.force_destroy
   external_vault = local.external_vault
   use_vault      = var.use_vault
-  region         = var.region
-  enable_acl     = var.enable_acl
-  s3_extra_tags  = var.s3_extra_tags
 }
 
 // ----------------------------------------------------------------------------
@@ -162,13 +155,11 @@ module "dns" {
 
 module "health" {
   source               = "./modules/health"
-  is_jx2               = var.is_jx2
   install_kuberhealthy = var.install_kuberhealthy
 }
 
 module "nginx" {
   source                 = "./modules/nginx"
-  is_jx2                 = var.is_jx2
   create_nginx           = var.create_nginx
   nginx_release_name     = var.nginx_release_name
   nginx_namespace        = var.nginx_namespace
