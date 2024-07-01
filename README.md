@@ -1,6 +1,6 @@
 # Jenkins X EKS Module
 
-This repository contains a Terraform module for creating an EKS cluster and all the necessary infrastructure to install Jenkins X via `jx boot`.
+This repository contains a Terraform module for creating an EKS cluster and all the necessary infrastructure to install Jenkins X as described in https://jenkins-x.io/v3/admin/platforms/eks/.
 
 The module makes use of the [Terraform EKS cluster Module](https://github.com/terraform-aws-modules/terraform-aws-eks).
 
@@ -67,11 +67,10 @@ For more information about modules refer to the Terraform [documentation](https:
 This Terraform module allows you to create an [EKS](https://aws.amazon.com/eks/) cluster ready for the installation of Jenkins X.
 You need the following binaries locally installed and configured on your _PATH_:
 
-- `terraform` (=> 0.12.17, < 2.0.0)
-- `kubectl` (>=1.10)
+- `terraform` (>= 1.0.0, < 2.0.0)
+- `kubectl` (>= 1.10)
 - `aws-cli`
-- `aws-iam-authenticator`
-- `wget`
+- `helm` (>= 3.0)
 
 ### Cluster provisioning
 
@@ -79,7 +78,7 @@ A default Jenkins X ready cluster can be provisioned by creating a _main.tf_ fil
 
 ```terraform
 module "eks-jx" {
-  source = "jenkins-x/eks-jx/aws"
+  source = "github.com/jenkins-x/terraform-aws-eks-jx"
 }
 
 output "jx_requirements" {
@@ -101,7 +100,7 @@ If you do not want Terraform to create a new IAM user or you do not have permiss
 
 ```terraform
 module "eks-jx" {
-  source     = "jenkins-x/eks-jx/aws"
+  source     = "github.com/jenkins-x/terraform-aws-eks-jx"
 }
 ```
 
@@ -333,7 +332,7 @@ The following is a list of considerations for a production use case.
 
   ```terraform
   module "eks-jx" {
-    source  = "jenkins-x/eks-jx/aws"
+    source  = "github.com/jenkins-x/terraform-aws-eks-jx"
     version = "1.0.0"
     # insert your configuration
   }
@@ -391,7 +390,7 @@ These values can be adjusted by using the variables `lt_desired_nodes_per_subnet
 
 ```terraform
 module "eks-jx" {
-  source                               = "jenkins-x/eks-jx/aws"
+  source                               = "github.com/jenkins-x/terraform-aws-eks-jx"
   enable_worker_groups_launch_template = true
   allowed_spot_instance_types          = ["m5.large", "m5a.large", "m5d.large", "m5ad.large", "t3.large", "t3a.large"]
   lt_desired_nodes_per_subnet          = 2
@@ -411,7 +410,7 @@ Once you've scaled down to zero nodes for the original worker group, and your wo
 
 ```terraform
 module "eks-jx" {
-  source                               = "jenkins-x/eks-jx/aws"
+  source                               = "github.com/jenkins-x/terraform-aws-eks-jx"
   enable_worker_group                  = false
   enable_worker_groups_launch_template = true
   allowed_spot_instance_types          = ["m5.large", "m5a.large", "m5d.large", "m5ad.large", "t3.large", "t3a.large"]
@@ -433,7 +432,7 @@ In order to provision EKS node groups create a _main.tf_ with the following cont
 
 ```terraform
 module "eks-jx" {
-  source  = "jenkins-x/eks-jx/aws"
+  source  = "github.com/jenkins-x/terraform-aws-eks-jx"
   enable_worker_group = false
 }
 
@@ -450,7 +449,7 @@ A single node group will be created by default when using EKS node groups. Suppl
 
 ```terraform
 module "eks-jx" {
-  source  = "jenkins-x/eks-jx/aws"
+  source  = "github.com/jenkins-x/terraform-aws-eks-jx"
   enable_worker_group = false
   node_groups_managed = {
     node-group-name = {
@@ -484,7 +483,7 @@ resource "aws_launch_template" "foo" {
 }
 
 module "eks-jx" {
-  source  = "jenkins-x/eks-jx/aws"
+  source  = "github.com/jenkins-x/terraform-aws-eks-jx"
   enable_worker_group = false
   node_groups_managed = {
     node-group-name = {
@@ -562,7 +561,7 @@ resource "aws_iam_user" "patrick" {
 }
 
 module "eks-jx" {
-  source  = "jenkins-x/eks-jx/aws"
+  source  = "github.com/jenkins-x/terraform-aws-eks-jx"
   map_users = [
     {
       userarn  = aws_iam_user.patrick.arn
@@ -579,7 +578,7 @@ To map additional roles to the AWS Auth ConfigMap, use `map_roles`:
 
 ```terraform
 module "eks-jx" {
-  source  = "jenkins-x/eks-jx/aws"
+  source  = "github.com/jenkins-x/terraform-aws-eks-jx"
   map_roles = [
     {
       rolearn  = "arn:aws:iam::66666666666:role/role1"
@@ -596,7 +595,7 @@ To map additional accounts to the AWS Auth ConfigMap, use `map_accounts`:
 
 ```terraform
 module "eks-jx" {
-  source  = "jenkins-x/eks-jx/aws"
+  source  = "github.com/jenkins-x/terraform-aws-eks-jx"
   map_accounts = [
     "777777777777",
     "888888888888",
@@ -651,8 +650,8 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.64.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | 3.5.1 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | > 4.0, < 5.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.0 |
 #### Modules
 
 | Name | Source | Version |
@@ -674,7 +673,6 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="requirement_local"></a> [local](#requirement\_local) | ~> 2.0 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | ~> 3.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.0 |
-| <a name="requirement_template"></a> [template](#requirement\_template) | ~> 2.0 |
 #### Inputs
 
 | Name | Description | Type | Default | Required |
@@ -693,7 +691,7 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_cluster_in_private_subnet"></a> [cluster\_in\_private\_subnet](#input\_cluster\_in\_private\_subnet) | Flag to enable installation of cluster on private subnets | `bool` | `false` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Variable to provide your desired name for the cluster. The script will create a random name if this is empty | `string` | `""` | no |
 | <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Kubernetes version to use for the EKS cluster. | `string` | n/a | yes |
-| <a name="input_create_addon_role"></a> [create\_addon\_role](#input\_create\_addon\_role) | Flag to control ebscsi addon iam role creation | `bool` | `true` | no |
+| <a name="input_create_addon_role"></a> [create\_addon\_role](#input\_create\_addon\_role) | Flag to control addon iam roles creation | `bool` | `false` | no |
 | <a name="input_create_and_configure_subdomain"></a> [create\_and\_configure\_subdomain](#input\_create\_and\_configure\_subdomain) | Flag to create an NS record set for the subdomain in the apex domain's Hosted Zone | `bool` | `false` | no |
 | <a name="input_create_asm_role"></a> [create\_asm\_role](#input\_create\_asm\_role) | Flag to control AWS Secrets Manager iam roles creation | `bool` | `false` | no |
 | <a name="input_create_autoscaler_role"></a> [create\_autoscaler\_role](#input\_create\_autoscaler\_role) | Flag to control cluster autoscaler iam role creation | `bool` | `true` | no |
@@ -711,8 +709,9 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_create_velero_role"></a> [create\_velero\_role](#input\_create\_velero\_role) | Flag to control velero iam role creation | `bool` | `true` | no |
 | <a name="input_create_vpc"></a> [create\_vpc](#input\_create\_vpc) | Controls if VPC and related resources should be created. If you have an existing vpc for jx, set it to false | `bool` | `true` | no |
 | <a name="input_desired_node_count"></a> [desired\_node\_count](#input\_desired\_node\_count) | The number of worker nodes to use for the cluster | `number` | `3` | no |
-| <a name="input_enable_acl"></a> [enable\_acl](#input\_enable\_acl) | Flag to enable ACL along with bucket ownership controls for S3 storage | `bool` | `false` | no |
-| <a name="input_ebs_addon_version"></a> [ebs\_addon\_version](#input\_ebs\_addon\_version) | EBS Addon aws-ebs-csi-driver Version | `string` |  `"v1.21.0-ebsbuild.1"`| no |
+| <a name="input_ebs_addon_version"></a> [ebs\_addon\_version](#input\_ebs\_addon\_version) | EBS CSI driver addon (aws-ebs-csi-driver) version | `string` | `"v1.21.0-eksbuild.1"` | no |
+| <a name="input_eks_cluster_tags"></a> [eks\_cluster\_tags](#input\_eks\_cluster\_tags) | Add tags for the EKS Cluster | `map` | `{}` | no |
+| <a name="input_enable_acl"></a> [enable\_acl](#input\_enable\_acl) | Flag to enable ACL instead of bucket ownership for S3 storage | `bool` | `false` | no |
 | <a name="input_enable_backup"></a> [enable\_backup](#input\_enable\_backup) | Whether or not Velero backups should be enabled | `bool` | `false` | no |
 | <a name="input_enable_ebs_addon"></a> [enable\_ebs\_addon](#input\_enable\_ebs\_addon) | Flag to enable or disable EBS CSI driver addon | `bool` | `false` | no |
 | <a name="input_enable_external_dns"></a> [enable\_external\_dns](#input\_enable\_external\_dns) | Flag to enable or disable External DNS in the final `jx-requirements.yml` file | `bool` | `false` | no |
@@ -762,6 +761,7 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_public_subnets"></a> [public\_subnets](#input\_public\_subnets) | The public subnet CIDR block to use in the created VPC | `list(string)` | <pre>[<br>  "10.0.1.0/24",<br>  "10.0.2.0/24",<br>  "10.0.3.0/24"<br>]</pre> | no |
 | <a name="input_region"></a> [region](#input\_region) | The region to create the resources into | `string` | `"us-east-1"` | no |
 | <a name="input_registry"></a> [registry](#input\_registry) | Registry used to store images | `string` | `""` | no |
+| <a name="input_s3_extra_tags"></a> [s3\_extra\_tags](#input\_s3\_extra\_tags) | Add new tags for s3 buckets | `map` | `{}` | no |
 | <a name="input_s3_kms_arn"></a> [s3\_kms\_arn](#input\_s3\_kms\_arn) | ARN of the kms key used for encrypting s3 buckets | `string` | `""` | no |
 | <a name="input_single_nat_gateway"></a> [single\_nat\_gateway](#input\_single\_nat\_gateway) | Should be true if you want to provision a single shared NAT Gateway across all of your private networks | `bool` | `false` | no |
 | <a name="input_spot_price"></a> [spot\_price](#input\_spot\_price) | The spot price ceiling for spot instances | `string` | `"0.1"` | no |
@@ -797,6 +797,7 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="output_cm_cainjector_iam_role"></a> [cm\_cainjector\_iam\_role](#output\_cm\_cainjector\_iam\_role) | The IAM Role that the CM CA Injector pod will assume to authenticate |
 | <a name="output_connect"></a> [connect](#output\_connect) | "The cluster connection string to use once Terraform apply finishes,<br>this command is already executed as part of the apply, you may have to provide the region and<br>profile as environment variables " |
 | <a name="output_controllerbuild_iam_role"></a> [controllerbuild\_iam\_role](#output\_controllerbuild\_iam\_role) | The IAM Role that the ControllerBuild pod will assume to authenticate |
+| <a name="output_ebscsi_addon_iam_role"></a> [ebscsi\_addon\_iam\_role](#output\_ebscsi\_addon\_iam\_role) | The IAM Role that the EBS CSI Driver addon  will assume to authenticate |
 | <a name="output_eks_module"></a> [eks\_module](#output\_eks\_module) | The output of the terraform-aws-modules/eks/aws module for use in terraform |
 | <a name="output_external_dns_iam_role"></a> [external\_dns\_iam\_role](#output\_external\_dns\_iam\_role) | The IAM Role that the External DNS pod will assume to authenticate |
 | <a name="output_jx_requirements"></a> [jx\_requirements](#output\_jx\_requirements) | The jx-requirements rendered output |
