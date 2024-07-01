@@ -34,6 +34,12 @@ variable "vault_url" {
   default     = ""
 }
 
+variable "install_vault" {
+  description = "Whether or not this modules creates and manages the Vault instance. If set to false and use_vault is true either an external Vault URL needs to be provided or you need to install vault operator and instance using helmfile."
+  type        = bool
+  default     = true
+}
+
 // ----------------------------------------------------------------------------
 // Velero/backup
 // ----------------------------------------------------------------------------

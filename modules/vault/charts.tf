@@ -1,5 +1,5 @@
 resource "helm_release" "vault-operator" {
-  count            = local.create_vault_resources ? 1 : 0
+  count            = var.resource_count
   name             = "vault-operator"
   chart            = "vault-operator"
   namespace        = "jx-vault"
@@ -9,7 +9,7 @@ resource "helm_release" "vault-operator" {
 }
 
 resource "helm_release" "vault-instance" {
-  count      = local.create_vault_resources ? 1 : 0
+  count      = var.resource_count
   name       = "vault-instance"
   chart      = "vault-instance"
   namespace  = "jx-vault"
