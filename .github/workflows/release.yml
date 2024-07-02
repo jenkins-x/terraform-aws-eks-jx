@@ -13,7 +13,7 @@ jobs:
         credentials: ${{ format('https://x-access-token:{0}@github.com/', secrets.GIT_BOT_TOKEN) }}
     - id: prep
       name: next release version
-      uses: jenkins-x-plugins/jx-release-version@v2.4.13
+      uses: jenkins-x-plugins/jx-release-version@v2.7.3
     - env:
         VERSION: ${{ steps.prep.outputs.version }}
       run: |
@@ -39,7 +39,7 @@ jobs:
         VERSION: ${{ steps.prep.outputs.version}}
         XDG_CONFIG_HOME: /github/home/.config
       name: updatebot
-      uses: docker://ghcr.io/jenkins-x/jx-updatebot:0.1.3
+      uses: docker://ghcr.io/jenkins-x/jx-updatebot:0.4.22
       with:
         args: pr --git-credentials
 
