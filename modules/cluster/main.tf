@@ -28,7 +28,7 @@ provider "kubernetes" {
 // ----------------------------------------------------------------------------
 module "vpc" {
   source               = "terraform-aws-modules/vpc/aws"
-  version              = "~> 2.70"
+#  version              = "~> 2.70"
   create_vpc           = var.create_vpc
   name                 = var.vpc_name
   cidr                 = var.vpc_cidr_block
