@@ -29,6 +29,19 @@ output "lts_repository_bucket" {
   description = "The bucket that will serve as artifacts repository"
 }
 
+// ----------------------------------------------------------------------------
+// Cluster
+// ----------------------------------------------------------------------------
+
+output "cluster_name" {
+  value       = local.cluster_name
+  description = "The name of the created cluster"
+}
+
+output "cluster_oidc_issuer_url" {
+  value       = module.cluster.cluster_oidc_issuer_url
+  description = "The Cluster OIDC Issuer URL"
+}
 
 // ----------------------------------------------------------------------------
 // Generated IAM Roles
