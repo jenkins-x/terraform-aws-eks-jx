@@ -1,29 +1,3 @@
-output "vpc_id" {
-  value       = var.create_vpc ? module.vpc.vpc_id : var.vpc_id
-  description = "The ID of the VPC"
-}
-
-output "cluster_oidc_issuer_url" {
-  value = local.oidc_provider_url
-}
-
-output "cluster_host" {
-  value = data.aws_eks_cluster.cluster.endpoint
-}
-
-output "cluster_ca_certificate" {
-  value = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
-}
-
-output "cluster_token" {
-  value = data.aws_eks_cluster_auth.cluster.token
-}
-
-output "eks_module" {
-  value       = module.eks
-  description = "The output of the terraform-aws-modules/eks/aws module for use in terraform"
-}
-
 // ----------------------------------------------------------------------------
 // Long Term Storage S3 Buckets (Logs, Reports, Repository)
 // ----------------------------------------------------------------------------
@@ -87,7 +61,18 @@ output "pipeline_viz_iam_role" {
   description = "The IAM Role that the pipeline visualizer pod will assume to authenticate"
 }
 
-output "ebscsi_addon_iam_role" {
-  value       = module.ebs_csi_irsa_role.iam_role_name
-  description = "The IAM Role that the build pods will assume to authenticate"
+output "cluster_oidc_issuer_url" {
+  value = local.oidc_provider_url
+}
+
+output "cluster_host" {
+  value = data.aws_eks_cluster.cluster.endpoint
+}
+
+output "cluster_ca_certificate" {
+  value = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
+}
+
+output "cluster_token" {
+  value = data.aws_eks_cluster_auth.cluster.token
 }
