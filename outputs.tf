@@ -29,30 +29,6 @@ output "lts_repository_bucket" {
   description = "The bucket that will serve as artifacts repository"
 }
 
-// VPC
-
-output "vpc_id" {
-  value       = module.cluster.vpc_id
-  description = "The ID of the VPC"
-}
-
-// ----------------------------------------------------------------------------
-// Cluster
-// ----------------------------------------------------------------------------
-output "cluster_name" {
-  value       = local.cluster_name
-  description = "The name of the created cluster"
-}
-
-output "cluster_oidc_issuer_url" {
-  value       = module.cluster.cluster_oidc_issuer_url
-  description = "The Cluster OIDC Issuer URL"
-}
-
-output "eks_module" {
-  value       = module.cluster.eks_module
-  description = "The output of the terraform-aws-modules/eks/aws module for use in terraform"
-}
 
 // ----------------------------------------------------------------------------
 // Generated IAM Roles
@@ -101,11 +77,6 @@ output "cluster_ssm_iam_role" {
   value       = module.cluster.cluster_ssm_iam_role
   description = "The IAM Role that the External Secrets pod will assume to authenticate (Parameter Store)"
 
-}
-
-output "ebscsi_addon_iam_role" {
-  value       = module.cluster.ebscsi_addon_iam_role
-  description = "The IAM Role that the EBS CSI Driver addon  will assume to authenticate"
 }
 
 // ----------------------------------------------------------------------------

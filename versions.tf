@@ -2,7 +2,7 @@ terraform {
   required_version = ">= 0.12.17, < 2.0.0"
 
   required_providers {
-    aws        = "> 4.0, < 5.0"
+    aws        = "> 4.0"
     kubernetes = "~> 2.0"
     local      = "~> 2.0"
     null       = "~> 3.0"
