@@ -170,13 +170,13 @@ variable "s3_kms_arn" {
 
 variable "s3_extra_tags" {
   description = "Add new tags for s3 buckets"
-  type        = map
+  type        = map(any)
   default     = {}
 }
 
 variable "eks_cluster_tags" {
   description = "Add tags for the EKS Cluster"
-  type        = map
+  type        = map(any)
   default     = {}
 }
 
