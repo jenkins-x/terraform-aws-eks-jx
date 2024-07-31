@@ -59,6 +59,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "backup_bucket" {
 // Setup IAM User and Policies for Velero
 //
 // https://github.com/vmware-tanzu/velero-plugin-for-aws#set-permissions-for-velero
+// https://github.com/vmware-tanzu/velero/issues/3143
 // ----------------------------------------------------------------------------
 resource "aws_iam_user" "velero" {
   count = var.enable_backup ? 1 : 0
