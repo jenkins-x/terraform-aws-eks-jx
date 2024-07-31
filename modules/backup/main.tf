@@ -131,7 +131,7 @@ resource "aws_iam_user_policy" "velero" {
 // ----------------------------------------------------------------------------
 
 resource "kubernetes_secret" "credentials-velero" {
-  count      = var.enable_backup ? 1 : 0
+  count = var.enable_backup ? 1 : 0
   metadata {
     name      = "velero-secret"
     namespace = var.velero_namespace

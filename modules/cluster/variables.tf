@@ -51,13 +51,13 @@ variable "use_kms_s3" {
 
 variable "s3_default_tags" {
   description = "Default tags for s3 buckets"
-  type    = map
-  default = { Owner = "Jenkins-x" }
+  type        = map(any)
+  default     = { Owner = "Jenkins-x" }
 }
 
 variable "s3_extra_tags" {
   description = "Add new tags for s3 buckets"
-  type        = map
+  type        = map(any)
   default     = {}
 }
 
