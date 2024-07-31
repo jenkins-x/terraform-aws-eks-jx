@@ -57,17 +57,9 @@ You need the following binaries locally installed and configured on your _PATH_:
 
 ### Cluster provisioning
 
-A default Jenkins X ready cluster can be provisioned by creating a _main.tf_ file in an empty directory with the following content:
-
-```terraform
-module "eks-jx" {
-  source = "github.com/jenkins-x/terraform-aws-eks-jx"
-}
-
-output "jx_requirements" {
-  value = module.eks-jx.jx_requirements
-}
-```
+A Jenkins X ready cluster can be provisioned using the configuration in
+[jx3-terraform-eks](https://github.com/jx3-gitops-repositories/jx3-terraform-eks) as described in
+https://jenkins-x.io/v3/admin/platforms/eks/.
 
 All s3 buckets created by the module use Server-Side Encryption with Amazon S3-Managed Encryption Keys
 (SSE-S3) by default.
@@ -77,17 +69,9 @@ If you don't specify the value of `s3_kms_arn`, then the default aws managed cmk
 :warning: **Note**: Using AWS KMS with customer managed keys has cost
 [considerations](https://aws.amazon.com/blogs/storage/changing-your-amazon-s3-encryption-from-s3-managed-encryption-sse-s3-to-aws-key-management-service-sse-kms/).
 
-The _jx_requirements_ output is a helper for creating the initial input for `jx boot`.
-
-If you do not want Terraform to create a new IAM user or you do not have permissions to create one, you need to provide the name of an existing IAM user.
-
-```terraform
-module "eks-jx" {
-  source     = "github.com/jenkins-x/terraform-aws-eks-jx"
-}
-```
-
 You should have your [AWS CLI configured correctly](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).
+
+
 
 #### AWS_REGION
 
@@ -108,6 +92,11 @@ This creates an EKS cluster with all possible configuration options defaulted.
 :warning: **Note**: This example is for getting up and running quickly.
 It is not intended for a production cluster.
 Refer to [Production cluster considerations](#production-cluster-considerations) for things to consider when creating a production cluster.
+
+
+### Migrating to current version of module from a version pre 3.0.0
+
+From version 3.0.0 this module creates neither the EKS cluster nor the VPC.  
 
 ### Cluster Autoscaling
 
