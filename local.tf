@@ -22,9 +22,9 @@ locals {
     enable_repository_storage = var.enable_repository_storage
     repository_storage_bucket = length(module.cluster.repository_jenkins_x) > 0 ? module.cluster.repository_jenkins_x[0] : ""
     // Vault
-    vault_url            = var.vault_url
-    external_vault       = local.external_vault
-    use_vault            = var.use_vault
+    vault_url      = var.vault_url
+    external_vault = local.external_vault
+    use_vault      = var.use_vault
     // AWS Secrets Manager
     use_asm = var.use_asm
     // Velero
