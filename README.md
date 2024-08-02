@@ -2,8 +2,6 @@
 
 This repository contains a Terraform module for creating an EKS cluster and all the necessary infrastructure to install Jenkins X as described in https://jenkins-x.io/v3/admin/platforms/eks/.
 
-The module makes use of the [Terraform EKS cluster Module](https://github.com/terraform-aws-modules/terraform-aws-eks).
-
 <!-- TOC -->
 
 - [Jenkins X EKS Module](#jenkins-x-eks-module)
@@ -57,6 +55,11 @@ You need the following binaries locally installed and configured on your _PATH_:
 
 ### Cluster provisioning
 
+From version 3.0.0 this module creates neither the EKS cluster nor the VPC. 
+
+We recommend using the Terraform modules [terraform-aws-modules/eks/aws](https://registry.terraform.io/modules/terraform-aws-modules/eks/aws)
+to create the cluster and [terraform-aws-modules/vpc/aws](https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/) to create the VPC.
+
 A Jenkins X ready cluster can be provisioned using the configuration in
 [jx3-terraform-eks](https://github.com/jx3-gitops-repositories/jx3-terraform-eks) as described in
 https://jenkins-x.io/v3/admin/platforms/eks/.
@@ -94,9 +97,78 @@ It is not intended for a production cluster.
 Refer to [Production cluster considerations](#production-cluster-considerations) for things to consider when creating a production cluster.
 
 
-### Migrating to current version of module from a version pre 3.0.0
+### Migrating to current version of module from a version prior to 3.0.0
 
-From version 3.0.0 this module creates neither the EKS cluster nor the VPC.  
+TODO: Verify that I have covered all of https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1744#issuecomment-1027359982
+
+If you already have created an EKS cluster using a pre 3.0.0 version of this module there is unfortunately no easy 
+way to upgrade without recreating the cluster. If you already create the cluster in some other way and now set 
+`create_eks = false` you only n eed to remove some inputs. I won't cover that much simpler case here.
+
+While it would be a bit easier if you started using the same version of `terraform-aws-modules/eks/aws` as previously used by this module we 
+would advise against that. The reason is that this version is very old and doesn't support a lot of feature currently available with AWS.
+
+Let's say you created your 
+cluster using [an old version of the template](https://github.com/jx3-gitops-repositories/jx3-terraform-eks/tree/451bf5a1a453aca9a384a9f817d8b347e18c4c04) and change 
+your configuration to a [current version](https://github.com/jx3-gitops-repositories/jx3-terraform-eks). If you then run `terraform plan` you will see that basically 
+everything would be destroyed and then created. To mitigate that you can move resources in the terraform state to the new addresses. In some cases there are no 
+corresponding new address, instead you are better off removing resources to avoid that they get destroyed before the new resources are created. This means that you 
+need to remove those cloud resources manually later. You can also tweak configurations to prevent resources from be 
+replaced. If you check the output from `terraform plan` you will see that resources marked as "must be replaced" 
+have one or more inputs with the comment "# forces replacement". If it is a resource that you need to keep to 
+prevent disruption or data loss you should try to tweak the configuration so that the inputs value is reverted to 
+what it was before.
+
+```shell
+terraform state mv module.eks-jx.random_pet.current  random_pet.current # Only needed if cluster_name wasn't specified
+terraform state mv module.eks-jx.module.cluster.module.vpc module.vpc # Only needed if create_vpc wasn't false
+terraform state mv module.eks-jx.module.cluster.module.eks module.eks
+terraform state mv 'module.eks.aws_iam_role.cluster[0]' 'module.eks.aws_iam_role.this[0]'
+
+# If the following two commands fail it is because you are migrating from a version of this module that didn't 
+# create these resource. That is not a problem, but if you have installed the add on in some other way you will 
+# need to issue some other terraform command: either "terraform state mv" command or "terragrunt import"
+terraform state mv 'module.eks-jx.module.cluster.aws_eks_addon.ebs_addon[0]' 'module.eks.aws_eks_addon.this["aws-ebs-csi-driver"]'
+terraform state mv module.eks-jx.module.cluster.module.ebs_csi_irsa_role module.ebs_csi_irsa_role
+
+# Removing the following resources from the state prevent terraform apply from destroying existing node groups and 
+# related resources before new ones are created. But this means that ypu need to delete the resources manually later.  
+terraform state rm module.eks.module.node_groups 
+terraform state rm 'module.eks.aws_iam_role_policy_attachment.workers_AmazonEC2ContainerRegistryReadOnly[0]' 'module.eks.aws_iam_role_policy_attachment.workers_AmazonEKSWorkerNodePolicy[0]' 'module.eks.aws_iam_role_policy_attachment.workers_AmazonEKS_CNI_Policy[0]'
+terraform state rm 'module.eks.aws_security_group.workers[0]'  'module.eks.aws_iam_role.workers[0]'
+terraform state rm $(terraform state list | grep aws_security_group_rule.workers)
+terraform state rm $(terraform state list | grep aws_security_group_rule.cluster) 
+```
+
+In main.tf some tweaks are needed. Add the following inputs to the module eks
+```hcl
+  prefix_separator                   = ""
+  iam_role_name                      = local.cluster_name
+  cluster_security_group_name        = local.cluster_name
+  cluster_security_group_description = "EKS cluster security group."
+```
+
+
+#### Cluster add ons
+
+If you already create cluster addons with terraform you can either remove the corresponding addon from the 
+`cluster_addons` input of the eks module or use `terraform state mv` to  change the address in the state file and 
+thus prevent destroying and creating the add-on. 
+
+#### aws-auth config map
+
+If you have configured the config map aws-auth by setting any of the inputs `map_accounts`, `map_roles` or 
+`map_users` you will need to either configure aws-auth ins some other way, see https://registry.terraform.
+io/modules/terraform-aws-modules/eks/aws/20.20.0/submodules/aws-auth or switch to using access entries.
+See the documentation for the input `access_entries` in [terraform-aws-modules/eks/aws](https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest) and the 
+[AWS documentation](https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html).
+
+If you keep aws-auth you should remove the old configuration, so the config map isn't deleted temporarily during 
+`terraform apply`:
+
+```shell
+terraform state rm 'module.eks.kubernetes_config_map.aws_auth[0]'
+```
 
 ### Cluster Autoscaling
 
@@ -137,6 +209,8 @@ image:
 Notice the image tag is `v1.19.1` - this tag goes with clusters running Kubernetes 1.19.
 If you are running 1.20, 1.21, etc, you will need to find the image tag that matches your cluster version.
 To see available tags, visit [this GCR registry](https://console.cloud.google.com/gcr/images/k8s-artifacts-prod/US/autoscaling/cluster-autoscaler?gcrImageListsize=30)
+
+TODO: Change to helmfile
 
 Next, you'll need to fetch the chart, apply your values using `helm template` and then apply the resulting Kubernetes object to your cluster.
 
