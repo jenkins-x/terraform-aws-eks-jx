@@ -12,8 +12,6 @@ provider "kubernetes" {
   host                   = data.aws_eks_cluster.cluster.endpoint
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority[0].data)
   token                  = data.aws_eks_cluster_auth.cluster.token
-  load_config_file       = false
-  version                = "~> 1.11"
 }
 
 // This will create a vpc using the official vpc module
@@ -47,7 +45,7 @@ module "vpc" {
 // This will create the eks cluster using the official eks module
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
-  version         = "12.20.0"
+  version         = "20.20.0"
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
   subnets         = (var.cluster_in_private_subnet ? module.vpc.private_subnets : module.vpc.public_subnets)
@@ -56,7 +54,7 @@ module "eks" {
 
   eks_managed_node_groups = {
     eks-jx-node-group = {
-      ami_type     = var.node_group_ami
+      ami_type     = var.ami_type
       desired_size = var.desired_node_count
       max_size     = var.max_node_count
       min_size     = var.min_node_count
@@ -107,10 +105,13 @@ module "eks-jx" {
   region    = var.region
   use_vault = var.use_vault
   use_asm   = var.use_asm
+  create_asm_role = var.use_asm
 
   jx_git_url      = var.jx_git_url
   jx_bot_username = var.jx_bot_username
   jx_bot_token    = var.jx_bot_token
+
+  nginx_chart_version = var.nginx_chart_version
 
   enable_repository_storage = var.enable_repository_storage
   enable_reports_storage    = var.enable_reports_storage

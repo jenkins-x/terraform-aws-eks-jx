@@ -34,7 +34,7 @@ output "lts_repository_bucket" {
 // ----------------------------------------------------------------------------
 
 output "cluster_name" {
-  value       = local.cluster_name
+  value       = var.cluster_name
   description = "The name of the created cluster"
 }
 

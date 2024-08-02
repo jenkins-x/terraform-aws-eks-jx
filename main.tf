@@ -14,14 +14,7 @@ resource "random_string" "suffix" {
   special = false
 }
 
-resource "random_pet" "current" {
-  prefix    = "tf-jx"
-  separator = "-"
-  keepers = {
-    # Keep the name consistent on executions
-    cluster_name = var.cluster_name
-  }
-}
+
 
 data "aws_caller_identity" "current" {}
 
@@ -35,7 +28,7 @@ module "cluster" {
   region                             = var.region
   vpc_id                             = var.vpc_id
   subnets                            = var.subnets
-  cluster_name                       = local.cluster_name
+  cluster_name                       = var.cluster_name
   force_destroy                      = var.force_destroy
   use_kms_s3                         = var.use_kms_s3
   s3_kms_arn                         = var.s3_kms_arn
@@ -85,7 +78,7 @@ module "backup" {
   source = "./modules/backup"
 
   enable_backup      = var.enable_backup
-  cluster_name       = local.cluster_name
+  cluster_name       = var.cluster_name
   force_destroy      = var.force_destroy
   velero_username    = var.velero_username
   create_velero_role = var.create_velero_role
