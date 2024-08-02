@@ -1,5 +1,4 @@
 locals {
-  cluster_name      = var.cluster_name != "" ? var.cluster_name : random_pet.current.id
   generated_seed    = random_string.suffix.result
   oidc_provider_url = module.cluster.cluster_oidc_issuer_url
   external_vault    = var.vault_url != "" ? true : false
@@ -12,7 +11,7 @@ locals {
   // ----------------------------------------------------------------------------
 
   interpolated_content = templatefile("${path.module}/templates/jx-requirements.yml.tpl", {
-    cluster_name = local.cluster_name
+    cluster_name = var.cluster_name
     region       = var.region
     // Storage Buckets
     enable_logs_storage       = var.enable_logs_storage

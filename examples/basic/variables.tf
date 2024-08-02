@@ -27,7 +27,7 @@ variable "max_node_count" {
 
 variable "node_machine_type" {
   type    = string
-  default = "m5.large"
+  default = "m6i.large"
 }
 
 # VPC
@@ -61,7 +61,7 @@ variable "single_nat_gateway" {
   default = false
 }
 
-variable "node_group_ami" {
+variable "ami_type" {
   description = "ami type for the node group worker intances"
   type        = string
   default     = "AL2023_x86_64_STANDARD"
@@ -169,3 +169,8 @@ variable "use_asm" {
   default = true
 }
 
+variable "nginx_chart_version" {
+  type        = string
+  description = "nginx chart version"
+  default     = "3.12.0"
+}
