@@ -1,5 +1,4 @@
 locals {
-  cluster_name      = var.cluster_name != "" ? var.cluster_name : random_pet.current.id
   generated_seed    = random_string.suffix.result
   oidc_provider_url = module.cluster.cluster_oidc_issuer_url
   external_vault    = var.vault_url != "" ? true : false
@@ -12,7 +11,7 @@ locals {
   // ----------------------------------------------------------------------------
 
   interpolated_content = templatefile("${path.module}/templates/jx-requirements.yml.tpl", {
-    cluster_name = local.cluster_name
+    cluster_name = var.cluster_name
     region       = var.region
     // Storage Buckets
     enable_logs_storage       = var.enable_logs_storage
@@ -22,9 +21,9 @@ locals {
     enable_repository_storage = var.enable_repository_storage
     repository_storage_bucket = length(module.cluster.repository_jenkins_x) > 0 ? module.cluster.repository_jenkins_x[0] : ""
     // Vault
-    vault_url            = var.vault_url
-    external_vault       = local.external_vault
-    use_vault            = var.use_vault
+    vault_url      = var.vault_url
+    external_vault = local.external_vault
+    use_vault      = var.use_vault
     // AWS Secrets Manager
     use_asm = var.use_asm
     // Velero

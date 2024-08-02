@@ -11,8 +11,4 @@ resource "kubernetes_secret" "tls" {
   }
 
   type = "kubernetes.io/tls"
-
-  depends_on = [
-    module.eks
-  ]
 }

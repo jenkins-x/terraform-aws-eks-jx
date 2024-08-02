@@ -47,6 +47,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "backup_bucket" {
 // Setup IAM User and Policies for Velero
 //
 // https://github.com/vmware-tanzu/velero-plugin-for-aws#set-permissions-for-velero
+// https://github.com/vmware-tanzu/velero/issues/3143
 // ----------------------------------------------------------------------------
 resource "aws_iam_user" "velero" {
   count = var.enable_backup ? 1 : 0
@@ -119,7 +120,7 @@ resource "aws_iam_user_policy" "velero" {
 // ----------------------------------------------------------------------------
 
 resource "kubernetes_secret" "credentials-velero" {
-  count      = var.enable_backup ? 1 : 0
+  count = var.enable_backup ? 1 : 0
   metadata {
     name      = "velero-secret"
     namespace = var.velero_namespace
