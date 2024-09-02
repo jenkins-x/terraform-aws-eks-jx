@@ -31,7 +31,6 @@ This repository contains a Terraform module for creating an EKS cluster and all 
   - [FAQ: Frequently Asked Questions](#faq-frequently-asked-questions)
     - [IAM Roles for Service Accounts](#iam-roles-for-service-accounts)
   - [Development](#development)
-    - [Releasing](#releasing)
   - [How can I contribute](#how-can-i-contribute)
 
 <!-- /TOC -->
@@ -173,56 +172,42 @@ terraform state rm 'module.eks.kubernetes_config_map.aws_auth[0]'
 ### Cluster Autoscaling
 
 This does not automatically install cluster-autoscaler, it installs all of the prerequisite policies and roles required to install autoscaler.
-The actual autoscaler installation varies depending on what version of kubernetes you are using.
 
-To install cluster autoscaler, first you will need the ARN of the cluster-autoscaler role.
+Create a pull request for your cluster repository the changes created by the following command (with the root of 
+your cluster repo as current directory):
 
-You can create the following output along side your module definition to find this:
-
-```terraform
-output "cluster_autoscaler_iam_role_arn" {
-  value = module.eks-jx.cluster_autoscaler_iam_role.this_iam_role_arn
-}
+```shell
+jx gitops helmfile add --chart  autoscaler/cluster-autoscaler --repository https://kubernetes.github.io/autoscaler  --namespace kube-system
 ```
 
-With the ARN, you may now install the cluster autoscaler using Helm.
-
-Create the file `cluster-autoscaler-values.yaml` with the following content:
+In the file kube-system/helmfile.yaml you should now configure a version of cluster autoscaler suitable for your 
+version of Kubernetes by adding `values` for the chart:
 
 ```yaml
-awsRegion: us-east-1
-
-rbac:
-  serviceAccount:
-    name: cluster-autoscaler
-    annotations:
-      eks.amazonaws.com/role-arn: "arn:aws:iam::12345678910:role/tf-your-cluster-name-cluster-autoscaler"
-
-autoDiscovery:
-  clusterName: your-cluster-name
-
-image:
-  repository: us.gcr.io/k8s-artifacts-prod/autoscaling/cluster-autoscaler
-  tag: v1.19.1
+- chart: autoscaler/cluster-autoscaler
+  values:
+  - image:
+      tag: v1.30.0
 ```
 
-Notice the image tag is `v1.19.1` - this tag goes with clusters running Kubernetes 1.19.
-If you are running 1.20, 1.21, etc, you will need to find the image tag that matches your cluster version.
-To see available tags, visit [this GCR registry](https://console.cloud.google.com/gcr/images/k8s-artifacts-prod/US/autoscaling/cluster-autoscaler?gcrImageListsize=30)
+Notice the image tag is `v1.30.0` - this tag goes with clusters running Kubernetes 1.30.
+If you are running another version, you will need to find the image tag that matches your cluster version.
 
-TODO: Change to helmfile
+Open the [Cluster Autoscaler releases page](https://github.com/kubernetes/autoscaler/releases) and find the latest Cluster Autoscaler version that 
+matches your cluster's Kubernetes major and minor version. For example, if your cluster's Kubernetes version is 1.29 
+find the latest Cluster Autoscaler release that begins with 1.29. Use the semantic version number (1.29.3 for 
+example) for that release to form the tag.
 
-Next, you'll need to fetch the chart, apply your values using `helm template` and then apply the resulting Kubernetes object to your cluster.
+Other values to configure for the chart (apart from `image.tag`) can be seen in the [documentation](https://github.com/kubernetes/autoscaler/tree/master/charts/cluster-autoscaler#values).
 
-```
-helm fetch stable/cluster-autoscaler --untar
-```
+The verify pipeline for the cluster repository will add some default values to `helmfile.yaml`. When this is done 
+the PR can be merged by approving it.
 
-And then
-
-```
-helm template --name cluster-autoscaler --namespace kube-system ./cluster-autoscaler -f ./cluster-autoscaler-values.yaml | kubectl apply -n kube-system -f -
-```
+:warning: **Note**: If you later on remove `helmfiles/kube-system/helmfile.yaml` from the root `helmfiles.yaml` the 
+jx boot job will try to remove the kube-system namespace, which would make the Kubernetes cluster 
+non-functional. To prevent this you would need to remove the label `gitops.jenkins-x.io/pipeline` from the 
+kube-system namespace (i.e. run `kubectl label ns kube-system gitops.jenkins-x.io/pipeline-`) before the change to 
+the root `helmfiles.yaml`.
 
 ### Long Term Storage
 
