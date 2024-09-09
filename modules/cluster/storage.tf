@@ -46,7 +46,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "logs_jenkins_x" {
 
 resource "aws_s3_bucket_lifecycle_configuration" "logs_jenkins_x" {
   count  = var.enable_logs_storage ? 1 : 0
-  bucket   = aws_s3_bucket.logs_jenkins_x.id
+  bucket   = aws_s3_bucket.logs_jenkins_x[0].id
   rule {
     status = "Enabled"
     id     = "abort_incomplete_uploads"
@@ -95,7 +95,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "reports_jenkins_x
 
 resource "aws_s3_bucket_lifecycle_configuration" "reports_jenkins_x" {
   count  = var.enable_reports_storage ? 1 : 0
-  bucket   = aws_s3_bucket.reports_jenkins_x.id
+  bucket   = aws_s3_bucket.reports_jenkins_x[0].id
   rule {
     status = "Enabled"
     id     = "abort_incomplete_uploads"
@@ -145,7 +145,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "repository_jenkin
 
 resource "aws_s3_bucket_lifecycle_configuration" "repository_jenkins_x" {
   count  = var.enable_repository_storage ? 1 : 0
-  bucket   = aws_s3_bucket.repository_jenkins_x.id
+  bucket   = aws_s3_bucket.repository_jenkins_x[0].id
   rule {
     status = "Enabled"
     id     = "abort_incomplete_uploads"
