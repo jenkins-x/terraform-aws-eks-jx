@@ -44,6 +44,18 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "logs_jenkins_x" {
   }
 }
 
+resource "aws_s3_bucket_lifecycle_configuration" "logs_jenkins_x" {
+  count  = var.enable_logs_storage ? 1 : 0
+  bucket   = aws_s3_bucket.logs_jenkins_x.id
+  rule {
+    status = "Enabled"
+    id     = "abort_incomplete_uploads"
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 7
+    }
+  }
+}
+
 // ---------------------------------
 // Configuration for reports bucket
 // ---------------------------------
@@ -77,6 +89,18 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "reports_jenkins_x
     apply_server_side_encryption_by_default {
       sse_algorithm     = local.encryption_algo
       kms_master_key_id = var.s3_kms_arn
+    }
+  }
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "reports_jenkins_x" {
+  count  = var.enable_reports_storage ? 1 : 0
+  bucket   = aws_s3_bucket.reports_jenkins_x.id
+  rule {
+    status = "Enabled"
+    id     = "abort_incomplete_uploads"
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 7
     }
   }
 }
@@ -115,6 +139,18 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "repository_jenkin
     apply_server_side_encryption_by_default {
       sse_algorithm     = local.encryption_algo
       kms_master_key_id = var.s3_kms_arn
+    }
+  }
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "repository_jenkins_x" {
+  count  = var.enable_repository_storage ? 1 : 0
+  bucket   = aws_s3_bucket.repository_jenkins_x.id
+  rule {
+    status = "Enabled"
+    id     = "abort_incomplete_uploads"
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 7
     }
   }
 }
