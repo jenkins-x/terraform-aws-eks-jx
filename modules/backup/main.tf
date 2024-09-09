@@ -45,7 +45,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "backup_bucket" {
 
 resource "aws_s3_bucket_lifecycle_configuration" "backup_bucket" {
   count  = var.enable_backup ? 1 : 0
-  bucket   = aws_s3_bucket.backup_bucket.id
+  bucket   = aws_s3_bucket.backup_bucket[0].id
   rule {
     status = "Enabled"
     id     = "abort_incomplete_uploads"
