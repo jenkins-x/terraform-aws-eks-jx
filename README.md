@@ -10,6 +10,7 @@ This repository contains a Terraform module for creating an EKS cluster and all 
     - [Prerequisites](#prerequisites)
     - [Cluster provisioning](#cluster-provisioning)
       - [AWS_REGION](#aws_region)
+    - [Migrating to current version of module from a version prior to 3.0.0](#migrating-to-current-version-of-module-from-a-version-prior-to-300)
     - [Cluster Autoscaling](#cluster-autoscaling)
     - [Long Term Storage](#long-term-storage)
     - [Secrets Management](#secrets-management)
@@ -30,7 +31,6 @@ This repository contains a Terraform module for creating an EKS cluster and all 
       - [Outputs](#outputs)
   - [FAQ: Frequently Asked Questions](#faq-frequently-asked-questions)
     - [IAM Roles for Service Accounts](#iam-roles-for-service-accounts)
-  - [Development](#development)
   - [How can I contribute](#how-can-i-contribute)
 
 <!-- /TOC -->
@@ -97,8 +97,6 @@ Refer to [Production cluster considerations](#production-cluster-considerations)
 
 
 ### Migrating to current version of module from a version prior to 3.0.0
-
-TODO: Verify that I have covered all of https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1744#issuecomment-1027359982
 
 If you already have created an EKS cluster using a pre 3.0.0 version of this module there is unfortunately no easy 
 way to upgrade without recreating the cluster. If you already create the cluster in some other way and now set 
@@ -531,8 +529,6 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 This module sets up a series of IAM Policies and Roles. These roles will be annotated into a few Kubernetes Service accounts.
 This allows us to make use of [IAM Roles for Sercive Accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) to set fine-grained permissions on a pod per pod basis.
 There is no way to provide your own roles or define other Service Accounts by variables, but you can always modify the `modules/cluster/irsa.tf` Terraform file.
-
-## Development
 
 ## How can I contribute
 
