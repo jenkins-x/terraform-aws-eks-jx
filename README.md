@@ -406,8 +406,8 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | > 4.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.60.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.6.2 |
 #### Modules
 
 | Name | Source | Version |
@@ -438,7 +438,7 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_asm_role"></a> [asm\_role](#input\_asm\_role) | DEPRECATED: Use the new bot\_iam\_role input with he same semantics instead. | `string` | `""` | no |
 | <a name="input_boot_iam_role"></a> [boot\_iam\_role](#input\_boot\_iam\_role) | Specify arn of the role to apply to the boot job service account | `string` | `""` | no |
 | <a name="input_boot_secrets"></a> [boot\_secrets](#input\_boot\_secrets) | n/a | <pre>list(object({<br>    name  = string<br>    value = string<br>    type  = string<br>  }))</pre> | `[]` | no |
-| <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Variable to provide your desired name for the cluster. The script will create a random name if this is empty | `string` | `""` | no |
+| <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Variable to provide your desired name for the cluster | `string` | n/a | yes |
 | <a name="input_create_and_configure_subdomain"></a> [create\_and\_configure\_subdomain](#input\_create\_and\_configure\_subdomain) | Flag to create an NS record set for the subdomain in the apex domain's Hosted Zone | `bool` | `false` | no |
 | <a name="input_create_asm_role"></a> [create\_asm\_role](#input\_create\_asm\_role) | Flag to control AWS Secrets Manager iam roles creation | `bool` | `false` | no |
 | <a name="input_create_autoscaler_role"></a> [create\_autoscaler\_role](#input\_create\_autoscaler\_role) | Flag to control cluster autoscaler iam role creation | `bool` | `true` | no |
@@ -453,7 +453,7 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_create_ssm_role"></a> [create\_ssm\_role](#input\_create\_ssm\_role) | Flag to control AWS Parameter Store iam roles creation | `bool` | `false` | no |
 | <a name="input_create_tekton_role"></a> [create\_tekton\_role](#input\_create\_tekton\_role) | Flag to control tekton iam role creation | `bool` | `true` | no |
 | <a name="input_create_velero_role"></a> [create\_velero\_role](#input\_create\_velero\_role) | Flag to control velero iam role creation | `bool` | `true` | no |
-| <a name="input_eks_cluster_tags"></a> [eks\_cluster\_tags](#input\_eks\_cluster\_tags) | Add tags for the EKS Cluster | `map` | `{}` | no |
+| <a name="input_eks_cluster_tags"></a> [eks\_cluster\_tags](#input\_eks\_cluster\_tags) | Add tags for the EKS Cluster | `map(any)` | `{}` | no |
 | <a name="input_enable_acl"></a> [enable\_acl](#input\_enable\_acl) | Flag to enable ACL instead of bucket ownership for S3 storage | `bool` | `false` | no |
 | <a name="input_enable_backup"></a> [enable\_backup](#input\_enable\_backup) | Whether or not Velero backups should be enabled | `bool` | `false` | no |
 | <a name="input_enable_external_dns"></a> [enable\_external\_dns](#input\_enable\_external\_dns) | Flag to enable or disable External DNS in the final `jx-requirements.yml` file | `bool` | `false` | no |
@@ -482,7 +482,7 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_profile"></a> [profile](#input\_profile) | The AWS Profile used to provision the EKS Cluster | `string` | `null` | no |
 | <a name="input_region"></a> [region](#input\_region) | The region to create the resources into | `string` | `"us-east-1"` | no |
 | <a name="input_registry"></a> [registry](#input\_registry) | Registry used to store images | `string` | `""` | no |
-| <a name="input_s3_extra_tags"></a> [s3\_extra\_tags](#input\_s3\_extra\_tags) | Add new tags for s3 buckets | `map` | `{}` | no |
+| <a name="input_s3_extra_tags"></a> [s3\_extra\_tags](#input\_s3\_extra\_tags) | Add new tags for s3 buckets | `map(any)` | `{}` | no |
 | <a name="input_s3_kms_arn"></a> [s3\_kms\_arn](#input\_s3\_kms\_arn) | ARN of the kms key used for encrypting s3 buckets | `string` | `""` | no |
 | <a name="input_subdomain"></a> [subdomain](#input\_subdomain) | The subdomain to be added to the apex domain. If subdomain is set, it will be appended to the apex domain in  `jx-requirements-eks.yml` file | `string` | `""` | no |
 | <a name="input_subnets"></a> [subnets](#input\_subnets) | The subnet ids to create EKS cluster in if create\_vpc is false | `list(string)` | `[]` | no |
