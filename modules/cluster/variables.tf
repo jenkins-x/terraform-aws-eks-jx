@@ -21,6 +21,12 @@ variable "enable_logs_storage" {
   default = true
 }
 
+variable "expire_logs_after_day" {
+  description = "Number of days objects in the logs bucket are stored"
+  type = number
+  default = 90
+}
+
 variable "enable_worker_group" {
   description = "Flag to enable worker group. Setting this to false will provision a node group instead"
   type        = bool

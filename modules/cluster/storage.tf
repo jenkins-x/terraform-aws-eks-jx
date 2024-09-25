@@ -54,6 +54,14 @@ resource "aws_s3_bucket_lifecycle_configuration" "logs_jenkins_x" {
       days_after_initiation = 7
     }
   }
+  rule {
+    status = "Enabled"
+    id     = "delete_old"
+    expiration {
+      expired_object_delete_marker = false
+      days = var.expire_logs_after_days
+    }
+  }
 }
 
 // ---------------------------------

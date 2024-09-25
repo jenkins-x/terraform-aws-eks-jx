@@ -54,6 +54,7 @@ module "cluster" {
   local-exec-interpreter             = var.local-exec-interpreter
   profile                            = var.profile
   enable_logs_storage                = var.enable_logs_storage
+  expire_logs_after_days             = var.expire_logs_after_days
   enable_reports_storage             = var.enable_reports_storage
   enable_repository_storage          = var.enable_repository_storage
   boot_secrets                       = var.boot_secrets
