@@ -97,6 +97,12 @@ variable "enable_logs_storage" {
   default     = true
 }
 
+variable "expire_logs_after_days" {
+  description = "Number of days objects in the logs bucket are stored"
+  type = number
+  default = 90
+}
+
 variable "enable_reports_storage" {
   description = "Flag to enable or disable long term storage for reports"
   type        = bool
