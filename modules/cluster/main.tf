@@ -1,24 +1,4 @@
-// ----------------------------------------------------------------------------
-// Query necessary data for the module
-// ----------------------------------------------------------------------------
-data "aws_eks_cluster" "cluster" {
-  name = var.cluster_name
-}
-
-data "aws_eks_cluster_auth" "cluster" {
-  name = var.cluster_name
-}
-
 data "aws_caller_identity" "current" {}
-
-// ----------------------------------------------------------------------------
-// Define K8s cluster configuration
-// ----------------------------------------------------------------------------
-provider "kubernetes" {
-  host                   = data.aws_eks_cluster.cluster.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
-  token                  = data.aws_eks_cluster_auth.cluster.token
-}
 
 // ----------------------------------------------------------------------------
 // Update the kube configuration after the cluster has been created so we can
@@ -26,7 +6,7 @@ provider "kubernetes" {
 // ----------------------------------------------------------------------------
 resource "null_resource" "kubeconfig" {
   provisioner "local-exec" {
-    command     = "aws eks update-kubeconfig --name ${var.cluster_name} --region=${var.region} ${var.profile == null ? "" : format("--profile=%s", var.profile)}"
+    command     = "aws eks update-kubeconfig --name ${var.cluster_name} --region=${var.region}"
     interpreter = var.local-exec-interpreter
   }
 }

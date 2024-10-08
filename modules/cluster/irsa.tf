@@ -42,7 +42,7 @@ module "iam_assumable_role_tekton_bot" {
   version                       = "~> v3.8.0"
   create_role                   = var.create_tekton_role
   role_name                     = "${local.cluster_trunc}-tekton-bot"
-  provider_url                  = local.oidc_provider_url
+  provider_url                  = var.cluster_oidc_issuer_url
   role_policy_arns              = var.create_tekton_role ? concat([aws_iam_policy.tekton-bot[0].arn], var.additional_tekton_role_policy_arns) : [""]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.jenkins-x-namespace}:tekton-bot"]
 }
@@ -78,7 +78,7 @@ module "iam_assumable_role_external_dns" {
   version                       = "~> v3.8.0"
   create_role                   = var.create_exdns_role
   role_name                     = "${local.cluster_trunc}-external-dns"
-  provider_url                  = local.oidc_provider_url
+  provider_url                  = var.cluster_oidc_issuer_url
   role_policy_arns              = [var.create_exdns_role ? aws_iam_policy.external-dns[0].arn : ""]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.jenkins-x-namespace}:external-dns"]
 }
@@ -120,7 +120,7 @@ module "iam_assumable_role_cert_manager" {
   version                       = "~> v3.8.0"
   create_role                   = var.create_cm_role
   role_name                     = "${local.cluster_trunc}-cert-manager-cert-manager"
-  provider_url                  = local.oidc_provider_url
+  provider_url                  = var.cluster_oidc_issuer_url
   role_policy_arns              = [var.create_cm_role ? aws_iam_policy.cert-manager[0].arn : ""]
   oidc_fully_qualified_subjects = ["system:serviceaccount:cert-manager:cert-manager"]
 }
@@ -132,7 +132,7 @@ module "iam_assumable_role_cm_cainjector" {
   version                       = "~> v3.8.0"
   create_role                   = var.create_cmcainjector_role
   role_name                     = "${local.cluster_trunc}-cert-manager-cert-manager-cainjector"
-  provider_url                  = local.oidc_provider_url
+  provider_url                  = var.cluster_oidc_issuer_url
   role_policy_arns              = [var.create_cmcainjector_role ? aws_iam_policy.cert-manager[0].arn : ""]
   oidc_fully_qualified_subjects = ["system:serviceaccount:cert-manager:cert-manager-cainjector"]
 }
@@ -144,7 +144,7 @@ module "iam_assumable_role_controllerbuild" {
   version                       = "~> v3.8.0"
   create_role                   = var.create_ctrlb_role
   role_name                     = "${local.cluster_trunc}-build-ctrl"
-  provider_url                  = local.oidc_provider_url
+  provider_url                  = var.cluster_oidc_issuer_url
   role_policy_arns              = ["arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonS3FullAccess"]
   oidc_fully_qualified_subjects = ["system:serviceaccount:jx:jenkins-x-controllerbuild"]
 }
@@ -158,7 +158,7 @@ module "iam_assumable_role_cluster_autoscaler" {
   version                       = "~> v3.8.0"
   create_role                   = var.create_autoscaler_role
   role_name                     = "${local.cluster_trunc}-cluster-autoscaler-cluster-autoscaler"
-  provider_url                  = local.oidc_provider_url
+  provider_url                  = var.cluster_oidc_issuer_url
   role_policy_arns              = [var.create_autoscaler_role ? aws_iam_policy.cluster_autoscaler[0].arn : ""]
   oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:cluster-autoscaler"]
 }
@@ -243,7 +243,7 @@ module "iam_assumable_role_pipeline_visualizer" {
   version                       = "~> v3.8.0"
   create_role                   = var.create_pipeline_vis_role && length(aws_s3_bucket.logs_jenkins_x) > 0
   role_name                     = "${local.cluster_trunc}-jx-pipelines-visualizer"
-  provider_url                  = local.oidc_provider_url
+  provider_url                  = var.cluster_oidc_issuer_url
   role_policy_arns              = [var.create_pipeline_vis_role && length(aws_s3_bucket.logs_jenkins_x) > 0 ? aws_iam_policy.pipeline-visualizer[0].arn : ""]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.jenkins-x-namespace}:jx-pipelines-visualizer"]
 }
@@ -273,7 +273,7 @@ module "iam_assumable_role_bucketrepo" {
   version                       = "~> v3.8.0"
   create_role                   = var.create_bucketrepo_role && length(aws_s3_bucket.repository_jenkins_x) > 0
   role_name                     = "${local.cluster_trunc}-jx-bucketrepo"
-  provider_url                  = local.oidc_provider_url
+  provider_url                  = var.cluster_oidc_issuer_url
   role_policy_arns              = [var.create_bucketrepo_role && length(aws_s3_bucket.repository_jenkins_x) > 0 ? aws_iam_policy.bucketrepo[0].arn : ""]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.jenkins-x-namespace}:bucketrepo-bucketrepo"]
 }
@@ -319,7 +319,7 @@ module "iam_assumable_role_secrets-secrets-manager" {
   version                       = "~> v3.8.0"
   create_role                   = var.create_asm_role
   role_name                     = "${local.cluster_trunc}-external-secrets-secrets-manager"
-  provider_url                  = local.oidc_provider_url
+  provider_url                  = var.cluster_oidc_issuer_url
   role_policy_arns              = [var.create_asm_role ? aws_iam_policy.secrets-manager[0].arn : ""]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.secret-infra-namespace}:kubernetes-external-secrets", "system:serviceaccount:${local.git-operator-namespace}:jx-boot-job"]
 }
@@ -360,7 +360,7 @@ module "iam_assumable_role_secrets-system-manager" {
   version                       = "~> v3.8.0"
   create_role                   = var.create_ssm_role
   role_name                     = "${local.cluster_trunc}-external-secrets-system-manager"
-  provider_url                  = local.oidc_provider_url
+  provider_url                  = var.cluster_oidc_issuer_url
   role_policy_arns              = [var.create_ssm_role ? aws_iam_policy.system-manager[0].arn : ""]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.secret-infra-namespace}:kubernetes-external-secrets"]
 }

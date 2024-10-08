@@ -1,21 +1,3 @@
-// ----------------------------------------------------------------------------
-// Configure providers
-// ----------------------------------------------------------------------------
-provider "helm" {
-  kubernetes {
-    host                   = module.cluster.cluster_host
-    cluster_ca_certificate = module.cluster.cluster_ca_certificate
-    token                  = module.cluster.cluster_token
-  }
-}
-
-resource "random_string" "suffix" {
-  length  = 8
-  special = false
-}
-
-
-
 data "aws_caller_identity" "current" {}
 
 // ----------------------------------------------------------------------------
@@ -52,7 +34,6 @@ module "cluster" {
   tls_cert                           = var.tls_cert
   tls_key                            = var.tls_key
   local-exec-interpreter             = var.local-exec-interpreter
-  profile                            = var.profile
   enable_logs_storage                = var.enable_logs_storage
   expire_logs_after_days             = var.expire_logs_after_days
   enable_reports_storage             = var.enable_reports_storage
@@ -61,6 +42,7 @@ module "cluster" {
   use_asm                            = var.use_asm
   boot_iam_role                      = "${var.asm_role}${var.boot_iam_role}"
   enable_acl                         = var.enable_acl
+  cluster_oidc_issuer_url            = var.cluster_oidc_issuer_url
 }
 
 // ----------------------------------------------------------------------------

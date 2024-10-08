@@ -8,11 +8,11 @@ variable "cluster_name" {
   type = string
 }
 
-variable "profile" {
-  description = "The AWS Profile used to provision the EKS Cluster"
+variable "cluster_oidc_issuer_url" {
+  description = "The oidc provider url for the clustrer"
   type        = string
-  default     = null
 }
+
 // ----------------------------------------------------------------------------
 // Flag Variables
 // ----------------------------------------------------------------------------
@@ -23,8 +23,8 @@ variable "enable_logs_storage" {
 
 variable "expire_logs_after_days" {
   description = "Number of days objects in the logs bucket are stored"
-  type = number
-  default = 90
+  type        = number
+  default     = 90
 }
 
 variable "enable_worker_group" {
