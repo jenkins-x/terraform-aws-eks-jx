@@ -21,7 +21,7 @@ variable "enable_logs_storage" {
   default = true
 }
 
-variable "expire_logs_after_day" {
+variable "expire_logs_after_days" {
   description = "Number of days objects in the logs bucket are stored"
   type = number
   default = 90
