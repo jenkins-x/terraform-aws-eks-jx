@@ -407,7 +407,6 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 5.60.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | 3.6.2 |
 #### Modules
 
 | Name | Source | Version |
@@ -422,13 +421,11 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.12.17, < 2.0.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.0, < 2.0.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | > 4.0 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | ~> 2.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~> 2.0 |
-| <a name="requirement_local"></a> [local](#requirement\_local) | ~> 2.0 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | ~> 3.0 |
-| <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.0 |
 #### Inputs
 
 | Name | Description | Type | Default | Required |
@@ -437,8 +434,9 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_apex_domain"></a> [apex\_domain](#input\_apex\_domain) | The main domain to either use directly or to configure a subdomain from | `string` | `""` | no |
 | <a name="input_asm_role"></a> [asm\_role](#input\_asm\_role) | DEPRECATED: Use the new bot\_iam\_role input with he same semantics instead. | `string` | `""` | no |
 | <a name="input_boot_iam_role"></a> [boot\_iam\_role](#input\_boot\_iam\_role) | Specify arn of the role to apply to the boot job service account | `string` | `""` | no |
-| <a name="input_boot_secrets"></a> [boot\_secrets](#input\_boot\_secrets) | n/a | <pre>list(object({<br>    name  = string<br>    value = string<br>    type  = string<br>  }))</pre> | `[]` | no |
+| <a name="input_boot_secrets"></a> [boot\_secrets](#input\_boot\_secrets) | n/a | <pre>list(object({<br/>    name  = string<br/>    value = string<br/>    type  = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Variable to provide your desired name for the cluster | `string` | n/a | yes |
+| <a name="input_cluster_oidc_issuer_url"></a> [cluster\_oidc\_issuer\_url](#input\_cluster\_oidc\_issuer\_url) | The oidc provider url for the clustrer | `string` | n/a | yes |
 | <a name="input_create_and_configure_subdomain"></a> [create\_and\_configure\_subdomain](#input\_create\_and\_configure\_subdomain) | Flag to create an NS record set for the subdomain in the apex domain's Hosted Zone | `bool` | `false` | no |
 | <a name="input_create_asm_role"></a> [create\_asm\_role](#input\_create\_asm\_role) | Flag to control AWS Secrets Manager iam roles creation | `bool` | `false` | no |
 | <a name="input_create_autoscaler_role"></a> [create\_autoscaler\_role](#input\_create\_autoscaler\_role) | Flag to control cluster autoscaler iam role creation | `bool` | `true` | no |
@@ -472,7 +470,7 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_jx_bot_username"></a> [jx\_bot\_username](#input\_jx\_bot\_username) | Bot username used to interact with the Jenkins X cluster git repository | `string` | `""` | no |
 | <a name="input_jx_git_operator_values"></a> [jx\_git\_operator\_values](#input\_jx\_git\_operator\_values) | Extra values for jx-git-operator chart as a list of yaml formated strings | `list(string)` | `[]` | no |
 | <a name="input_jx_git_url"></a> [jx\_git\_url](#input\_jx\_git\_url) | URL for the Jenkins X cluster git repository | `string` | `""` | no |
-| <a name="input_local-exec-interpreter"></a> [local-exec-interpreter](#input\_local-exec-interpreter) | If provided, this is a list of interpreter arguments used to execute the command | `list(string)` | <pre>[<br>  "/bin/bash",<br>  "-c"<br>]</pre> | no |
+| <a name="input_local-exec-interpreter"></a> [local-exec-interpreter](#input\_local-exec-interpreter) | If provided, this is a list of interpreter arguments used to execute the command | `list(string)` | <pre>[<br/>  "/bin/bash",<br/>  "-c"<br/>]</pre> | no |
 | <a name="input_manage_apex_domain"></a> [manage\_apex\_domain](#input\_manage\_apex\_domain) | Flag to control if apex domain should be managed/updated by this module. Set this to false,if your apex domain is managed in a different AWS account or different provider | `bool` | `true` | no |
 | <a name="input_manage_subdomain"></a> [manage\_subdomain](#input\_manage\_subdomain) | Flag to control subdomain creation/management | `bool` | `true` | no |
 | <a name="input_nginx_chart_version"></a> [nginx\_chart\_version](#input\_nginx\_chart\_version) | nginx chart version | `string` | n/a | yes |
@@ -480,7 +478,6 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_nginx_release_name"></a> [nginx\_release\_name](#input\_nginx\_release\_name) | Name of the nginx release name | `string` | `"nginx-ingress"` | no |
 | <a name="input_nginx_values_file"></a> [nginx\_values\_file](#input\_nginx\_values\_file) | Name of the values file which holds the helm chart values | `string` | `"nginx_values.yaml"` | no |
 | <a name="input_production_letsencrypt"></a> [production\_letsencrypt](#input\_production\_letsencrypt) | Flag to use the production environment of letsencrypt in the `jx-requirements.yml` file | `bool` | `false` | no |
-| <a name="input_profile"></a> [profile](#input\_profile) | The AWS Profile used to provision the EKS Cluster | `string` | `null` | no |
 | <a name="input_region"></a> [region](#input\_region) | The region to create the resources into | `string` | `"us-east-1"` | no |
 | <a name="input_registry"></a> [registry](#input\_registry) | Registry used to store images | `string` | `""` | no |
 | <a name="input_s3_extra_tags"></a> [s3\_extra\_tags](#input\_s3\_extra\_tags) | Add new tags for s3 buckets | `map(any)` | `{}` | no |
@@ -508,10 +505,9 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="output_cluster_asm_iam_role"></a> [cluster\_asm\_iam\_role](#output\_cluster\_asm\_iam\_role) | The IAM Role that the External Secrets pod will assume to authenticate (Secrets Manager) |
 | <a name="output_cluster_autoscaler_iam_role"></a> [cluster\_autoscaler\_iam\_role](#output\_cluster\_autoscaler\_iam\_role) | The IAM Role that the Jenkins X UI pod will assume to authenticate |
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | The name of the created cluster |
-| <a name="output_cluster_oidc_issuer_url"></a> [cluster\_oidc\_issuer\_url](#output\_cluster\_oidc\_issuer\_url) | The Cluster OIDC Issuer URL |
 | <a name="output_cluster_ssm_iam_role"></a> [cluster\_ssm\_iam\_role](#output\_cluster\_ssm\_iam\_role) | The IAM Role that the External Secrets pod will assume to authenticate (Parameter Store) |
 | <a name="output_cm_cainjector_iam_role"></a> [cm\_cainjector\_iam\_role](#output\_cm\_cainjector\_iam\_role) | The IAM Role that the CM CA Injector pod will assume to authenticate |
-| <a name="output_connect"></a> [connect](#output\_connect) | "The cluster connection string to use once Terraform apply finishes,<br>this command is already executed as part of the apply, you may have to provide the region and<br>profile as environment variables " |
+| <a name="output_connect"></a> [connect](#output\_connect) | "The cluster connection string to use once Terraform apply finishes,<br/>this command is already executed as part of the apply, you may have to provide the region and<br/>profile as environment variables " |
 | <a name="output_controllerbuild_iam_role"></a> [controllerbuild\_iam\_role](#output\_controllerbuild\_iam\_role) | The IAM Role that the ControllerBuild pod will assume to authenticate |
 | <a name="output_external_dns_iam_role"></a> [external\_dns\_iam\_role](#output\_external\_dns\_iam\_role) | The IAM Role that the External DNS pod will assume to authenticate |
 | <a name="output_jx_requirements"></a> [jx\_requirements](#output\_jx\_requirements) | The jx-requirements rendered output |

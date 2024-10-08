@@ -1,13 +1,7 @@
-resource "random_string" "suffix" {
-  length  = 8
-  special = false
-}
-
 // ----------------------------------------------------------------------------
 // Module local variables
 // ----------------------------------------------------------------------------
 locals {
-  oidc_provider_url      = replace(data.aws_eks_cluster.cluster.identity[0].oidc[0].issuer, "https://", "")
   jenkins-x-namespace    = "jx"
   cluster_trunc          = substr(var.cluster_name, 0, 35)
   cert-manager-namespace = "cert-manager"

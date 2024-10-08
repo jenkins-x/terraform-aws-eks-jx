@@ -1,3 +1,5 @@
+recursive:
+  enabled: true
 formatter: "markdown table"
 content: |-
   {{ .Providers }}

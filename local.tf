@@ -1,10 +1,8 @@
 locals {
-  generated_seed    = random_string.suffix.result
-  oidc_provider_url = module.cluster.cluster_oidc_issuer_url
-  external_vault    = var.vault_url != "" ? true : false
-  registry          = var.registry != "" ? var.registry : "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.region}.amazonaws.com"
-  project           = data.aws_caller_identity.current.account_id
-  tls_secret_name   = var.tls_key == "" || var.tls_cert == "" ? "" : "tls-ingress-certificates-ca"
+  external_vault  = var.vault_url != "" ? true : false
+  registry        = var.registry != "" ? var.registry : "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.region}.amazonaws.com"
+  project         = data.aws_caller_identity.current.account_id
+  tls_secret_name = var.tls_key == "" || var.tls_cert == "" ? "" : "tls-ingress-certificates-ca"
 
   // ----------------------------------------------------------------------------
   // Let's generate jx-requirements.yml
