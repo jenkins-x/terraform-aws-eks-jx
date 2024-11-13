@@ -50,8 +50,10 @@ module "cluster" {
 // See https://github.com/bank-vaults/bank-vaults
 // ----------------------------------------------------------------------------
 module "vault" {
-  source         = "./modules/vault"
-  resource_count = var.use_vault && !local.external_vault && var.install_vault ? 1 : 0
+  source                = "./modules/vault"
+  resource_count        = var.use_vault && !local.external_vault && var.install_vault ? 1 : 0
+  vault_operator_values = var.vault_operator_values
+  vault_instance_values = var.vault_instance_values
 }
 
 // ----------------------------------------------------------------------------
