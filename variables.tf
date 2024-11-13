@@ -33,6 +33,18 @@ variable "install_vault" {
   default     = true
 }
 
+variable "vault_operator_values" {
+  description = "Extra values for vault-operator chart as a list of yaml formated strings"
+  type        = list(string)
+  default     = []
+}
+
+variable "vault_instance_values" {
+  description = "Extra values for vault-instance chart as a list of yaml formated strings"
+  type        = list(string)
+  default     = []
+}
+
 // ----------------------------------------------------------------------------
 // Velero/backup
 // ----------------------------------------------------------------------------

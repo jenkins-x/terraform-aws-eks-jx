@@ -20,7 +20,7 @@ No requirements.
 | <a name="input_enable_acl"></a> [enable\_acl](#input\_enable\_acl) | Flag to enable ACL instead of bucket ownership for S3 storage | `bool` | n/a | yes |
 | <a name="input_enable_backup"></a> [enable\_backup](#input\_enable\_backup) | Whether or not Velero backups should be enabled | `bool` | `false` | no |
 | <a name="input_force_destroy"></a> [force\_destroy](#input\_force\_destroy) | Flag to determine whether storage buckets get forcefully destroyed | `bool` | `false` | no |
-| <a name="input_s3_default_tags"></a> [s3\_default\_tags](#input\_s3\_default\_tags) | Default tags for s3 buckets | `map(any)` | <pre>{<br/>  "Owner": "Jenkins-x"<br/>}</pre> | no |
+| <a name="input_s3_default_tags"></a> [s3\_default\_tags](#input\_s3\_default\_tags) | Default tags for s3 buckets | `map(any)` | <pre>{<br>  "Owner": "Jenkins-x"<br>}</pre> | no |
 | <a name="input_s3_extra_tags"></a> [s3\_extra\_tags](#input\_s3\_extra\_tags) | Add new tags for s3 buckets | `map(any)` | `{}` | no |
 | <a name="input_s3_kms_arn"></a> [s3\_kms\_arn](#input\_s3\_kms\_arn) | ARN of the kms key used for encrypting s3 buckets | `string` | `""` | no |
 | <a name="input_use_kms_s3"></a> [use\_kms\_s3](#input\_use\_kms\_s3) | Flag to determine whether kms should be used for encrypting s3 buckets | `bool` | `false` | no |

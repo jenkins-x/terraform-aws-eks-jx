@@ -15,6 +15,8 @@ No requirements.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_resource_count"></a> [resource\_count](#input\_resource\_count) | Number of resources to create (0 or 1) | `number` | n/a | yes |
+| <a name="input_vault_instance_values"></a> [vault\_instance\_values](#input\_vault\_instance\_values) | Extra values for vault-instance chart as a list of yaml formated strings | `list(string)` | `[]` | no |
+| <a name="input_vault_operator_values"></a> [vault\_operator\_values](#input\_vault\_operator\_values) | Extra values for vault-operator chart as a list of yaml formated strings | `list(string)` | `[]` | no |
 #### Outputs
 
 No outputs.
