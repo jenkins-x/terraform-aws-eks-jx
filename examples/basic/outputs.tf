@@ -6,11 +6,7 @@ output "cluster_id" {
   value = module.eks.cluster_id
 }
 
-//// Storage (backup, logs, reports, repo)
-//output "backup_bucket_url" {
-//  value       = module.eks-jx.backup_bucket_url
-//  description = "The bucket where backups from velero will be stored"
-//}
+//// Storage (logs, reports, repo)
 //
 //output "lts_logs_bucket" {
 //  value       = module.eks-jx.lts_logs_bucket

@@ -8,8 +8,6 @@ data "aws_caller_identity" "current" {}
 module "cluster" {
   source                             = "./modules/cluster"
   region                             = var.region
-  vpc_id                             = var.vpc_id
-  subnets                            = var.subnets
   cluster_name                       = var.cluster_name
   force_destroy                      = var.force_destroy
   use_kms_s3                         = var.use_kms_s3
@@ -33,13 +31,11 @@ module "cluster" {
   additional_tekton_role_policy_arns = var.additional_tekton_role_policy_arns
   tls_cert                           = var.tls_cert
   tls_key                            = var.tls_key
-  local-exec-interpreter             = var.local-exec-interpreter
   enable_logs_storage                = var.enable_logs_storage
   expire_logs_after_days             = var.expire_logs_after_days
   enable_reports_storage             = var.enable_reports_storage
   enable_repository_storage          = var.enable_repository_storage
   boot_secrets                       = var.boot_secrets
-  use_asm                            = var.use_asm
   boot_iam_role                      = "${var.asm_role}${var.boot_iam_role}"
   enable_acl                         = var.enable_acl
   cluster_oidc_issuer_url            = var.cluster_oidc_issuer_url
@@ -54,21 +50,6 @@ module "vault" {
   resource_count        = var.use_vault && !local.external_vault && var.install_vault ? 1 : 0
   vault_operator_values = var.vault_operator_values
   vault_instance_values = var.vault_instance_values
-}
-
-// ----------------------------------------------------------------------------
-// Setup all required resources for using Velero for cluster backups
-// ----------------------------------------------------------------------------
-module "backup" {
-  source = "./modules/backup"
-
-  enable_backup      = var.enable_backup
-  cluster_name       = var.cluster_name
-  force_destroy      = var.force_destroy
-  velero_username    = var.velero_username
-  create_velero_role = var.create_velero_role
-  enable_acl         = var.enable_acl
-  s3_extra_tags      = var.s3_extra_tags
 }
 
 // ----------------------------------------------------------------------------

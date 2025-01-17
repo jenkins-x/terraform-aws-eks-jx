@@ -6,7 +6,6 @@
 | <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
 | <a name="provider_helm"></a> [helm](#provider\_helm) | n/a |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | n/a |
-| <a name="provider_null"></a> [null](#provider\_null) | n/a |
 #### Modules
 
 | Name | Source | Version |
@@ -30,7 +29,7 @@ No requirements.
 |------|-------------|------|---------|:--------:|
 | <a name="input_additional_tekton_role_policy_arns"></a> [additional\_tekton\_role\_policy\_arns](#input\_additional\_tekton\_role\_policy\_arns) | Additional Policy ARNs to attach to Tekton IRSA Role | `list(string)` | `[]` | no |
 | <a name="input_boot_iam_role"></a> [boot\_iam\_role](#input\_boot\_iam\_role) | Specify arn of the role to apply to the boot job service account | `string` | `""` | no |
-| <a name="input_boot_secrets"></a> [boot\_secrets](#input\_boot\_secrets) | n/a | <pre>list(object({<br>    name  = string<br>    value = string<br>    type  = string<br>  }))</pre> | `[]` | no |
+| <a name="input_boot_secrets"></a> [boot\_secrets](#input\_boot\_secrets) | n/a | <pre>list(object({<br/>    name  = string<br/>    value = string<br/>    type  = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | n/a | `string` | n/a | yes |
 | <a name="input_cluster_oidc_issuer_url"></a> [cluster\_oidc\_issuer\_url](#input\_cluster\_oidc\_issuer\_url) | The oidc provider url for the clustrer | `string` | n/a | yes |
 | <a name="input_content"></a> [content](#input\_content) | Interpolated jx-requirements.yml | `string` | `""` | no |
@@ -48,24 +47,19 @@ No requirements.
 | <a name="input_enable_logs_storage"></a> [enable\_logs\_storage](#input\_enable\_logs\_storage) | ---------------------------------------------------------------------------- Flag Variables ---------------------------------------------------------------------------- | `bool` | `true` | no |
 | <a name="input_enable_reports_storage"></a> [enable\_reports\_storage](#input\_enable\_reports\_storage) | n/a | `bool` | `true` | no |
 | <a name="input_enable_repository_storage"></a> [enable\_repository\_storage](#input\_enable\_repository\_storage) | n/a | `bool` | `true` | no |
-| <a name="input_enable_worker_group"></a> [enable\_worker\_group](#input\_enable\_worker\_group) | Flag to enable worker group. Setting this to false will provision a node group instead | `bool` | `true` | no |
 | <a name="input_expire_logs_after_days"></a> [expire\_logs\_after\_days](#input\_expire\_logs\_after\_days) | Number of days objects in the logs bucket are stored | `number` | `90` | no |
 | <a name="input_force_destroy"></a> [force\_destroy](#input\_force\_destroy) | Flag to determine whether storage buckets get forcefully destroyed. If set to false, empty the bucket first in the aws s3 console, else terraform destroy will fail with BucketNotEmpty error | `bool` | `false` | no |
 | <a name="input_jx_bot_token"></a> [jx\_bot\_token](#input\_jx\_bot\_token) | Bot token used to interact with the Jenkins X cluster git repository | `string` | `""` | no |
 | <a name="input_jx_bot_username"></a> [jx\_bot\_username](#input\_jx\_bot\_username) | Bot username used to interact with the Jenkins X cluster git repository | `string` | `""` | no |
 | <a name="input_jx_git_operator_values"></a> [jx\_git\_operator\_values](#input\_jx\_git\_operator\_values) | Extra values for jx-git-operator chart as a list of yaml formated strings | `list(string)` | `[]` | no |
 | <a name="input_jx_git_url"></a> [jx\_git\_url](#input\_jx\_git\_url) | URL for the Jenins X cluster git repository | `string` | `""` | no |
-| <a name="input_local-exec-interpreter"></a> [local-exec-interpreter](#input\_local-exec-interpreter) | If provided, this is a list of interpreter arguments used to execute the command | `list(string)` | <pre>[<br>  "/bin/bash",<br>  "-c"<br>]</pre> | no |
 | <a name="input_region"></a> [region](#input\_region) | The region to create the resources into | `string` | `"us-east-1"` | no |
-| <a name="input_s3_default_tags"></a> [s3\_default\_tags](#input\_s3\_default\_tags) | Default tags for s3 buckets | `map(any)` | <pre>{<br>  "Owner": "Jenkins-x"<br>}</pre> | no |
+| <a name="input_s3_default_tags"></a> [s3\_default\_tags](#input\_s3\_default\_tags) | Default tags for s3 buckets | `map(any)` | <pre>{<br/>  "Owner": "Jenkins-x"<br/>}</pre> | no |
 | <a name="input_s3_extra_tags"></a> [s3\_extra\_tags](#input\_s3\_extra\_tags) | Add new tags for s3 buckets | `map(any)` | `{}` | no |
 | <a name="input_s3_kms_arn"></a> [s3\_kms\_arn](#input\_s3\_kms\_arn) | ARN of the kms key used for encrypting s3 buckets | `string` | `""` | no |
-| <a name="input_subnets"></a> [subnets](#input\_subnets) | The subnet ids to create EKS cluster in if create\_vpc is false | `list(string)` | `[]` | no |
 | <a name="input_tls_cert"></a> [tls\_cert](#input\_tls\_cert) | Path to TLS certificate or base64-encrypted content | `string` | `""` | no |
 | <a name="input_tls_key"></a> [tls\_key](#input\_tls\_key) | Path to TLS key or base64-encrypted content | `string` | `""` | no |
-| <a name="input_use_asm"></a> [use\_asm](#input\_use\_asm) | Flag to specify if AWS Secrets manager is being used | `bool` | `false` | no |
 | <a name="input_use_kms_s3"></a> [use\_kms\_s3](#input\_use\_kms\_s3) | Flag to determine whether kms should be used for encrypting s3 buckets | `bool` | `false` | no |
-| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The VPC to create EKS cluster in if create\_vpc is false | `string` | `""` | no |
 #### Outputs
 
 | Name | Description |
