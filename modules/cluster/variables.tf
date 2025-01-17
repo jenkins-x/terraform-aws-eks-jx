@@ -27,12 +27,6 @@ variable "expire_logs_after_days" {
   default     = 90
 }
 
-variable "enable_worker_group" {
-  description = "Flag to enable worker group. Setting this to false will provision a node group instead"
-  type        = bool
-  default     = true
-}
-
 variable "enable_reports_storage" {
   type    = bool
   default = true
@@ -103,18 +97,6 @@ variable "jx_bot_token" {
   default     = ""
 }
 
-variable "vpc_id" {
-  description = "The VPC to create EKS cluster in if create_vpc is false"
-  type        = string
-  default     = ""
-}
-
-variable "subnets" {
-  description = "The subnet ids to create EKS cluster in if create_vpc is false"
-  type        = list(string)
-  default     = []
-}
-
 variable "create_tekton_role" {
   description = "Flag to control tekton iam role creation"
   type        = bool
@@ -181,12 +163,6 @@ variable "additional_tekton_role_policy_arns" {
   default     = []
 }
 
-variable "local-exec-interpreter" {
-  description = "If provided, this is a list of interpreter arguments used to execute the command"
-  type        = list(string)
-  default     = ["/bin/bash", "-c"]
-}
-
 // ----------------------------------------------------------------------------
 //  Customer's Certificates
 // ----------------------------------------------------------------------------
@@ -211,12 +187,6 @@ variable "boot_secrets" {
     type  = string
   }))
   default = []
-}
-
-variable "use_asm" {
-  description = "Flag to specify if AWS Secrets manager is being used"
-  type        = bool
-  default     = false
 }
 
 variable "boot_iam_role" {

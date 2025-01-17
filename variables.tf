@@ -46,39 +46,6 @@ variable "vault_instance_values" {
 }
 
 // ----------------------------------------------------------------------------
-// Velero/backup
-// ----------------------------------------------------------------------------
-variable "enable_backup" {
-  description = "Whether or not Velero backups should be enabled"
-  type        = bool
-  default     = false
-}
-
-variable "velero_namespace" {
-  description = "Kubernetes namespace for Velero"
-  type        = string
-  default     = "velero"
-}
-
-variable "velero_schedule" {
-  description = "The Velero backup schedule in cron notation to be set in the Velero Schedule CRD (see [default-backup.yaml](https://github.com/jenkins-x/jenkins-x-boot-config/blob/master/systems/velero-backups/templates/default-backup.yaml))"
-  type        = string
-  default     = "0 * * * *"
-}
-
-variable "velero_ttl" {
-  description = "The the lifetime of a velero backup to be set in the Velero Schedule CRD (see [default-backup.yaml](https://github.com/jenkins-x/jenkins-x-boot-config/blob/master/systems/velero-backups/templates/default-backup))"
-  type        = string
-  default     = "720h0m0s"
-}
-
-variable "velero_username" {
-  description = "The username to be assigned to the Velero IAM user"
-  type        = string
-  default     = "velero"
-}
-
-// ----------------------------------------------------------------------------
 // External DNS Variables
 // ----------------------------------------------------------------------------
 variable "apex_domain" {
@@ -162,12 +129,6 @@ variable "force_destroy" {
   default     = false
 }
 
-variable "enable_key_rotation" {
-  description = "Flag to enable kms key rotation"
-  type        = bool
-  default     = true
-}
-
 variable "use_kms_s3" {
   description = "Flag to determine whether kms should be used for encrypting s3 buckets"
   type        = bool
@@ -186,12 +147,6 @@ variable "s3_kms_arn" {
 
 variable "s3_extra_tags" {
   description = "Add new tags for s3 buckets"
-  type        = map(any)
-  default     = {}
-}
-
-variable "eks_cluster_tags" {
-  description = "Add tags for the EKS Cluster"
   type        = map(any)
   default     = {}
 }
@@ -230,18 +185,6 @@ variable "jx_bot_token" {
   description = "Bot token used to interact with the Jenkins X cluster git repository"
   type        = string
   default     = ""
-}
-
-variable "vpc_id" {
-  description = "The VPC to create EKS cluster in if create_vpc is false"
-  type        = string
-  default     = ""
-}
-
-variable "subnets" {
-  description = "The subnet ids to create EKS cluster in if create_vpc is false"
-  type        = list(string)
-  default     = []
 }
 
 variable "use_vault" {
@@ -322,12 +265,6 @@ variable "create_asm_role" {
   default     = false
 }
 
-variable "create_velero_role" {
-  description = "Flag to control velero iam role creation"
-  type        = bool
-  default     = true
-}
-
 variable "manage_apex_domain" {
   description = "Flag to control if apex domain should be managed/updated by this module. Set this to false,if your apex domain is managed in a different AWS account or different provider"
   default     = true
@@ -356,12 +293,6 @@ variable "additional_tekton_role_policy_arns" {
   description = "Additional Policy ARNs to attach to Tekton IRSA Role"
   type        = list(string)
   default     = []
-}
-
-variable "local-exec-interpreter" {
-  description = "If provided, this is a list of interpreter arguments used to execute the command"
-  type        = list(string)
-  default     = ["/bin/bash", "-c"]
 }
 
 // ----------------------------------------------------------------------------

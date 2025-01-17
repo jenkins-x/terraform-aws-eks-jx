@@ -18,8 +18,6 @@ This repository contains a Terraform module for creating an EKS cluster and all 
     - [ExternalDNS](#externaldns)
     - [cert-manager](#cert-manager)
     - [Customer's CA certificates](#customers-ca-certificates)
-    - [Velero Backups](#velero-backups)
-      - [Enabling backups on pre-existing clusters](#enabling-backups-on-pre-existing-clusters)
     - [Production cluster considerations](#production-cluster-considerations)
     - [Configuring a Terraform backend](#configuring-a-terraform-backend)
     - [Examples](#examples)
@@ -333,25 +331,6 @@ tls_cert            = "/opt/CA/cert.crt"
 tls_key             = "LS0tLS1C....BLRVktLS0tLQo="
 ```
 
-### Velero Backups
-
-This module can set up the resources required for running backups with Velero on your cluster by setting the flag `enable_backup` to `true`.
-
-#### Enabling backups on pre-existing clusters
-
-If your cluster is pre-existing and already contains a namespace named `velero`, then enabling backups will initially fail with an error that you are trying to create a namespace which already exists.
-
-```
-Error: namespaces "velero" already exists
-```
-
-If you get this error, consider it a warning - you may then adjust accordingly by importing that namespace to be managed by Terraform, deleting the previously existing ns if it wasn't actually in use, or setting `enable_backup` back to `false` to continue managing Velero in the previous manner.
-
-The recommended way is to import the namespace and then run another Terraform plan and apply:
-
-```
-terraform import module.eks-jx.module.backup.kubernetes_namespace.velero_namespace velero
-```
 ### Production cluster considerations
 
 The configuration, as seen in [Cluster provisioning](#cluster-provisioning), is not suited for creating and maintaining a production Jenkins X cluster.
@@ -411,7 +390,6 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_backup"></a> [backup](#module\_backup) | ./modules/backup | n/a |
 | <a name="module_cluster"></a> [cluster](#module\_cluster) | ./modules/cluster | n/a |
 | <a name="module_dns"></a> [dns](#module\_dns) | ./modules/dns | n/a |
 | <a name="module_health"></a> [health](#module\_health) | ./modules/health | n/a |
@@ -434,7 +412,7 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_apex_domain"></a> [apex\_domain](#input\_apex\_domain) | The main domain to either use directly or to configure a subdomain from | `string` | `""` | no |
 | <a name="input_asm_role"></a> [asm\_role](#input\_asm\_role) | DEPRECATED: Use the new bot\_iam\_role input with he same semantics instead. | `string` | `""` | no |
 | <a name="input_boot_iam_role"></a> [boot\_iam\_role](#input\_boot\_iam\_role) | Specify arn of the role to apply to the boot job service account | `string` | `""` | no |
-| <a name="input_boot_secrets"></a> [boot\_secrets](#input\_boot\_secrets) | n/a | <pre>list(object({<br>    name  = string<br>    value = string<br>    type  = string<br>  }))</pre> | `[]` | no |
+| <a name="input_boot_secrets"></a> [boot\_secrets](#input\_boot\_secrets) | n/a | <pre>list(object({<br/>    name  = string<br/>    value = string<br/>    type  = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Variable to provide your desired name for the cluster | `string` | n/a | yes |
 | <a name="input_cluster_oidc_issuer_url"></a> [cluster\_oidc\_issuer\_url](#input\_cluster\_oidc\_issuer\_url) | The oidc provider url for the clustrer | `string` | n/a | yes |
 | <a name="input_create_and_configure_subdomain"></a> [create\_and\_configure\_subdomain](#input\_create\_and\_configure\_subdomain) | Flag to create an NS record set for the subdomain in the apex domain's Hosted Zone | `bool` | `false` | no |
@@ -450,12 +428,8 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_create_pipeline_vis_role"></a> [create\_pipeline\_vis\_role](#input\_create\_pipeline\_vis\_role) | Flag to control pipeline visualizer role | `bool` | `true` | no |
 | <a name="input_create_ssm_role"></a> [create\_ssm\_role](#input\_create\_ssm\_role) | Flag to control AWS Parameter Store iam roles creation | `bool` | `false` | no |
 | <a name="input_create_tekton_role"></a> [create\_tekton\_role](#input\_create\_tekton\_role) | Flag to control tekton iam role creation | `bool` | `true` | no |
-| <a name="input_create_velero_role"></a> [create\_velero\_role](#input\_create\_velero\_role) | Flag to control velero iam role creation | `bool` | `true` | no |
-| <a name="input_eks_cluster_tags"></a> [eks\_cluster\_tags](#input\_eks\_cluster\_tags) | Add tags for the EKS Cluster | `map(any)` | `{}` | no |
 | <a name="input_enable_acl"></a> [enable\_acl](#input\_enable\_acl) | Flag to enable ACL instead of bucket ownership for S3 storage | `bool` | `false` | no |
-| <a name="input_enable_backup"></a> [enable\_backup](#input\_enable\_backup) | Whether or not Velero backups should be enabled | `bool` | `false` | no |
 | <a name="input_enable_external_dns"></a> [enable\_external\_dns](#input\_enable\_external\_dns) | Flag to enable or disable External DNS in the final `jx-requirements.yml` file | `bool` | `false` | no |
-| <a name="input_enable_key_rotation"></a> [enable\_key\_rotation](#input\_enable\_key\_rotation) | Flag to enable kms key rotation | `bool` | `true` | no |
 | <a name="input_enable_logs_storage"></a> [enable\_logs\_storage](#input\_enable\_logs\_storage) | Flag to enable or disable long term storage for logs | `bool` | `true` | no |
 | <a name="input_enable_reports_storage"></a> [enable\_reports\_storage](#input\_enable\_reports\_storage) | Flag to enable or disable long term storage for reports | `bool` | `true` | no |
 | <a name="input_enable_repository_storage"></a> [enable\_repository\_storage](#input\_enable\_repository\_storage) | Flag to enable or disable the repository bucket storage | `bool` | `true` | no |
@@ -470,7 +444,6 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_jx_bot_username"></a> [jx\_bot\_username](#input\_jx\_bot\_username) | Bot username used to interact with the Jenkins X cluster git repository | `string` | `""` | no |
 | <a name="input_jx_git_operator_values"></a> [jx\_git\_operator\_values](#input\_jx\_git\_operator\_values) | Extra values for jx-git-operator chart as a list of yaml formated strings | `list(string)` | `[]` | no |
 | <a name="input_jx_git_url"></a> [jx\_git\_url](#input\_jx\_git\_url) | URL for the Jenkins X cluster git repository | `string` | `""` | no |
-| <a name="input_local-exec-interpreter"></a> [local-exec-interpreter](#input\_local-exec-interpreter) | If provided, this is a list of interpreter arguments used to execute the command | `list(string)` | <pre>[<br>  "/bin/bash",<br>  "-c"<br>]</pre> | no |
 | <a name="input_manage_apex_domain"></a> [manage\_apex\_domain](#input\_manage\_apex\_domain) | Flag to control if apex domain should be managed/updated by this module. Set this to false,if your apex domain is managed in a different AWS account or different provider | `bool` | `true` | no |
 | <a name="input_manage_subdomain"></a> [manage\_subdomain](#input\_manage\_subdomain) | Flag to control subdomain creation/management | `bool` | `true` | no |
 | <a name="input_nginx_chart_version"></a> [nginx\_chart\_version](#input\_nginx\_chart\_version) | nginx chart version | `string` | n/a | yes |
@@ -483,7 +456,6 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_s3_extra_tags"></a> [s3\_extra\_tags](#input\_s3\_extra\_tags) | Add new tags for s3 buckets | `map(any)` | `{}` | no |
 | <a name="input_s3_kms_arn"></a> [s3\_kms\_arn](#input\_s3\_kms\_arn) | ARN of the kms key used for encrypting s3 buckets | `string` | `""` | no |
 | <a name="input_subdomain"></a> [subdomain](#input\_subdomain) | The subdomain to be added to the apex domain. If subdomain is set, it will be appended to the apex domain in  `jx-requirements-eks.yml` file | `string` | `""` | no |
-| <a name="input_subnets"></a> [subnets](#input\_subnets) | The subnet ids to create EKS cluster in if create\_vpc is false | `list(string)` | `[]` | no |
 | <a name="input_tls_cert"></a> [tls\_cert](#input\_tls\_cert) | TLS certificate encrypted with Base64 | `string` | `""` | no |
 | <a name="input_tls_email"></a> [tls\_email](#input\_tls\_email) | The email to register the LetsEncrypt certificate with. Added to the `jx-requirements.yml` file | `string` | `""` | no |
 | <a name="input_tls_key"></a> [tls\_key](#input\_tls\_key) | TLS key encrypted with Base64 | `string` | `""` | no |
@@ -493,23 +465,17 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_vault_instance_values"></a> [vault\_instance\_values](#input\_vault\_instance\_values) | Extra values for vault-instance chart as a list of yaml formated strings | `list(string)` | `[]` | no |
 | <a name="input_vault_operator_values"></a> [vault\_operator\_values](#input\_vault\_operator\_values) | Extra values for vault-operator chart as a list of yaml formated strings | `list(string)` | `[]` | no |
 | <a name="input_vault_url"></a> [vault\_url](#input\_vault\_url) | URL to an external Vault instance in case Jenkins X does not create its own system Vault | `string` | `""` | no |
-| <a name="input_velero_namespace"></a> [velero\_namespace](#input\_velero\_namespace) | Kubernetes namespace for Velero | `string` | `"velero"` | no |
-| <a name="input_velero_schedule"></a> [velero\_schedule](#input\_velero\_schedule) | The Velero backup schedule in cron notation to be set in the Velero Schedule CRD (see [default-backup.yaml](https://github.com/jenkins-x/jenkins-x-boot-config/blob/master/systems/velero-backups/templates/default-backup.yaml)) | `string` | `"0 * * * *"` | no |
-| <a name="input_velero_ttl"></a> [velero\_ttl](#input\_velero\_ttl) | The the lifetime of a velero backup to be set in the Velero Schedule CRD (see [default-backup.yaml](https://github.com/jenkins-x/jenkins-x-boot-config/blob/master/systems/velero-backups/templates/default-backup)) | `string` | `"720h0m0s"` | no |
-| <a name="input_velero_username"></a> [velero\_username](#input\_velero\_username) | The username to be assigned to the Velero IAM user | `string` | `"velero"` | no |
-| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The VPC to create EKS cluster in if create\_vpc is false | `string` | `""` | no |
 #### Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_backup_bucket_url"></a> [backup\_bucket\_url](#output\_backup\_bucket\_url) | The bucket where backups from velero will be stored |
 | <a name="output_cert_manager_iam_role"></a> [cert\_manager\_iam\_role](#output\_cert\_manager\_iam\_role) | The IAM Role that the Cert Manager pod will assume to authenticate |
 | <a name="output_cluster_asm_iam_role"></a> [cluster\_asm\_iam\_role](#output\_cluster\_asm\_iam\_role) | The IAM Role that the External Secrets pod will assume to authenticate (Secrets Manager) |
 | <a name="output_cluster_autoscaler_iam_role"></a> [cluster\_autoscaler\_iam\_role](#output\_cluster\_autoscaler\_iam\_role) | The IAM Role that the Jenkins X UI pod will assume to authenticate |
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | The name of the created cluster |
 | <a name="output_cluster_ssm_iam_role"></a> [cluster\_ssm\_iam\_role](#output\_cluster\_ssm\_iam\_role) | The IAM Role that the External Secrets pod will assume to authenticate (Parameter Store) |
 | <a name="output_cm_cainjector_iam_role"></a> [cm\_cainjector\_iam\_role](#output\_cm\_cainjector\_iam\_role) | The IAM Role that the CM CA Injector pod will assume to authenticate |
-| <a name="output_connect"></a> [connect](#output\_connect) | "The cluster connection string to use once Terraform apply finishes,<br>this command is already executed as part of the apply, you may have to provide the region and<br>profile as environment variables " |
+| <a name="output_connect"></a> [connect](#output\_connect) | The cluster connection string to use once Terraform apply finishes. You may have to provide the region and<br/>profile (as options or environment variables) |
 | <a name="output_controllerbuild_iam_role"></a> [controllerbuild\_iam\_role](#output\_controllerbuild\_iam\_role) | The IAM Role that the ControllerBuild pod will assume to authenticate |
 | <a name="output_external_dns_iam_role"></a> [external\_dns\_iam\_role](#output\_external\_dns\_iam\_role) | The IAM Role that the External DNS pod will assume to authenticate |
 | <a name="output_jx_requirements"></a> [jx\_requirements](#output\_jx\_requirements) | The jx-requirements rendered output |

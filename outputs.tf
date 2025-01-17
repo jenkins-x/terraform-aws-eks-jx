@@ -7,13 +7,8 @@ output "jx_requirements" {
 }
 
 // ----------------------------------------------------------------------------
-// Storage (backup, logs, reports, repo)
+// Storage (logs, reports, repo)
 // ----------------------------------------------------------------------------
-output "backup_bucket_url" {
-  value       = module.backup.backup_bucket_url
-  description = "The bucket where backups from velero will be stored"
-}
-
 output "lts_logs_bucket" {
   value       = length(module.cluster.logs_jenkins_x) > 0 ? module.cluster.logs_jenkins_x[0] : ""
   description = "The bucket where logs from builds will be stored"
@@ -99,9 +94,8 @@ output "subdomain_nameservers" {
 // ----------------------------------------------------------------------------
 output "connect" {
   description = <<EOT
-"The cluster connection string to use once Terraform apply finishes,
-this command is already executed as part of the apply, you may have to provide the region and
-profile as environment variables "
+The cluster connection string to use once Terraform apply finishes. You may have to provide the region and
+profile (as options or environment variables)
 EOT
   value       = "aws eks update-kubeconfig --name ${var.cluster_name}"
 }

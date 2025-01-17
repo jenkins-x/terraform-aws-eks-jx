@@ -43,8 +43,4 @@ resource "helm_release" "jx-git-operator" {
       type  = set.value["type"]
     }
   }
-
-  depends_on = [
-    null_resource.kubeconfig
-  ]
 }
