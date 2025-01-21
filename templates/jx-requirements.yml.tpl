@@ -20,8 +20,8 @@ ingress:
     %{ if tls_secret_name != ""}secretName: ${tls_secret_name}%{ endif }
 %{ if use_vault }
 secretStorage: vault
-vault:
 %{ if external_vault }
+vault:
   url: ${vault_url}
 %{ endif }
 %{ endif }
