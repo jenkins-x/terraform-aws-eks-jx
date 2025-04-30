@@ -331,6 +331,7 @@ variable "nginx_namespace" {
 variable "nginx_chart_version" {
   type        = string
   description = "nginx chart version"
+  default = null
 }
 
 variable "create_nginx_namespace" {

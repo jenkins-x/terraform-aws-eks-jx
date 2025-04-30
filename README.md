@@ -446,7 +446,7 @@ Each example generates a valid _jx-requirements.yml_ file that can be used to bo
 | <a name="input_jx_git_url"></a> [jx\_git\_url](#input\_jx\_git\_url) | URL for the Jenkins X cluster git repository | `string` | `""` | no |
 | <a name="input_manage_apex_domain"></a> [manage\_apex\_domain](#input\_manage\_apex\_domain) | Flag to control if apex domain should be managed/updated by this module. Set this to false,if your apex domain is managed in a different AWS account or different provider | `bool` | `true` | no |
 | <a name="input_manage_subdomain"></a> [manage\_subdomain](#input\_manage\_subdomain) | Flag to control subdomain creation/management | `bool` | `true` | no |
-| <a name="input_nginx_chart_version"></a> [nginx\_chart\_version](#input\_nginx\_chart\_version) | nginx chart version | `string` | n/a | yes |
+| <a name="input_nginx_chart_version"></a> [nginx\_chart\_version](#input\_nginx\_chart\_version) | nginx chart version | `string` | `null` | no |
 | <a name="input_nginx_namespace"></a> [nginx\_namespace](#input\_nginx\_namespace) | Name of the nginx namespace | `string` | `"nginx"` | no |
 | <a name="input_nginx_release_name"></a> [nginx\_release\_name](#input\_nginx\_release\_name) | Name of the nginx release name | `string` | `"nginx-ingress"` | no |
 | <a name="input_nginx_values_file"></a> [nginx\_values\_file](#input\_nginx\_values\_file) | Name of the values file which holds the helm chart values | `string` | `"nginx_values.yaml"` | no |
