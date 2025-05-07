@@ -11,19 +11,9 @@ variable "subdomain" {
   default = ""
 }
 
-variable "tls_email" {
-  type    = string
-  default = ""
-}
-
 // ----------------------------------------------------------------------------
 // Flag Variables
 // ----------------------------------------------------------------------------
-variable "enable_external_dns" {
-  type    = bool
-  default = false
-}
-
 variable "create_and_configure_subdomain" {
   type    = bool
   default = false
@@ -33,16 +23,6 @@ variable "force_destroy_subdomain" {
   description = "Flag to determine whether subdomain zone get forcefully destroyed. If set to false, empty the sub domain first in the aws Route 53 console, else terraform destroy will fail with HostedZoneNotEmpty error"
   type        = bool
   default     = false
-}
-
-variable "enable_tls" {
-  type    = bool
-  default = false
-}
-
-variable "production_letsencrypt" {
-  type    = bool
-  default = false
 }
 
 variable "manage_apex_domain" {
