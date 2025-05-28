@@ -139,13 +139,35 @@ module "iam_assumable_role_cm_cainjector" {
 // ----------------------------------------------------------------------------
 // ControllerBuild IAM Policy, IAM Role and Service Account
 // ----------------------------------------------------------------------------
+
+data "aws_iam_policy_document" "controllerbuild-policy" {
+  count = var.create_ctrlb_role && length(aws_s3_bucket.logs_jenkins_x) > 0 ? 1 : 0
+  statement {
+    sid    = "BuildControllerPolicy"
+    effect = "Allow"
+    actions = [
+      "s3:ListBucket",
+      "s3:PutObject",
+    ]
+    resources = [aws_s3_bucket.logs_jenkins_x.*.arn[0], "${aws_s3_bucket.logs_jenkins_x.*.arn[0]}/*"]
+  }
+}
+
+resource "aws_iam_policy" "controllerbuild" {
+  count       = var.create_ctrlb_role && length(aws_s3_bucket.logs_jenkins_x) > 0 ? 1 : 0
+  name_prefix = "jx-bucketrepo"
+  description = "bucketrepo policy for cluster ${var.cluster_name}"
+  policy      = data.aws_iam_policy_document.controllerbuild-policy[count.index].json
+}
+
+
 module "iam_assumable_role_controllerbuild" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v3.8.0"
-  create_role                   = var.create_ctrlb_role
+  create_role                   = var.create_ctrlb_role && length(aws_s3_bucket.logs_jenkins_x) > 0
   role_name                     = "${local.cluster_trunc}-build-ctrl"
   provider_url                  = var.cluster_oidc_issuer_url
-  role_policy_arns              = ["arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonS3FullAccess"]
+  role_policy_arns              = aws_iam_policy.controllerbuild[*].arn
   oidc_fully_qualified_subjects = ["system:serviceaccount:jx:jenkins-x-controllerbuild"]
 }
 
