@@ -17,7 +17,9 @@ spec:
       email: "${tls_email}"
       enabled: ${enable_tls}
       production: ${use_production_letsencrypt}
-      %{ if tls_secret_name != ""}secretName: ${tls_secret_name}%{ endif }
+%{ if tls_secret_name != ""}
+      secretName: ${tls_secret_name}
+%{ endif }
 %{ if use_vault }
   secretStorage: vault
 %{ if external_vault }
