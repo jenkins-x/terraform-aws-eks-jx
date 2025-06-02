@@ -213,15 +213,18 @@ During `terraform apply` the enabled S3 buckets are created, and the _jx_require
 
 ```yaml
 storage:
-  logs:
-    enabled: ${enable_logs_storage}
+%{ if enable_logs_storage }
+  - name: logs
     url: s3://${logs_storage_bucket}
-  reports:
-    enabled: ${enable_reports_storage}
-    url: s3://${reports_storage_bucket}
-  repository:
-    enabled: ${enable_repository_storage}
+%{ endif }
+%{ if enable_reports_storage }
+  - name: reports
+    url: s3://${reports_storage_bucket}}
+%{ endif }
+%{ if enable_repository_storage }
+  - name: repository
     url: s3://${repository_storage_bucket}
+%{ endif }
 ```
 
 If you just want to experiment with Jenkins X, you can set the variable _force_destroy_ to true.
