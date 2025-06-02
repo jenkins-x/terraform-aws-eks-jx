@@ -22,6 +22,7 @@ locals {
     vault_url      = var.vault_url
     external_vault = local.external_vault
     use_vault      = var.use_vault
+    install_vault  = var.install_vault
     // AWS Secrets Manager
     use_asm = var.use_asm
     // DNS
