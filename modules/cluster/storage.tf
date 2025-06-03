@@ -60,7 +60,14 @@ resource "aws_s3_bucket_lifecycle_configuration" "logs_jenkins_x" {
     id     = "delete_old"
     expiration {
       expired_object_delete_marker = false
-      days                         = var.expire_logs_after_days
+    }
+    filter {}
+  }
+  rule {
+    status = "Enabled"
+    id     = "delete_marker"
+    expiration {
+      days = var.expire_logs_after_days
     }
     filter {}
   }
