@@ -53,6 +53,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "logs_jenkins_x" {
     abort_incomplete_multipart_upload {
       days_after_initiation = 7
     }
+    filter {}
   }
   rule {
     status = "Enabled"
@@ -61,6 +62,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "logs_jenkins_x" {
       expired_object_delete_marker = false
       days                         = var.expire_logs_after_days
     }
+    filter {}
   }
 }
 
@@ -110,6 +112,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "reports_jenkins_x" {
     abort_incomplete_multipart_upload {
       days_after_initiation = 7
     }
+    filter {}
   }
 }
 
@@ -160,5 +163,6 @@ resource "aws_s3_bucket_lifecycle_configuration" "repository_jenkins_x" {
     abort_incomplete_multipart_upload {
       days_after_initiation = 7
     }
+    filter {}
   }
 }
