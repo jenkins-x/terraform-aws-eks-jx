@@ -4,7 +4,7 @@ resource "helm_release" "vault-operator" {
   chart            = "vault-operator"
   namespace        = "jx-vault"
   repository       = "oci://ghcr.io/bank-vaults/helm-charts"
-  version          = "1.22.3"
+  version          = "1.23.0"
   create_namespace = true
   values           = var.vault_operator_values
 }
@@ -15,7 +15,7 @@ resource "helm_release" "vault-instance" {
   chart      = "vault-instance"
   namespace  = "jx-vault"
   repository = "https://jenkins-x-charts.github.io/repo"
-  version    = "1.3.0"
+  version    = "1.4.0"
   depends_on = [helm_release.vault-operator]
   set {
     name  = "ingress.enabled"
@@ -24,7 +24,7 @@ resource "helm_release" "vault-instance" {
 
   set {
     name  = "bankVaultsImage"
-    value = "ghcr.io/bank-vaults/bank-vaults:v1.31.2"
+    value = "ghcr.io/bank-vaults/bank-vaults:v1.32.1"
   }
   values = var.vault_instance_values
 }
